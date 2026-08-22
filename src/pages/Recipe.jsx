@@ -117,7 +117,7 @@ export default function Recipe() {
           <p style={{ margin: '0 0 0.35rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
             지도에서 “{recipe.name_ko} 술집/맛집”으로 검색합니다.
           </p>
-          <PlaceSearchButtons snackName={recipe.name_ko} drinkName={pairDrinks[0]} />
+          <PlaceSearchButtons snackName={recipe.name_ko} drinkName={pairDrinks[0]} snackCategory={recipe.category} />
         </div>
       </div>
     </div>

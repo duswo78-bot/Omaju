@@ -1,4 +1,4 @@
-/** 안주/술을 취급하는 주점·맛집 지도 검색 */
+/** 지도 딥링크 (목록 API 실패/키 없을 때 보조) */
 
 export function buildPlaceQuery(snackName, drinkName) {
   const snack = (snackName || '').trim();

@@ -52,6 +52,7 @@ function RecommendationCards({ recommendation, onOpenSnack }) {
           compact
           snackName={snack?.name_ko}
           drinkName={alcohol?.name_ko}
+          snackCategory={snack?.category}
         />
       )}
     </div>

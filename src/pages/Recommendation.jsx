@@ -178,7 +178,7 @@ export default function Recommendation() {
                   레시피 보기
                 </button>
               </div>
-              <PlaceSearchButtons snackName={item.name_ko} drinkName={drink.name} />
+              <PlaceSearchButtons snackName={item.name_ko} drinkName={drink.name} snackCategory={item.category} />
             </div>
           ))
         )}
