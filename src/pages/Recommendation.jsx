@@ -170,15 +170,21 @@ export default function Recommendation() {
                   {item.recipe.ingredients.length > 3 ? '…' : ''}
                 </div>
               )}
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', alignItems: 'stretch' }}>
                 <button
                   onClick={() => navigate('/recipe', { state: { recipe: item } })}
-                  style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: 'none', background: 'var(--primary-color)', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '0.75rem 0.5rem', borderRadius: '8px', border: 'none', background: 'var(--primary-color)', color: 'white', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
                 >
-                  레시피 보기
+                  레시피
                 </button>
+                <PlaceSearchButtons
+                  inline
+                  label="근처 가게 찾기"
+                  snackName={item.name_ko}
+                  drinkName={drink.name}
+                  snackCategory={item.category}
+                />
               </div>
-              <PlaceSearchButtons snackName={item.name_ko} drinkName={drink.name} snackCategory={item.category} />
             </div>
           ))
         )}

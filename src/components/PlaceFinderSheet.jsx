@@ -140,7 +140,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.15rem' }}>주점 찾기</div>
+              <div style={{ fontWeight: 800, fontSize: '1.15rem' }}>근처 가게 찾기</div>
               <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.8rem', marginTop: 2 }}>
                 {snackName}{drinkName ? ` · ${drinkName}` : ''}
               </div>
