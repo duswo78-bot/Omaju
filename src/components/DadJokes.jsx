@@ -1,29 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { assetUrl } from '../utils/assets';
-
-const jokes = [
-  { q: '왕이 넘어지면?', a: '킹콩' },
-  { q: '딸기가 도망가면?', a: '딸기쨈' },
-  { q: '세상에서 가장 가난한 왕은?', a: '최저임금' },
-  { q: '아몬드가 죽으면?', a: '다이아몬드' },
-  { q: '자동차가 깜짝 놀라면?', a: '카놀라유' },
-  { q: '소가 계단을 올라가면?', a: '소오름' },
-  { q: '가장 억울한 도형은?', a: '원통' },
-  { q: '신발이 화나면?', a: '신발끈' },
-  { q: '바나나가 웃으면?', a: '바나나킥' },
-  { q: '사과가 웃으면?', a: '풋사과' },
-  { q: '세상에서 가장 뜨거운 과일은?', a: '천도복숭아' },
-  { q: '전화기가 떨어지면?', a: '콜라' },
-  { q: '우유가 넘어지면?', a: '아야' },
-  { q: '고등학생이 싫어하는 나무는?', a: '야자나무' },
-  { q: '세 사람만 탈 수 있는 차는?', a: '인삼차' },
-  { q: '얼음이 죽으면?', a: '다이빙' },
-  { q: '창문이 피를 흘리면?', a: '윈도우창' },
-  { q: '개가 사람을 가르치면?', a: '개인지도' },
-  { q: '미소의 반대말은?', a: '당기소' },
-  { q: '칼이 정색하면?', a: '검정색' }
-];
+import jokes from '../data/dadJokes.json';
 
 export default function DadJokes() {
   const [currentIndex, setCurrentIndex] = useState(Math.floor(Math.random() * jokes.length));
@@ -46,7 +24,7 @@ export default function DadJokes() {
         😎 아재개그 사전
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
-        카드를 터치하면 정답이 나옵니다. 웃으면 원샷!
+        아재개그 {jokes.length}선 · 카드를 터치하면 정답이 나옵니다. 웃으면 원샷!
       </p>
 
       {/* 3D 카드 컨테이너 */}

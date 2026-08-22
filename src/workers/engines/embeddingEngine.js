@@ -64,11 +64,24 @@ export async function initEmbeddings(postMessage) {
   const db = await openDB();
   
   // 캐시 확인
+  const cacheMeta = await getCache(db, 'embeddingMeta');
+  const expectedMeta = {
+    alcoholCount: alcoholsData.length,
+    snackCount: snacksData.length,
+    gameCount: gamesData.length,
+    version: 2,
+  };
   const cachedAlcohols = await getCache(db, 'alcoholEmbeddings');
   const cachedSnacks = await getCache(db, 'snackEmbeddings');
   const cachedGames = await getCache(db, 'gameEmbeddings');
+  const metaMatches =
+    cacheMeta &&
+    cacheMeta.version === expectedMeta.version &&
+    cacheMeta.alcoholCount === expectedMeta.alcoholCount &&
+    cacheMeta.snackCount === expectedMeta.snackCount &&
+    cacheMeta.gameCount === expectedMeta.gameCount;
 
-  if (cachedAlcohols && cachedSnacks && cachedGames) {
+  if (metaMatches && cachedAlcohols && cachedSnacks && cachedGames) {
     alcoholEmbeddings = cachedAlcohols;
     snackEmbeddings = cachedSnacks;
     gameEmbeddings = cachedGames;
@@ -108,6 +121,7 @@ export async function initEmbeddings(postMessage) {
   await setCache(db, 'alcoholEmbeddings', alcoholEmbeddings);
   await setCache(db, 'snackEmbeddings', snackEmbeddings);
   await setCache(db, 'gameEmbeddings', gameEmbeddings);
+  await setCache(db, 'embeddingMeta', expectedMeta);
 }
 
 export async function embedQuery(text) {

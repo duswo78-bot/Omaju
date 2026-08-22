@@ -3008,5 +3008,1825 @@
     "source": "alc_highball_suntory",
     "target": "snk_user_1783696077714_r7rj",
     "score": 91
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kimchi_jeongol",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_kimchi_jeongol",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_kimchi_jeongol",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_kimchi_jeongol",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dogani_tang",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_dogani_tang",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_hwayo",
+    "target": "snk_dogani_tang",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_dogani_tang",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_ganjang_gejang",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_ganjang_gejang",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_ganjang_gejang",
+    "score": 91
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_ganjang_gejang",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_yangnyeom_gejang",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_yangnyeom_gejang",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_yangnyeom_gejang",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_yangnyeom_gejang",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_saengseon_gui",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_saengseon_gui",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_saengseon_gui",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_saengseon_gui",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_godeungeo_gui",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_godeungeo_gui",
+    "score": 73
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_godeungeo_gui",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_godeungeo_gui",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_samchi_gui",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_samchi_gui",
+    "score": 77
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_samchi_gui",
+    "score": 75
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_samchi_gui",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_imyeonsu_gui",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_imyeonsu_gui",
+    "score": 76
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_imyeonsu_gui",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_imyeonsu_gui",
+    "score": 71
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_galchi_gui",
+    "score": 72
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_galchi_gui",
+    "score": 71
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_galchi_gui",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_galchi_gui",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_jogae_butter",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_jogae_butter",
+    "score": 91
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_jogae_butter",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_jogae_butter",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gyeran_jangjorim",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gyeran_jangjorim",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_gyeran_jangjorim",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gyeran_jangjorim",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_mechurial_jangjorim",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_mechurial_jangjorim",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_mechurial_jangjorim",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_mechurial_jangjorim",
+    "score": 72
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gyeran_ppang",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gyeran_ppang",
+    "score": 92
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_gyeran_ppang",
+    "score": 92
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_gyeran_ppang",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_hotdog",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_hotdog",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_hotdog",
+    "score": 70
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_hotdog",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_tteok_kkochi",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_tteok_kkochi",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_tteok_kkochi",
+    "score": 76
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_tteok_kkochi",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_eomuk_bokkeum",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_eomuk_bokkeum",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_eomuk_bokkeum",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_eomuk_bokkeum",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gamjachae_bokkeum",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gamjachae_bokkeum",
+    "score": 92
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_gamjachae_bokkeum",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_gamjachae_bokkeum",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_myeolchi_bokkeum",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_myeolchi_bokkeum",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_myeolchi_bokkeum",
+    "score": 76
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_myeolchi_bokkeum",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_jinmicha_muchim",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_jinmicha_muchim",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_jinmicha_muchim",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_jinmicha_muchim",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_ojingeochae",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_ojingeochae",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_ojingeochae",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_ojingeochae",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_butter_ojingeo",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_butter_ojingeo",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_butter_ojingeo",
+    "score": 73
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_butter_ojingeo",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_yang_kkochi",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_yang_kkochi",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_yang_kkochi",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_yang_kkochi",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_gamja_gratin",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_gamja_gratin",
+    "score": 83
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_gamja_gratin",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gamja_gratin",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_vongole",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_vongole",
+    "score": 86
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_vongole",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_vongole",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_bacon_roll",
+    "score": 71
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_bacon_roll",
+    "score": 70
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_bacon_roll",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_bacon_roll",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gyeran_bokkeumbap",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gyeran_bokkeumbap",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gyeran_bokkeumbap",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gyeran_bokkeumbap",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_omurice",
+    "score": 95
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_omurice",
+    "score": 76
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_omurice",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_omurice",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_ramyeon_sari",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_ramyeon_sari",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_ramyeon_sari",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_ramyeon_sari",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_agol_jjim",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_agol_jjim",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_agol_jjim",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_agol_jjim",
+    "score": 71
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_haemul_pajun_extra",
+    "score": 77
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_haemul_pajun_extra",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_haemul_pajun_extra",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_haemul_pajun_extra",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dubu_jorim",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_dubu_jorim",
+    "score": 70
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_dubu_jorim",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_dubu_jorim",
+    "score": 80
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kongnamul_muchim",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_kongnamul_muchim",
+    "score": 75
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_kongnamul_muchim",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_kongnamul_muchim",
+    "score": 79
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_oi_muchim",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_oi_muchim",
+    "score": 73
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_oi_muchim",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_oi_muchim",
+    "score": 82
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_garlic_bread",
+    "score": 76
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_garlic_bread",
+    "score": 82
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_garlic_bread",
+    "score": 70
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_garlic_bread",
+    "score": 86
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_shrimp_toast",
+    "score": 89
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_shrimp_toast",
+    "score": 76
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_shrimp_toast",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_shrimp_toast",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_tofu_salad",
+    "score": 71
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_tofu_salad",
+    "score": 70
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_tofu_salad",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_tofu_salad",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_jjin_mandu",
+    "score": 72
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_jjin_mandu",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_jjin_mandu",
+    "score": 91
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_jjin_mandu",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gun_mandu",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gun_mandu",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_gun_mandu",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gun_mandu",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kimchi_mandu",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_kimchi_mandu",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_kimchi_mandu",
+    "score": 96
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_kimchi_mandu",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_haemul_bokkeum",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_haemul_bokkeum",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_haemul_bokkeum",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_haemul_bokkeum",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_ojingeo_sundae",
+    "score": 72
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_ojingeo_sundae",
+    "score": 72
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_ojingeo_sundae",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_ojingeo_sundae",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dak_ttongjip_muchim",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_dak_ttongjip_muchim",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_dak_ttongjip_muchim",
+    "score": 70
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_dak_ttongjip_muchim",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gopchang_bokkeum_spicy",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gopchang_bokkeum_spicy",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gopchang_bokkeum_spicy",
+    "score": 72
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gopchang_bokkeum_spicy",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_bulgogi",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_bulgogi",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_bulgogi",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_bulgogi",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_deunggalbi",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_deunggalbi",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_deunggalbi",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_deunggalbi",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gamja_salad",
+    "score": 70
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gamja_salad",
+    "score": 77
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_gamja_salad",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_gamja_salad",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_corn_butter",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_corn_butter",
+    "score": 91
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_corn_butter",
+    "score": 89
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_corn_butter",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_spicy_rice_cake_skewer",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_spicy_rice_cake_skewer",
+    "score": 70
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_spicy_rice_cake_skewer",
+    "score": 76
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_spicy_rice_cake_skewer",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_fishcake_bar",
+    "score": 73
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_fishcake_bar",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_fishcake_bar",
+    "score": 75
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_fishcake_bar",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_cheese_ramyeon",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_cheese_ramyeon",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_cheese_ramyeon",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_cheese_ramyeon",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_budae_bokkeumbap",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_budae_bokkeumbap",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_budae_bokkeumbap",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_budae_bokkeumbap",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_napjak_mandu",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_napjak_mandu",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_napjak_mandu",
+    "score": 76
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_napjak_mandu",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_bindaetteok_mung",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_bindaetteok_mung",
+    "score": 70
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_bindaetteok_mung",
+    "score": 76
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_bindaetteok_mung",
+    "score": 70
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_haemul_tang_spicy",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_haemul_tang_spicy",
+    "score": 79
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_haemul_tang_spicy",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_haemul_tang_spicy",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kkomak_tang",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_kkomak_tang",
+    "score": 72
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_kkomak_tang",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_kkomak_tang",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_seonji_haejainguk",
+    "score": 73
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_seonji_haejainguk",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_seonji_haejainguk",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_seonji_haejainguk",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dwaeji_gukbap",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_dwaeji_gukbap",
+    "score": 76
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_dwaeji_gukbap",
+    "score": 96
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_dwaeji_gukbap",
+    "score": 71
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_sundae_guk",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_sundae_guk",
+    "score": 86
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_sundae_guk",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_sundae_guk",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_cheese_buldak",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_cheese_buldak",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_cheese_buldak",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_cheese_buldak",
+    "score": 70
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gan_jeonyuh",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gan_jeonyuh",
+    "score": 76
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_gan_jeonyuh",
+    "score": 81
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_gan_jeonyuh",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_chungmu_gimbap",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_chungmu_gimbap",
+    "score": 76
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_chungmu_gimbap",
+    "score": 71
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_chungmu_gimbap",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_mayo_corn_pizza",
+    "score": 72
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_mayo_corn_pizza",
+    "score": 88
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_mayo_corn_pizza",
+    "score": 97
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_mayo_corn_pizza",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_spicy_tendon",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_spicy_tendon",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_spicy_tendon",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_spicy_tendon",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_potato_wedge_cheese",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_potato_wedge_cheese",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_potato_wedge_cheese",
+    "score": 79
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_potato_wedge_cheese",
+    "score": 71
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_smoke_duck_salad",
+    "score": 77
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_smoke_duck_salad",
+    "score": 76
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_smoke_duck_salad",
+    "score": 78
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_smoke_duck_salad",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_anchovy_potato",
+    "score": 72
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_anchovy_potato",
+    "score": 70
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_anchovy_potato",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_anchovy_potato",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_jjukkumi_tang",
+    "score": 70
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_jjukkumi_tang",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_jjukkumi_tang",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_jjukkumi_tang",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_nakji_yeonpo",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_nakji_yeonpo",
+    "score": 91
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_nakji_yeonpo",
+    "score": 80
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_nakji_yeonpo",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gul_gui",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_gul_gui",
+    "score": 70
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_gul_gui",
+    "score": 70
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_gul_gui",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_honeymustard_chicken",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_honeymustard_chicken",
+    "score": 88
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_honeymustard_chicken",
+    "score": 93
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_honeymustard_chicken",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_pepperoni_pizza_bite",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_pepperoni_pizza_bite",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_pepperoni_pizza_bite",
+    "score": 86
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_pepperoni_pizza_bite",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_tteokgalbi",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_tteokgalbi",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_tteokgalbi",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_tteokgalbi",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_soy_garlic_shrimp",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_soy_garlic_shrimp",
+    "score": 71
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_soy_garlic_shrimp",
+    "score": 95
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_soy_garlic_shrimp",
+    "score": 82
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_kimchi_jeon_extra",
+    "score": 84
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_kimchi_jeon_extra",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_kimchi_jeon_extra",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kimchi_jeon_extra",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_spicy_pork_skin",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_spicy_pork_skin",
+    "score": 79
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_spicy_pork_skin",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_spicy_pork_skin",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_egg_tofu_stew",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_egg_tofu_stew",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_egg_tofu_stew",
+    "score": 81
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_egg_tofu_stew",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_fry_gimmari_set",
+    "score": 73
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_fry_gimmari_set",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_fry_gimmari_set",
+    "score": 92
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_fry_gimmari_set",
+    "score": 81
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_yakitori_negima",
+    "score": 74
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_yakitori_negima",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_yakitori_negima",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_yakitori_negima",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_edamame",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_edamame",
+    "score": 97
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_edamame",
+    "score": 97
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_edamame",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_takoyaki_cheese",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_takoyaki_cheese",
+    "score": 91
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_takoyaki_cheese",
+    "score": 85
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_takoyaki_cheese",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_spicy_jjamppong_bokkeum",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_spicy_jjamppong_bokkeum",
+    "score": 71
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_spicy_jjamppong_bokkeum",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_spicy_jjamppong_bokkeum",
+    "score": 79
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_haemul_jjim_garlic",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_haemul_jjim_garlic",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_haemul_jjim_garlic",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_haemul_jjim_garlic",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_pork_belly_kimchi",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_pork_belly_kimchi",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_pork_belly_kimchi",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_pork_belly_kimchi",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_hwayo",
+    "target": "snk_abalone_porridge_side",
+    "score": 92
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_abalone_porridge_side",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_abalone_porridge_side",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_abalone_porridge_side",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_wasabi_fries",
+    "score": 73
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_wasabi_fries",
+    "score": 79
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_wasabi_fries",
+    "score": 70
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_wasabi_fries",
+    "score": 86
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_salmon_carpaccio_extra",
+    "score": 80
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_salmon_carpaccio_extra",
+    "score": 87
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_salmon_carpaccio_extra",
+    "score": 74
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_salmon_carpaccio_extra",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_dry_ojingeo",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_dry_ojingeo",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dry_ojingeo",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_dry_ojingeo",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_honey_butter_chips_platter",
+    "score": 78
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_honey_butter_chips_platter",
+    "score": 70
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_honey_butter_chips_platter",
+    "score": 77
+  },
+  {
+    "source": "alc_cocktail_midori",
+    "target": "snk_honey_butter_chips_platter",
+    "score": 71
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_maeuntang_galchi",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_maeuntang_galchi",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_maeuntang_galchi",
+    "score": 74
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_maeuntang_galchi",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_dak_gangjeong_set",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_dak_gangjeong_set",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_dak_gangjeong_set",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_dak_gangjeong_set",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_truffle_pizza",
+    "score": 79
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_truffle_pizza",
+    "score": 98
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_truffle_pizza",
+    "score": 74
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_truffle_pizza",
+    "score": 73
   }
 ]

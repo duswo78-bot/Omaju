@@ -48,5 +48,155 @@
     "funLevel": 4,
     "description": "다섯 손가락을 펴고, 돌아가면서 특정 조건을 말합니다. 해당 조건에 맞는 사람은 손가락을 하나씩 접으며, 다섯 개를 모두 접은 사람이 벌칙을 받습니다.",
     "tags": ["눈치게임", "토크", "비밀알아내기", "질문게임"]
+  },
+  {
+    "id": "game_apartment",
+    "name": "아파트 게임",
+    "minPeople": 3,
+    "maxPeople": 12,
+    "difficulty": 2,
+    "funLevel": 5,
+    "description": "박자에 맞춰 '아파트' 리듬을 타며 손뼉·탭을 이어갑니다. 박자를 놓치거나 타이밍이 어긋나면 벌칙!",
+    "tags": ["리듬게임", "박자", "텐션업", "국민게임"]
+  },
+  {
+    "id": "game_forbidden",
+    "name": "금지어 게임",
+    "minPeople": 3,
+    "maxPeople": 10,
+    "difficulty": 2,
+    "funLevel": 4,
+    "description": "미리 정한 금지어를 말하지 않고 대화를 이어갑니다. 금지어를 말하는 순간 원샷!",
+    "tags": ["토크", "순발력", "초보자용", "소규모"]
+  },
+  {
+    "id": "game_king",
+    "name": "킹 게임",
+    "minPeople": 4,
+    "maxPeople": 12,
+    "difficulty": 1,
+    "funLevel": 5,
+    "description": "뽑기로 킹을 정하고, 킹이 미션(둘만 마시기, 춤추기 등)을 부여합니다. 거부하면 벌칙주!",
+    "tags": ["엠티게임", "미션", "리더십", "파티"]
+  },
+  {
+    "id": "game_never",
+    "name": "나 이런 적 없어",
+    "minPeople": 4,
+    "maxPeople": 15,
+    "difficulty": 1,
+    "funLevel": 4,
+    "description": "한 명이 '나 이런 적 없어 ~'라고 말하면, 해당되는 사람이 마십니다. 고백 토크와 함께 분위기를 풀기 좋습니다.",
+    "tags": ["토크", "친해지기", "고백", "회식"]
+  },
+  {
+    "id": "game_three_six_nine",
+    "name": "삼육구 게임",
+    "minPeople": 3,
+    "maxPeople": 12,
+    "difficulty": 2,
+    "funLevel": 3,
+    "description": "숫자를 차례로 말하다가 3·6·9가 들어가면 숫자 대신 박수를 칩니다. 실수하면 벌칙!",
+    "tags": ["숫자게임", "간단한", "초보자용", "빠른"]
+  },
+  {
+    "id": "game_market",
+    "name": "마켓게임",
+    "minPeople": 3,
+    "maxPeople": 8,
+    "difficulty": 3,
+    "funLevel": 4,
+    "description": "앞 사람이 산 물건을 기억해 누적해서 말합니다. '나는 마트에서 사과를 샀다' → 다음 사람은 사과+바나나... 틀리면 벌칙.",
+    "tags": ["기억력", "누적", "머리쓰는", "소규모"]
+  },
+  {
+    "id": "game_resume",
+    "name": "이력서 게임",
+    "minPeople": 4,
+    "maxPeople": 10,
+    "difficulty": 2,
+    "funLevel": 4,
+    "description": "술래가 카테고리(예: 동물)를 정하면 돌아가며 해당 단어를 댑니다. 중복·침묵하면 아웃.",
+    "tags": ["단어게임", "순발력", "초보자용", "회식"]
+  },
+  {
+    "id": "game_eye_contact",
+    "name": "눈치 게임",
+    "minPeople": 4,
+    "maxPeople": 12,
+    "difficulty": 1,
+    "funLevel": 3,
+    "description": "하나부터 숫자를 외치며 일어나는데, 동시에 일어나면 실패입니다. 눈치와 타이밍이 핵심!",
+    "tags": ["눈치게임", "간단한", "초보자용", "침묵"]
+  },
+  {
+    "id": "game_baeddook",
+    "name": "배뚝 게임",
+    "minPeople": 4,
+    "maxPeople": 10,
+    "difficulty": 3,
+    "funLevel": 5,
+    "description": "박자에 맞춰 손동작과 구호를 점점 빠르게 이어갑니다. 템포가 올라갈수록 지옥...",
+    "tags": ["리듬게임", "박자", "텐션업", "고급"]
+  },
+  {
+    "id": "game_creative_liar",
+    "name": "파울 게임",
+    "minPeople": 3,
+    "maxPeople": 8,
+    "difficulty": 2,
+    "funLevel": 4,
+    "description": "한 명이 제시어를 말하면 다음 사람은 연관 단어를 댑니다. 너무 동떨어지거나 끊기면 파울(벌칙).",
+    "tags": ["단어게임", "순발력", "토크", "소규모"]
+  },
+  {
+    "id": "game_phone",
+    "name": "핸드폰 게임",
+    "minPeople": 3,
+    "maxPeople": 10,
+    "difficulty": 1,
+    "funLevel": 4,
+    "description": "술래가 미션을 정합니다. 예: 최근 사진 보여주기, 검색 기록 1번 읽기, 엄마에게 전화 걸기. 거부 시 원샷.",
+    "tags": ["미션", "파티", "용기", "엠티게임"]
+  },
+  {
+    "id": "game_balance",
+    "name": "밸런스 게임",
+    "minPeople": 3,
+    "maxPeople": 15,
+    "difficulty": 1,
+    "funLevel": 3,
+    "description": "두 가지 선택지 중 하나를 고르게 하고, 소수파가 마십니다. 취향 차이로 대화가 길어지는 게 매력.",
+    "tags": ["토크", "취향", "회식", "초보자용"]
+  },
+  {
+    "id": "game_jockey",
+    "name": "조커 게임",
+    "minPeople": 4,
+    "maxPeople": 10,
+    "difficulty": 2,
+    "funLevel": 4,
+    "description": "카드나 앱으로 조커를 숨깁니다. 조커를 뽑은 사람이 미션을 수행하거나 마십니다.",
+    "tags": ["뽑기", "미션", "파티", "랜덤"]
+  },
+  {
+    "id": "game_stop",
+    "name": "멈춰 게임",
+    "minPeople": 4,
+    "maxPeople": 12,
+    "difficulty": 1,
+    "funLevel": 3,
+    "description": "음악/박수에 맞춰 움직이다 '멈춰!' 외침에 자세를 고정합니다. 움직이면 벌칙.",
+    "tags": ["바디", "간단한", "텐션업", "파티"]
+  },
+  {
+    "id": "game_initial_chat",
+    "name": "초성 이어말하기",
+    "minPeople": 3,
+    "maxPeople": 10,
+    "difficulty": 2,
+    "funLevel": 3,
+    "description": "앞 단어의 마지막 글자 초성으로 다음 단어를 이어 말합니다. 막히면 벌칙!",
+    "tags": ["단어게임", "순발력", "초보자용", "빠른"]
   }
 ]

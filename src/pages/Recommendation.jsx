@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import snacksData from '../data/snacks.json';
 import relationsData from '../data/relations.json';
@@ -12,7 +12,7 @@ function scoreToStars(score) {
   return 1;
 }
 
-function getSnackRecommendations(uiDrinkId, limit = 6) {
+function getSnackRecommendations(uiDrinkId, limit = 16) {
   const aiIds = new Set(resolveAiAlcoholIds(uiDrinkId));
   const snackById = new Map(snacksData.map((s) => [s.id, s]));
   const scores = new Map();
@@ -50,9 +50,10 @@ export default function Recommendation() {
   const navigate = useNavigate();
   const drink = location.state?.selectedDrink;
 
+  const [showAll, setShowAll] = useState(false);
   const recommendations = useMemo(
-    () => (drink ? getSnackRecommendations(drink.id) : []),
-    [drink]
+    () => (drink ? getSnackRecommendations(drink.id, showAll ? 40 : 16) : []),
+    [drink, showAll]
   );
 
   if (!drink) {
@@ -97,6 +98,9 @@ export default function Recommendation() {
       </button>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+          추천 안주 {recommendations.length}개 · 전체 안주 DB {snacksData.length}개
+        </div>
         {recommendations.length === 0 ? (
           <div className="glass-panel" style={{ padding: '1.5rem', color: 'var(--text-secondary)' }}>
             아직 매칭된 안주 데이터가 없습니다. AI에게 직접 물어보세요.
@@ -111,7 +115,11 @@ export default function Recommendation() {
                 </span>
               </div>
               {item.category && (
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{item.category}</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  {item.category}
+                  {item.recipe?.time ? ` · ${item.recipe.time}` : ''}
+                  {item.recipe?.difficulty ? ` · ${item.recipe.difficulty}` : ''}
+                </div>
               )}
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
                 {item.tags.map((tag) => (
@@ -123,6 +131,12 @@ export default function Recommendation() {
                   </span>
                 ))}
               </div>
+              {item.recipe?.ingredients?.length > 0 && (
+                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.45 }}>
+                  재료 미리보기: {item.recipe.ingredients.slice(0, 3).join(', ')}
+                  {item.recipe.ingredients.length > 3 ? '…' : ''}
+                </div>
+              )}
               <button
                 onClick={() => navigate('/recipe', { state: { recipe: item } })}
                 style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '8px', border: 'none', background: 'var(--primary-color)', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}
@@ -131,6 +145,23 @@ export default function Recommendation() {
               </button>
             </div>
           ))
+        )}
+        {!showAll && recommendations.length >= 16 && (
+          <button
+            onClick={() => setShowAll(true)}
+            style={{
+              marginTop: '0.5rem',
+              padding: '0.85rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.06)',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            안주 더 보기
+          </button>
         )}
       </div>
     </div>

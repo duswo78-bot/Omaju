@@ -4,11 +4,19 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SpinBottle from '../components/SpinBottle';
 import DadJokes from '../components/DadJokes';
 import SobrietyTest from '../components/SobrietyTest';
+import Baskin31 from '../components/Baskin31';
+import ApartmentGame from '../components/ApartmentGame';
+import ForbiddenWord from '../components/ForbiddenWord';
+import GameRules from '../components/GameRules';
 
 const games = [
-  { id: 'bottle', component: <SpinBottle /> },
-  { id: 'jokes', component: <DadJokes /> },
-  { id: 'sobriety', component: <SobrietyTest /> }
+  { id: 'bottle', title: '돌려돌려 병', component: <SpinBottle /> },
+  { id: 'baskin', title: '베스킨 31', component: <Baskin31 /> },
+  { id: 'apartment', title: '아파트', component: <ApartmentGame /> },
+  { id: 'forbidden', title: '금지어', component: <ForbiddenWord /> },
+  { id: 'jokes', title: '아재개그', component: <DadJokes /> },
+  { id: 'sobriety', title: '취함 테스트', component: <SobrietyTest /> },
+  { id: 'rules', title: '규칙 카드', component: <GameRules /> },
 ];
 
 export default function Game() {
@@ -26,55 +34,60 @@ export default function Game() {
   };
 
   const variants = {
-    enter: (direction) => {
-      return {
-        x: direction > 0 ? 300 : -300,
-        opacity: 0
-      };
-    },
+    enter: (dir) => ({
+      x: dir > 0 ? 300 : -300,
+      opacity: 0
+    }),
     center: {
       zIndex: 1,
       x: 0,
       opacity: 1
     },
-    exit: (direction) => {
-      return {
-        zIndex: 0,
-        x: direction < 0 ? 300 : -300,
-        opacity: 0
-      };
-    }
+    exit: (dir) => ({
+      zIndex: 0,
+      x: dir < 0 ? 300 : -300,
+      opacity: 0
+    })
   };
 
   return (
     <div className="animate-fade-in" style={{ padding: '0', paddingBottom: '120px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', overflowX: 'hidden' }}>
-      
-      {/* 캐러셀 네비게이션 헤더 */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '1.5rem', marginTop: '1rem' }}>
-        <motion.button 
+        <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => paginate(-1)}
           style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer', backdropFilter: 'blur(10px)' }}
         >
           <ChevronLeft size={24} />
         </motion.button>
-        
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {games.map((_, idx) => (
-            <div 
-              key={idx}
-              style={{
-                width: idx === currentIndex ? '20px' : '8px',
-                height: '8px',
-                borderRadius: '4px',
-                background: idx === currentIndex ? '#a78bfa' : 'rgba(255,255,255,0.2)',
-                transition: 'all 0.3s ease'
-              }}
-            />
-          ))}
+
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ color: '#fff', fontWeight: 700, marginBottom: '0.45rem' }}>{games[currentIndex].title}</div>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            {games.map((g, idx) => (
+              <button
+                key={g.id}
+                onClick={() => {
+                  setDirection(idx > currentIndex ? 1 : -1);
+                  setCurrentIndex(idx);
+                }}
+                style={{
+                  width: idx === currentIndex ? '20px' : '8px',
+                  height: '8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  padding: 0,
+                  background: idx === currentIndex ? '#a78bfa' : 'rgba(255,255,255,0.2)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                aria-label={g.title}
+              />
+            ))}
+          </div>
         </div>
 
-        <motion.button 
+        <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => paginate(1)}
           style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer', backdropFilter: 'blur(10px)' }}
@@ -83,8 +96,7 @@ export default function Game() {
         </motion.button>
       </div>
 
-      {/* 게임 컴포넌트 렌더링 영역 */}
-      <div style={{ position: 'relative', width: '100%', flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ position: 'relative', width: '100%', flex: 1, display: 'flex', justifyContent: 'center', minHeight: '70vh' }}>
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={currentIndex}
@@ -94,16 +106,15 @@ export default function Game() {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
+              x: { type: 'spring', stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            style={{ position: 'absolute', width: '100%', maxWidth: '500px', height: '100%' }}
+            style={{ position: 'absolute', width: '100%', maxWidth: '560px', height: '100%', overflowY: 'auto' }}
           >
             {games[currentIndex].component}
           </motion.div>
         </AnimatePresence>
       </div>
-      
     </div>
   );
 }
