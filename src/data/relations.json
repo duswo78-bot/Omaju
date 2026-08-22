@@ -1,0 +1,3012 @@
+[
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_egg_roll",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_egg_roll",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_egg_roll",
+    "score": 83
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_egg_soup",
+    "score": 99
+  },
+  {
+    "source": "alc_cocktail_kahlua",
+    "target": "snk_egg_soup",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_golbaengi",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_hwayo",
+    "target": "snk_golbaengi",
+    "score": 82
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_golbaengi",
+    "score": 100
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_odolppyeo",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_odolppyeo",
+    "score": 84
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_odolppyeo",
+    "score": 97
+  },
+  {
+    "source": "alc_cocktail_amaretto",
+    "target": "snk_odolppyeo",
+    "score": 77
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_dakddongjip",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_ilpoom",
+    "target": "snk_dakddongjip",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_dakddongjip",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_dakddongjip",
+    "score": 93
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_jjamppong",
+    "score": 77
+  },
+  {
+    "source": "alc_wine_port",
+    "target": "snk_jjamppong",
+    "score": 85
+  },
+  {
+    "source": "alc_vodka_tonic",
+    "target": "snk_odeng",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_jose",
+    "target": "snk_odeng",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_asahi",
+    "target": "snk_honghap",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_honghap",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_stella",
+    "target": "snk_meoktae",
+    "score": 75
+  },
+  {
+    "source": "alc_whiskey_shot",
+    "target": "snk_meoktae",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_meoktae",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_oksusu",
+    "target": "snk_meoktae",
+    "score": 84
+  },
+  {
+    "source": "alc_vodka_tonic",
+    "target": "snk_jwipo",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_jwipo",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_jwipo",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gambas",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_hwayo",
+    "target": "snk_gambas",
+    "score": 89
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_gambas",
+    "score": 75
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_gambas",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_pizza",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_budweiser",
+    "target": "snk_pizza",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_pizza",
+    "score": 83
+  },
+  {
+    "source": "alc_vodka_tonic",
+    "target": "snk_pizza",
+    "score": 82
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_cheese_stick",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_cheese_stick",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_cheese_stick",
+    "score": 80
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_cheese_stick",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_nacho",
+    "score": 77
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_nacho",
+    "score": 100
+  },
+  {
+    "source": "alc_highball_jose",
+    "target": "snk_nacho",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_nacho",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_port",
+    "target": "snk_popcorn",
+    "score": 93
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_popcorn",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_kozel",
+    "target": "snk_popcorn",
+    "score": 80
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_popcorn",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_yukhoe",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_yukhoe",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_yukhoe",
+    "score": 78
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_yukhoe",
+    "score": 75
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_salmon",
+    "score": 79
+  },
+  {
+    "source": "alc_beer_stella",
+    "target": "snk_salmon",
+    "score": 80
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_tuna",
+    "score": 100
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_tuna",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_tuna",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_tuna",
+    "score": 90
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_yakitori",
+    "score": 91
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_yakitori",
+    "score": 99
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_yakitori",
+    "score": 77
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_yakitori",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_stella",
+    "target": "snk_pineapple_sherbet",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_pineapple_sherbet",
+    "score": 88
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_pineapple_sherbet",
+    "score": 89
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_fruit_punch",
+    "score": 77
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_fruit_punch",
+    "score": 98
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_peach",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_peach",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_peach",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_bingsu",
+    "score": 82
+  },
+  {
+    "source": "alc_makgeolli_albam",
+    "target": "snk_bingsu",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_bingsu",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_bingsu",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_kozel",
+    "target": "snk_takoyaki",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_hwayo",
+    "target": "snk_takoyaki",
+    "score": 81
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_takoyaki",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_takoyaki",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_kkanpunggi",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_kkanpunggi",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_tangsuyuk",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_tangsuyuk",
+    "score": 81
+  },
+  {
+    "source": "alc_makgeolli_albam",
+    "target": "snk_tangsuyuk",
+    "score": 84
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_dry_snack_set",
+    "score": 96
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_dry_snack_set",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_jjapaghetti",
+    "score": 82
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_jjapaghetti",
+    "score": 92
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_ramen",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_kozel",
+    "target": "snk_ramen",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_ramen",
+    "score": 80
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_ramen",
+    "score": 76
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_udong",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_stella",
+    "target": "snk_udong",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_udong",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_tteokbokki",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_tteokbokki",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_budweiser",
+    "target": "snk_tteokbokki",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_rose_tteokbokki",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_ilpoom",
+    "target": "snk_rose_tteokbokki",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_rose_tteokbokki",
+    "score": 81
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_rose_tteokbokki",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_sundae",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_sundae",
+    "score": 78
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_sundae",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_twigim",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_budweiser",
+    "target": "snk_twigim",
+    "score": 100
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_twigim",
+    "score": 94
+  },
+  {
+    "source": "alc_cocktail_midori",
+    "target": "snk_twigim",
+    "score": 76
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_gimmari",
+    "score": 98
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_gimmari",
+    "score": 100
+  },
+  {
+    "source": "alc_beer_budweiser",
+    "target": "snk_gimmari",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gimmari",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_dakbal",
+    "score": 88
+  },
+  {
+    "source": "alc_cocktail_amaretto",
+    "target": "snk_dakbal",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_dakbal",
+    "score": 92
+  },
+  {
+    "source": "alc_vodka_tonic",
+    "target": "snk_dakbal",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_gukmul_dakbal",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gukmul_dakbal",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_gukmul_dakbal",
+    "score": 82
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_gukmul_dakbal",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_jokbal",
+    "score": 92
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_jokbal",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_jokbal",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_bossam",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_budweiser",
+    "target": "snk_bossam",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_bossam",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_samgyeopsal",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_samgyeopsal",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_samgyeopsal",
+    "score": 88
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_samgyeopsal",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_makchang",
+    "score": 79
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_makchang",
+    "score": 78
+  },
+  {
+    "source": "alc_beer_kozel",
+    "target": "snk_makchang",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_asahi",
+    "target": "snk_makchang",
+    "score": 84
+  },
+  {
+    "source": "alc_vodka_tonic",
+    "target": "snk_daechang",
+    "score": 82
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_daechang",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_daechang",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_daechang",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_goodday",
+    "target": "snk_gopchang",
+    "score": 76
+  },
+  {
+    "source": "alc_beer_terra",
+    "target": "snk_gopchang",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_gopchang",
+    "score": 77
+  },
+  {
+    "source": "alc_soju_ilpoom",
+    "target": "snk_gopchang",
+    "score": 100
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_gopchang_jeongol",
+    "score": 75
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_gopchang_jeongol",
+    "score": 93
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_budaejjigae",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_budaejjigae",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_heineken",
+    "target": "snk_budaejjigae",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_budaejjigae",
+    "score": 82
+  },
+  {
+    "source": "alc_cocktail_peach",
+    "target": "snk_kimchijjigae",
+    "score": 75
+  },
+  {
+    "source": "alc_soju_hallasan",
+    "target": "snk_kimchijjigae",
+    "score": 77
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_kimchijjigae",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_kimchijjigae",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_dongtae_jjigae",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_dongtae_jjigae",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_sparkling",
+    "target": "snk_al_tang",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_al_tang",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_asahi",
+    "target": "snk_al_tang",
+    "score": 91
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_jogae_tang",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_saero",
+    "target": "snk_jogae_tang",
+    "score": 86
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_nagasaki",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_nagasaki",
+    "score": 83
+  },
+  {
+    "source": "alc_highball_jose",
+    "target": "snk_nagasaki",
+    "score": 79
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_sukju_bokkeum",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_sukju_bokkeum",
+    "score": 91
+  },
+  {
+    "source": "alc_cocktail_amaretto",
+    "target": "snk_sukju_bokkeum",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_sukju_bokkeum",
+    "score": 92
+  },
+  {
+    "source": "alc_cocktail_kahlua",
+    "target": "snk_jeyuk_bokkeum",
+    "score": 79
+  },
+  {
+    "source": "alc_highball_jimbeam",
+    "target": "snk_jeyuk_bokkeum",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_ojingeo_bokkeum",
+    "score": 76
+  },
+  {
+    "source": "alc_cocktail_junebug",
+    "target": "snk_ojingeo_bokkeum",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_kelly",
+    "target": "snk_ojingeo_bokkeum",
+    "score": 75
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_ojingeo_bokkeum",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_nakji_bokkeum",
+    "score": 98
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_nakji_bokkeum",
+    "score": 77
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_dubu_kimchi",
+    "score": 75
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_dubu_kimchi",
+    "score": 94
+  },
+  {
+    "source": "alc_bokbunja",
+    "target": "snk_dubu_kimchi",
+    "score": 79
+  },
+  {
+    "source": "alc_cocktail_midori",
+    "target": "snk_dubu_kimchi",
+    "score": 100
+  },
+  {
+    "source": "alc_soju_starlight",
+    "target": "snk_pajeon",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_ixcg",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_ixcg",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_ixcg",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_ovkg",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_ovkg",
+    "score": 89
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_ovkg",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_7qin",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_7qin",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_7qin",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_ra7t",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_ra7t",
+    "score": 94
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_ra7t",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_ia5z",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_ia5z",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_ia5z",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_9y1o",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_9y1o",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_9y1o",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_lzsq",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_lzsq",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_lzsq",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_tsj4",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_tsj4",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_tsj4",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_sgxb",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_sgxb",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_sgxb",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_68cn",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_68cn",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_68cn",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077713_fuxt",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077713_fuxt",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077713_fuxt",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_xhrd",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_xhrd",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_xhrd",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_tqj7",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_tqj7",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_tqj7",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_boap",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_boap",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_boap",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_cajg",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_cajg",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_cajg",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_qwgz",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_qwgz",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_qwgz",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_2j02",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_2j02",
+    "score": 92
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_2j02",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_cwye",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_cwye",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_cwye",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_tfmm",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_tfmm",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_tfmm",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_81un",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_81un",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_81un",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ce13",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ce13",
+    "score": 87
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_ce13",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_49iz",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_49iz",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_49iz",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_27jg",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_27jg",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_27jg",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_d3om",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_d3om",
+    "score": 86
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_d3om",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_jd19",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_jd19",
+    "score": 83
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_jd19",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_4ea4",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_4ea4",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_4ea4",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_kqbg",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_kqbg",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_kqbg",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ye7l",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ye7l",
+    "score": 89
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_ye7l",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_gzo4",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_gzo4",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_gzo4",
+    "score": 82
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_mqcy",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_mqcy",
+    "score": 99
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_mqcy",
+    "score": 92
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_u7kz",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_u7kz",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_u7kz",
+    "score": 90
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_umti",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_umti",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_umti",
+    "score": 97
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_iyn0",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_iyn0",
+    "score": 82
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_iyn0",
+    "score": 80
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_gel0",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_gel0",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_gel0",
+    "score": 98
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_qc6u",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_qc6u",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_qc6u",
+    "score": 86
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_q6bb",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_q6bb",
+    "score": 81
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_q6bb",
+    "score": 94
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_x9wc",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_x9wc",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_x9wc",
+    "score": 85
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_930w",
+    "score": 80
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_930w",
+    "score": 80
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_930w",
+    "score": 97
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_mxdo",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_mxdo",
+    "score": 87
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_mxdo",
+    "score": 94
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_mu1w",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_mu1w",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_mu1w",
+    "score": 96
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_8x9i",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_8x9i",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_8x9i",
+    "score": 91
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_o9k9",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_o9k9",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_o9k9",
+    "score": 95
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_zaox",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_zaox",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_zaox",
+    "score": 81
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_023d",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_023d",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_023d",
+    "score": 87
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_s4ju",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_s4ju",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_s4ju",
+    "score": 87
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_7w15",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_7w15",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_7w15",
+    "score": 99
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_h6xd",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_h6xd",
+    "score": 88
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_h6xd",
+    "score": 82
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_ze0s",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ze0s",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_ze0s",
+    "score": 87
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_ntb8",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ntb8",
+    "score": 87
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_ntb8",
+    "score": 94
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_wz10",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_wz10",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_wz10",
+    "score": 93
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_2xfv",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_2xfv",
+    "score": 87
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_2xfv",
+    "score": 90
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_audx",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_audx",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_audx",
+    "score": 97
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_e35k",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_e35k",
+    "score": 81
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_e35k",
+    "score": 93
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_rs7e",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_rs7e",
+    "score": 82
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_rs7e",
+    "score": 94
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_tgom",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_tgom",
+    "score": 90
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_tgom",
+    "score": 97
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_88ad",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_88ad",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_88ad",
+    "score": 82
+  },
+  {
+    "source": "alc_chungha",
+    "target": "snk_user_1783696077714_3juu",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_3juu",
+    "score": 86
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_3juu",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_a55s",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_a55s",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_pjh5",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_pjh5",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_2quc",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_2quc",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_3aw8",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_3aw8",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_vdio",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_vdio",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_0fl8",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_0fl8",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_adgy",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_adgy",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_xuuh",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_xuuh",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_2tdz",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_2tdz",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_cwx0",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_cwx0",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_kth7",
+    "score": 94
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_kth7",
+    "score": 90
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_fjhi",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_fjhi",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_1d32",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_1d32",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_xj7a",
+    "score": 80
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_xj7a",
+    "score": 98
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_5vpz",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_5vpz",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_6psn",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_jinro",
+    "target": "snk_user_1783696077714_6psn",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_bsuj",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_bsuj",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_bsuj",
+    "score": 97
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_44co",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_44co",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_44co",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_6y7z",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_6y7z",
+    "score": 92
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_6y7z",
+    "score": 98
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_a0vy",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_a0vy",
+    "score": 89
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_a0vy",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_ldln",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_ldln",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_ldln",
+    "score": 93
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_jpzk",
+    "score": 96
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_jpzk",
+    "score": 94
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_jpzk",
+    "score": 82
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_t844",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_t844",
+    "score": 85
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_t844",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_xa00",
+    "score": 95
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_xa00",
+    "score": 99
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_xa00",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_tksb",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_tksb",
+    "score": 97
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_tksb",
+    "score": 88
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_8rfd",
+    "score": 83
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_8rfd",
+    "score": 84
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_8rfd",
+    "score": 80
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_2rzl",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_2rzl",
+    "score": 90
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_2rzl",
+    "score": 94
+  },
+  {
+    "source": "alc_makgeolli_jangsoo",
+    "target": "snk_user_1783696077714_icfm",
+    "score": 87
+  },
+  {
+    "source": "alc_makgeolli_slow",
+    "target": "snk_user_1783696077714_icfm",
+    "score": 97
+  },
+  {
+    "source": "alc_makgeolli_jipyeong",
+    "target": "snk_user_1783696077714_icfm",
+    "score": 82
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ld19",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ld19",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_y6px",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_y6px",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_4oqk",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_4oqk",
+    "score": 99
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_dbr0",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_dbr0",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_e91i",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_e91i",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_gzqk",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_gzqk",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_hxvv",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_hxvv",
+    "score": 86
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_yyli",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_yyli",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_bin2",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_bin2",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_8pch",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_8pch",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_8mc4",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_8mc4",
+    "score": 91
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_jfed",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_jfed",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_6bxm",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_6bxm",
+    "score": 83
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_6vyq",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_6vyq",
+    "score": 96
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_3iyn",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_3iyn",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_n87g",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_n87g",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_n87g",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_yrvd",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_yrvd",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_yrvd",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ndkd",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_ndkd",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_ndkd",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_dapp",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_dapp",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_dapp",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_z03s",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_z03s",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_z03s",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_7kc7",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_7kc7",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_7kc7",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_y17p",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_y17p",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_y17p",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_duo5",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_duo5",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_duo5",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_2jtz",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_2jtz",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_2jtz",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_umjj",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_umjj",
+    "score": 96
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_umjj",
+    "score": 80
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_03g3",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_03g3",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_03g3",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ph3j",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_ph3j",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_ph3j",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_goof",
+    "score": 89
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_goof",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_goof",
+    "score": 98
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_8ffb",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_8ffb",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_8ffb",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_no8u",
+    "score": 83
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_no8u",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_no8u",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_bueu",
+    "score": 86
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_bueu",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_bueu",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_yh9u",
+    "score": 81
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_yh9u",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_yh9u",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_1sg2",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_guinness",
+    "target": "snk_user_1783696077714_1sg2",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_tsingtao",
+    "target": "snk_user_1783696077714_1sg2",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_h29l",
+    "score": 98
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_h29l",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_xb6d",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_xb6d",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_lsv2",
+    "score": 92
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_lsv2",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_o4g7",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_o4g7",
+    "score": 80
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_xwdf",
+    "score": 89
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_xwdf",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_rn7y",
+    "score": 82
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_rn7y",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_hxdy",
+    "score": 97
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_hxdy",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_hoha",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_hoha",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_xpn1",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_xpn1",
+    "score": 95
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_d6qy",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_d6qy",
+    "score": 92
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_zwrx",
+    "score": 93
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_zwrx",
+    "score": 87
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_ukxy",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_ukxy",
+    "score": 94
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_ogpe",
+    "score": 83
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_ogpe",
+    "score": 84
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_rt6u",
+    "score": 92
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_rt6u",
+    "score": 81
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_e9sm",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_e9sm",
+    "score": 80
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_4v9v",
+    "score": 91
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_4v9v",
+    "score": 85
+  },
+  {
+    "source": "alc_wine_red",
+    "target": "snk_user_1783696077714_7nhj",
+    "score": 96
+  },
+  {
+    "source": "alc_wine_white",
+    "target": "snk_user_1783696077714_7nhj",
+    "score": 89
+  },
+  {
+    "source": "alc_whiskey_shot",
+    "target": "snk_user_1783696077714_yyrf",
+    "score": 98
+  },
+  {
+    "source": "alc_whiskey_shot",
+    "target": "snk_user_1783696077714_7545",
+    "score": 98
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_2e4w",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_user_1783696077714_2e4w",
+    "score": 83
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_5krt",
+    "score": 84
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_user_1783696077714_5krt",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_bn24",
+    "score": 83
+  },
+  {
+    "source": "alc_highball_earlgrey",
+    "target": "snk_user_1783696077714_bn24",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_5fov",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_5fov",
+    "score": 81
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_5fov",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_c570",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_c570",
+    "score": 92
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_c570",
+    "score": 91
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_tbvs",
+    "score": 93
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_tbvs",
+    "score": 94
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_tbvs",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_kznd",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_kznd",
+    "score": 96
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_kznd",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_ci39",
+    "score": 92
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_ci39",
+    "score": 91
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_ci39",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_5v7f",
+    "score": 84
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_5v7f",
+    "score": 95
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_5v7f",
+    "score": 92
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_vtba",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_vtba",
+    "score": 85
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_vtba",
+    "score": 85
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_rtlh",
+    "score": 88
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_rtlh",
+    "score": 96
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_rtlh",
+    "score": 90
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_nffu",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_nffu",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_nffu",
+    "score": 94
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_e6rd",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_e6rd",
+    "score": 80
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_e6rd",
+    "score": 97
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_elcu",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_elcu",
+    "score": 86
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_elcu",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_hl0a",
+    "score": 95
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_hl0a",
+    "score": 89
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_hl0a",
+    "score": 93
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_bl1y",
+    "score": 97
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_bl1y",
+    "score": 86
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_bl1y",
+    "score": 87
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_6bph",
+    "score": 89
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_6bph",
+    "score": 98
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_6bph",
+    "score": 99
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_12d1",
+    "score": 85
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_12d1",
+    "score": 94
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_12d1",
+    "score": 84
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_51ay",
+    "score": 87
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_51ay",
+    "score": 91
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_51ay",
+    "score": 88
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_e1uw",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_e1uw",
+    "score": 88
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_e1uw",
+    "score": 95
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_vt07",
+    "score": 81
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_vt07",
+    "score": 90
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_vt07",
+    "score": 82
+  },
+  {
+    "source": "alc_beer_cass",
+    "target": "snk_user_1783696077714_r7rj",
+    "score": 80
+  },
+  {
+    "source": "alc_soju_cham",
+    "target": "snk_user_1783696077714_r7rj",
+    "score": 87
+  },
+  {
+    "source": "alc_highball_suntory",
+    "target": "snk_user_1783696077714_r7rj",
+    "score": 91
+  }
+]

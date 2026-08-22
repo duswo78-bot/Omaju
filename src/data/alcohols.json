@@ -1,0 +1,1438 @@
+[
+  {
+    "id": "alc_soju_cham",
+    "name_ko": "참이슬",
+    "name_en": "Chamisul Soju",
+    "category": "소주",
+    "subCategory": "희석식 소주",
+    "abv": 16.5,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "friends",
+      "celebrate",
+      "refresh",
+      "date"
+    ],
+    "weather": [
+      "autumn",
+      "any",
+      "cold"
+    ],
+    "tags": [
+      "소주",
+      "인기",
+      "매콤달콤"
+    ],
+    "pairings": [
+      "snk_egg_roll",
+      "snk_honghap",
+      "snk_gambas",
+      "snk_nacho",
+      "snk_peach",
+      "snk_bingsu",
+      "snk_takoyaki",
+      "snk_kkanpunggi",
+      "snk_tteokbokki",
+      "snk_gimmari",
+      "snk_al_tang",
+      "snk_ojingeo_bokkeum",
+      "snk_muneo",
+      "snk_saeu_twigim"
+    ]
+  },
+  {
+    "id": "alc_soju_hwayo",
+    "name_ko": "화요",
+    "name_en": "Hwayo",
+    "category": "소주",
+    "subCategory": "증류식 소주",
+    "abv": 25,
+    "sweetness": 1,
+    "body": 3,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 3,
+    "moods": [
+      "movie",
+      "party",
+      "sad"
+    ],
+    "weather": [
+      "autumn"
+    ],
+    "tags": [
+      "소주",
+      "인기",
+      "고급",
+      "신선"
+    ],
+    "pairings": [
+      "snk_golbaengi",
+      "snk_gambas",
+      "snk_takoyaki",
+      "snk_ojingeo_twigim",
+      "snk_truffle_fries"
+    ]
+  },
+  {
+    "id": "alc_soju_ilpoom",
+    "name_ko": "일품진로",
+    "name_en": "Ilpoom Jinro",
+    "category": "소주",
+    "subCategory": "증류식 소주",
+    "abv": 25,
+    "sweetness": 1,
+    "body": 3,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 3,
+    "moods": [
+      "date",
+      "honsul",
+      "happy",
+      "comfort"
+    ],
+    "weather": [
+      "any",
+      "hot"
+    ],
+    "tags": [
+      "소주",
+      "추천",
+      "매콤달콤",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_dakddongjip",
+      "snk_rose_tteokbokki",
+      "snk_gopchang",
+      "snk_gwang_eo",
+      "snk_caprese",
+      "snk_french_fries"
+    ]
+  },
+  {
+    "id": "alc_soju_starlight",
+    "name_ko": "별빛청하",
+    "name_en": "Starlight Chungha",
+    "category": "소주",
+    "subCategory": "스파클링",
+    "abv": 7,
+    "sweetness": 4,
+    "body": 2,
+    "carbonation": 4,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "date",
+      "comfort",
+      "sad"
+    ],
+    "weather": [
+      "rain",
+      "cold",
+      "spring"
+    ],
+    "tags": [
+      "소주",
+      "인기",
+      "신선",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_odolppyeo",
+      "snk_jwipo",
+      "snk_cheese_stick",
+      "snk_tangsuyuk",
+      "snk_ramen",
+      "snk_tteokbokki",
+      "snk_twigim",
+      "snk_nagasaki",
+      "snk_nakji_bokkeum",
+      "snk_pajeon",
+      "snk_yugjeon",
+      "snk_gwang_eo",
+      "snk_yeon_eo",
+      "snk_padak",
+      "snk_churros",
+      "snk_sausage"
+    ]
+  },
+  {
+    "id": "alc_bokbunja",
+    "name_ko": "복분자주",
+    "name_en": "Bokbunja Wine",
+    "category": "과실주",
+    "subCategory": "복분자",
+    "abv": 15,
+    "sweetness": 4,
+    "body": 4,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 3,
+    "moods": [
+      "tired",
+      "honsul",
+      "comfort"
+    ],
+    "weather": [
+      "snow"
+    ],
+    "tags": [
+      "과실주",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_odolppyeo",
+      "snk_cheese_stick",
+      "snk_salmon",
+      "snk_gimmari",
+      "snk_jogae_tang",
+      "snk_dubu_kimchi",
+      "snk_dakgangjeong"
+    ]
+  },
+  {
+    "id": "alc_beer_tsingtao",
+    "name_ko": "칭따오",
+    "name_en": "Tsingtao",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 4.7,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 4,
+    "country": "중국",
+    "priceLevel": 2,
+    "moods": [
+      "stress",
+      "celebrate"
+    ],
+    "weather": [
+      "rain",
+      "winter",
+      "cool"
+    ],
+    "tags": [
+      "맥주",
+      "단짠"
+    ],
+    "pairings": [
+      "snk_golbaengi",
+      "snk_pizza",
+      "snk_sundae",
+      "snk_dongtae_jjigae",
+      "snk_ojingeo_bokkeum",
+      "snk_fried_chicken",
+      "snk_caprese",
+      "snk_cheese_platter",
+      "snk_waffle"
+    ]
+  },
+  {
+    "id": "alc_beer_guinness",
+    "name_ko": "기네스",
+    "name_en": "Guinness",
+    "category": "맥주",
+    "subCategory": "스타우트",
+    "abv": 4.2,
+    "sweetness": 1,
+    "body": 4,
+    "carbonation": 2,
+    "country": "아일랜드",
+    "priceLevel": 2,
+    "moods": [
+      "tired",
+      "celebrate",
+      "happy",
+      "sad"
+    ],
+    "weather": [
+      "hot",
+      "rain",
+      "summer"
+    ],
+    "tags": [
+      "맥주",
+      "단짠",
+      "고급",
+      "신선"
+    ],
+    "pairings": [
+      "snk_jwipo",
+      "snk_yukhoe",
+      "snk_peach",
+      "snk_pajeon",
+      "snk_kimchi_jeon",
+      "snk_steak"
+    ]
+  },
+  {
+    "id": "alc_highball_earlgrey",
+    "name_ko": "얼그레이 하이볼",
+    "name_en": "Earl Grey Highball",
+    "category": "칵테일/하이볼",
+    "subCategory": "하이볼",
+    "abv": 7,
+    "sweetness": 4,
+    "body": 2,
+    "carbonation": 4,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "happy",
+      "movie",
+      "comfort"
+    ],
+    "weather": [
+      "hot",
+      "any",
+      "summer"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "추천"
+    ],
+    "pairings": [
+      "snk_jjamppong",
+      "snk_dry_snack_set",
+      "snk_jokbal",
+      "snk_dubu_kimchi",
+      "snk_jeonbok",
+      "snk_ojingeo_twigim"
+    ]
+  },
+  {
+    "id": "alc_makgeolli_jipyeong",
+    "name_ko": "지평막걸리",
+    "name_en": "Jipyeong Makgeolli",
+    "category": "전통주",
+    "subCategory": "막걸리",
+    "abv": 5,
+    "sweetness": 3,
+    "body": 3,
+    "carbonation": 2,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "happy",
+      "comfort",
+      "movie",
+      "party"
+    ],
+    "weather": [
+      "spring"
+    ],
+    "tags": [
+      "전통주",
+      "가성비",
+      "추천",
+      "단짠"
+    ],
+    "pairings": [
+      "snk_popcorn",
+      "snk_yukhoe",
+      "snk_yakitori",
+      "snk_fruit_punch",
+      "snk_dry_snack_set",
+      "snk_jjapaghetti",
+      "snk_rose_tteokbokki",
+      "snk_sundae",
+      "snk_makchang",
+      "snk_nakji_bokkeum",
+      "snk_dubu_kimchi",
+      "snk_yugjeon",
+      "snk_churros"
+    ]
+  },
+  {
+    "id": "alc_makgeolli_slow",
+    "name_ko": "느린마을막걸리",
+    "name_en": "Slow Village Makgeolli",
+    "category": "전통주",
+    "subCategory": "막걸리",
+    "abv": 6,
+    "sweetness": 4,
+    "body": 4,
+    "carbonation": 1,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "comfort",
+      "tired",
+      "friends"
+    ],
+    "weather": [
+      "rain",
+      "snow",
+      "winter"
+    ],
+    "tags": [
+      "전통주",
+      "인기",
+      "추천",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_peach",
+      "snk_gopchang_jeongol",
+      "snk_sukju_bokkeum",
+      "snk_fried_chicken"
+    ]
+  },
+  {
+    "id": "alc_soju_saero",
+    "name_ko": "새로",
+    "name_en": "Saero Soju",
+    "category": "소주",
+    "subCategory": "제로슈거 소주",
+    "abv": 16,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "celebrate",
+      "romantic"
+    ],
+    "weather": [
+      "humid",
+      "hot"
+    ],
+    "tags": [
+      "소주",
+      "단짠",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_tuna",
+      "snk_ramen",
+      "snk_twigim",
+      "snk_bossam",
+      "snk_jogae_tang",
+      "snk_saeu_twigim",
+      "snk_ojingeo_twigim"
+    ]
+  },
+  {
+    "id": "alc_chungha",
+    "name_ko": "청하",
+    "name_en": "Chungha",
+    "category": "전통주",
+    "subCategory": "청주",
+    "abv": 13,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "sad",
+      "stress",
+      "tired",
+      "comfort"
+    ],
+    "weather": [
+      "cold",
+      "snow"
+    ],
+    "tags": [
+      "전통주",
+      "매콤달콤"
+    ],
+    "pairings": [
+      "snk_golbaengi",
+      "snk_gambas",
+      "snk_cheese_stick",
+      "snk_gamja_jeon",
+      "snk_chicken_karaage",
+      "snk_padak",
+      "snk_ice_cream"
+    ]
+  },
+  {
+    "id": "alc_wine_red",
+    "name_ko": "레드와인",
+    "name_en": "Red Wine",
+    "category": "와인",
+    "subCategory": "레드 와인",
+    "abv": 13.5,
+    "sweetness": 1,
+    "body": 4,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "sad",
+      "celebrate",
+      "stress"
+    ],
+    "weather": [
+      "gloomy"
+    ],
+    "tags": [
+      "와인",
+      "단짠",
+      "든든한",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_dakddongjip",
+      "snk_bingsu",
+      "snk_takoyaki",
+      "snk_tangsuyuk",
+      "snk_udong",
+      "snk_pajeon",
+      "snk_yugjeon",
+      "snk_daeha",
+      "snk_yangnyeom_chicken",
+      "snk_caprese"
+    ]
+  },
+  {
+    "id": "alc_wine_white",
+    "name_ko": "화이트와인",
+    "name_en": "White Wine",
+    "category": "와인",
+    "subCategory": "화이트 와인",
+    "abv": 12,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "friends",
+      "comfort"
+    ],
+    "weather": [
+      "humid",
+      "hot",
+      "any"
+    ],
+    "tags": [
+      "와인",
+      "인기"
+    ],
+    "pairings": [
+      "snk_fruit_punch",
+      "snk_ramen",
+      "snk_rose_tteokbokki",
+      "snk_makchang",
+      "snk_daechang",
+      "snk_dongtae_jjigae",
+      "snk_fried_chicken",
+      "snk_melon_prosciutto"
+    ]
+  },
+  {
+    "id": "alc_wine_sparkling",
+    "name_ko": "스파클링와인",
+    "name_en": "Sparkling Wine",
+    "category": "와인",
+    "subCategory": "스파클링 와인",
+    "abv": 11,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 4,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "party",
+      "romantic",
+      "honsul",
+      "happy"
+    ],
+    "weather": [
+      "humid",
+      "hot",
+      "winter"
+    ],
+    "tags": [
+      "와인",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_gambas",
+      "snk_cheese_stick",
+      "snk_gukmul_dakbal",
+      "snk_kimchijjigae",
+      "snk_al_tang"
+    ]
+  },
+  {
+    "id": "alc_cocktail_junebug",
+    "name_ko": "준벅",
+    "name_en": "June Bug",
+    "category": "칵테일/하이볼",
+    "subCategory": "칵테일",
+    "abv": 5,
+    "sweetness": 5,
+    "body": 2,
+    "carbonation": 0,
+    "country": "미국",
+    "priceLevel": 3,
+    "moods": [
+      "friends",
+      "refresh",
+      "happy",
+      "movie"
+    ],
+    "weather": [
+      "gloomy",
+      "hot",
+      "cold"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "트렌디",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_egg_soup",
+      "snk_yakitori",
+      "snk_pineapple_sherbet",
+      "snk_jokbal",
+      "snk_budaejjigae",
+      "snk_ojingeo_bokkeum",
+      "snk_sashimi",
+      "snk_saeu_twigim",
+      "snk_waffle"
+    ]
+  },
+  {
+    "id": "alc_cocktail_kahlua",
+    "name_ko": "깔루아밀크",
+    "name_en": "Kahlua Milk",
+    "category": "칵테일/하이볼",
+    "subCategory": "칵테일",
+    "abv": 5,
+    "sweetness": 5,
+    "body": 4,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "hoesik",
+      "comfort",
+      "friends"
+    ],
+    "weather": [
+      "humid",
+      "autumn"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "단짠",
+      "든든한"
+    ],
+    "pairings": [
+      "snk_egg_soup",
+      "snk_jeyuk_bokkeum",
+      "snk_buchu_jeon",
+      "snk_san_nakji"
+    ]
+  },
+  {
+    "id": "alc_soju_jinro",
+    "name_ko": "진로이즈백",
+    "name_en": "Jinro is Back",
+    "category": "소주",
+    "subCategory": "희석식 소주",
+    "abv": 16,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "casual",
+      "tired",
+      "romantic",
+      "stress"
+    ],
+    "weather": [
+      "gloomy",
+      "summer"
+    ],
+    "tags": [
+      "소주",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_meoktae",
+      "snk_pineapple_sherbet",
+      "snk_gimmari",
+      "snk_gukmul_dakbal",
+      "snk_caprese"
+    ]
+  },
+  {
+    "id": "alc_soju_goodday",
+    "name_ko": "좋은데이",
+    "name_en": "Good Day Soju",
+    "category": "소주",
+    "subCategory": "희석식 소주",
+    "abv": 16.5,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "tired",
+      "refresh",
+      "date"
+    ],
+    "weather": [
+      "autumn",
+      "winter"
+    ],
+    "tags": [
+      "소주",
+      "인기"
+    ],
+    "pairings": [
+      "snk_tuna",
+      "snk_sundae",
+      "snk_daechang",
+      "snk_gopchang",
+      "snk_yeon_eo",
+      "snk_chicken_karaage"
+    ]
+  },
+  {
+    "id": "alc_soju_hallasan",
+    "name_ko": "한라산",
+    "name_en": "Hallasan Soju",
+    "category": "소주",
+    "subCategory": "희석식 소주",
+    "abv": 21,
+    "sweetness": 1,
+    "body": 3,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "casual",
+      "movie",
+      "sad",
+      "stress"
+    ],
+    "weather": [
+      "snow"
+    ],
+    "tags": [
+      "소주",
+      "신선",
+      "클래식",
+      "단짠"
+    ],
+    "pairings": [
+      "snk_egg_roll",
+      "snk_dakddongjip",
+      "snk_rose_tteokbokki",
+      "snk_budaejjigae",
+      "snk_kimchijjigae"
+    ]
+  },
+  {
+    "id": "alc_beer_cass",
+    "name_ko": "카스",
+    "name_en": "Cass Beer",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 4.5,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 5,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "celebrate",
+      "movie"
+    ],
+    "weather": [
+      "summer",
+      "winter"
+    ],
+    "tags": [
+      "맥주",
+      "가성비",
+      "트렌디",
+      "매콤달콤"
+    ],
+    "pairings": [
+      "snk_dakddongjip",
+      "snk_pizza",
+      "snk_bingsu",
+      "snk_udong",
+      "snk_samgyeopsal",
+      "snk_budaejjigae",
+      "snk_sukju_bokkeum",
+      "snk_muneo",
+      "snk_french_fries"
+    ]
+  },
+  {
+    "id": "alc_beer_terra",
+    "name_ko": "테라",
+    "name_en": "Terra",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 4.6,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 5,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "happy",
+      "movie"
+    ],
+    "weather": [
+      "humid",
+      "hot",
+      "any"
+    ],
+    "tags": [
+      "맥주",
+      "클래식",
+      "단짠",
+      "든든한"
+    ],
+    "pairings": [
+      "snk_kkanpunggi",
+      "snk_gukmul_dakbal",
+      "snk_samgyeopsal",
+      "snk_daechang",
+      "snk_gopchang",
+      "snk_kimchi_jeon",
+      "snk_san_nakji"
+    ]
+  },
+  {
+    "id": "alc_beer_kelly",
+    "name_ko": "켈리",
+    "name_en": "Kelly",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 4.5,
+    "sweetness": 2,
+    "body": 3,
+    "carbonation": 4,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "sad",
+      "romantic",
+      "honsul",
+      "casual"
+    ],
+    "weather": [
+      "any"
+    ],
+    "tags": [
+      "맥주",
+      "트렌디",
+      "인기"
+    ],
+    "pairings": [
+      "snk_egg_roll",
+      "snk_dakbal",
+      "snk_ojingeo_bokkeum",
+      "snk_cheese_platter"
+    ]
+  },
+  {
+    "id": "alc_beer_asahi",
+    "name_ko": "아사히",
+    "name_en": "Asahi",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 5,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 5,
+    "country": "일본",
+    "priceLevel": 2,
+    "moods": [
+      "sad",
+      "happy",
+      "romantic"
+    ],
+    "weather": [
+      "any"
+    ],
+    "tags": [
+      "맥주",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_honghap",
+      "snk_makchang",
+      "snk_al_tang",
+      "snk_buchu_jeon",
+      "snk_daeha"
+    ]
+  },
+  {
+    "id": "alc_beer_heineken",
+    "name_ko": "하이네켄",
+    "name_en": "Heineken",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 5,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 4,
+    "country": "네덜란드",
+    "priceLevel": 2,
+    "moods": [
+      "honsul",
+      "sad",
+      "casual"
+    ],
+    "weather": [
+      "hot",
+      "rain"
+    ],
+    "tags": [
+      "맥주",
+      "트렌디",
+      "클래식",
+      "고급"
+    ],
+    "pairings": [
+      "snk_odolppyeo",
+      "snk_nacho",
+      "snk_yukhoe",
+      "snk_jjapaghetti",
+      "snk_jokbal",
+      "snk_bossam",
+      "snk_samgyeopsal",
+      "snk_gopchang",
+      "snk_budaejjigae",
+      "snk_san_nakji",
+      "snk_chicken_karaage",
+      "snk_cheese_platter",
+      "snk_truffle_fries"
+    ]
+  },
+  {
+    "id": "alc_beer_kozel",
+    "name_ko": "코젤다크",
+    "name_en": "Kozel Dark",
+    "category": "맥주",
+    "subCategory": "다크 라거",
+    "abv": 3.8,
+    "sweetness": 3,
+    "body": 3,
+    "carbonation": 3,
+    "country": "체코",
+    "priceLevel": 2,
+    "moods": [
+      "party",
+      "movie"
+    ],
+    "weather": [
+      "summer",
+      "cool",
+      "snow"
+    ],
+    "tags": [
+      "맥주",
+      "신선",
+      "인기",
+      "추천"
+    ],
+    "pairings": [
+      "snk_popcorn",
+      "snk_takoyaki",
+      "snk_ramen",
+      "snk_makchang",
+      "snk_sashimi",
+      "snk_jeonbok"
+    ]
+  },
+  {
+    "id": "alc_beer_stella",
+    "name_ko": "스텔라",
+    "name_en": "Stella Artois",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 5,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 4,
+    "country": "벨기에",
+    "priceLevel": 2,
+    "moods": [
+      "comfort",
+      "friends",
+      "hoesik",
+      "refresh"
+    ],
+    "weather": [
+      "summer",
+      "cool",
+      "winter"
+    ],
+    "tags": [
+      "맥주",
+      "트렌디",
+      "고급"
+    ],
+    "pairings": [
+      "snk_meoktae",
+      "snk_salmon",
+      "snk_pineapple_sherbet",
+      "snk_udong",
+      "snk_churros"
+    ]
+  },
+  {
+    "id": "alc_beer_budweiser",
+    "name_ko": "버드와이저",
+    "name_en": "Budweiser",
+    "category": "맥주",
+    "subCategory": "라거",
+    "abv": 5,
+    "sweetness": 1,
+    "body": 2,
+    "carbonation": 4,
+    "country": "미국",
+    "priceLevel": 2,
+    "moods": [
+      "comfort",
+      "party",
+      "honsul",
+      "refresh"
+    ],
+    "weather": [
+      "winter",
+      "cold"
+    ],
+    "tags": [
+      "맥주",
+      "매콤달콤"
+    ],
+    "pairings": [
+      "snk_pizza",
+      "snk_tteokbokki",
+      "snk_twigim",
+      "snk_gimmari",
+      "snk_bossam",
+      "snk_yangnyeom_chicken"
+    ]
+  },
+  {
+    "id": "alc_highball_suntory",
+    "name_ko": "산토리 하이볼",
+    "name_en": "Suntory Highball",
+    "category": "칵테일/하이볼",
+    "subCategory": "하이볼",
+    "abv": 7,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 4,
+    "country": "일본",
+    "priceLevel": 2,
+    "moods": [
+      "sad",
+      "honsul"
+    ],
+    "weather": [
+      "rain",
+      "cool",
+      "autumn"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_yakitori",
+      "snk_samgyeopsal",
+      "snk_yeon_eo",
+      "snk_muneo",
+      "snk_dakgangjeong"
+    ]
+  },
+  {
+    "id": "alc_highball_jimbeam",
+    "name_ko": "짐빔 하이볼",
+    "name_en": "Jim Beam Highball",
+    "category": "칵테일/하이볼",
+    "subCategory": "하이볼",
+    "abv": 7,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 4,
+    "country": "미국",
+    "priceLevel": 2,
+    "moods": [
+      "stress",
+      "comfort",
+      "movie",
+      "date"
+    ],
+    "weather": [
+      "winter",
+      "summer"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "단짠",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_nacho",
+      "snk_popcorn",
+      "snk_yukhoe",
+      "snk_gopchang_jeongol",
+      "snk_sukju_bokkeum",
+      "snk_jeyuk_bokkeum",
+      "snk_pajeon",
+      "snk_jeonbok",
+      "snk_steak",
+      "snk_waffle"
+    ]
+  },
+  {
+    "id": "alc_highball_jose",
+    "name_ko": "호세쿠엘보 하이볼",
+    "name_en": "Jose Cuervo Highball",
+    "category": "칵테일/하이볼",
+    "subCategory": "하이볼",
+    "abv": 7,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 4,
+    "country": "멕시코",
+    "priceLevel": 2,
+    "moods": [
+      "movie",
+      "happy",
+      "tired",
+      "romantic"
+    ],
+    "weather": [
+      "summer",
+      "snow"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "인기"
+    ],
+    "pairings": [
+      "snk_odeng",
+      "snk_nacho",
+      "snk_nagasaki",
+      "snk_gwang_eo"
+    ]
+  },
+  {
+    "id": "alc_makgeolli_jangsoo",
+    "name_ko": "장수막걸리",
+    "name_en": "Jangsoo Makgeolli",
+    "category": "전통주",
+    "subCategory": "막걸리",
+    "abv": 6,
+    "sweetness": 3,
+    "body": 3,
+    "carbonation": 2,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "party",
+      "tired"
+    ],
+    "weather": [
+      "summer",
+      "winter"
+    ],
+    "tags": [
+      "전통주",
+      "트렌디",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_tuna",
+      "snk_yakitori",
+      "snk_dakbal",
+      "snk_kimchijjigae",
+      "snk_nagasaki"
+    ]
+  },
+  {
+    "id": "alc_makgeolli_albam",
+    "name_ko": "알밤막걸리",
+    "name_en": "Chestnut Makgeolli",
+    "category": "전통주",
+    "subCategory": "막걸리",
+    "abv": 6,
+    "sweetness": 4,
+    "body": 3,
+    "carbonation": 1,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "romantic",
+      "movie"
+    ],
+    "weather": [
+      "rain",
+      "hot"
+    ],
+    "tags": [
+      "전통주",
+      "고급"
+    ],
+    "pairings": [
+      "snk_bingsu",
+      "snk_tangsuyuk",
+      "snk_sashimi",
+      "snk_yangnyeom_chicken",
+      "snk_ice_cream"
+    ]
+  },
+  {
+    "id": "alc_makgeolli_oksusu",
+    "name_ko": "옥수수막걸리",
+    "name_en": "Corn Makgeolli",
+    "category": "전통주",
+    "subCategory": "막걸리",
+    "abv": 6,
+    "sweetness": 4,
+    "body": 3,
+    "carbonation": 1,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "sad",
+      "stress"
+    ],
+    "weather": [
+      "gloomy",
+      "cool",
+      "rain"
+    ],
+    "tags": [
+      "전통주",
+      "트렌디",
+      "추천"
+    ],
+    "pairings": [
+      "snk_meoktae",
+      "snk_buchu_jeon",
+      "snk_muneo",
+      "snk_daeha",
+      "snk_saeu_twigim",
+      "snk_melon_prosciutto"
+    ]
+  },
+  {
+    "id": "alc_wine_port",
+    "name_ko": "포트와인",
+    "name_en": "Port Wine",
+    "category": "와인",
+    "subCategory": "주정강화 와인",
+    "abv": 20,
+    "sweetness": 5,
+    "body": 5,
+    "carbonation": 0,
+    "country": "포르투갈",
+    "priceLevel": 4,
+    "moods": [
+      "refresh",
+      "comfort",
+      "honsul"
+    ],
+    "weather": [
+      "winter",
+      "autumn"
+    ],
+    "tags": [
+      "와인",
+      "든든한",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_jjamppong",
+      "snk_popcorn",
+      "snk_gamja_jeon",
+      "snk_yeon_eo"
+    ]
+  },
+  {
+    "id": "alc_cocktail_peach",
+    "name_ko": "피치크러쉬",
+    "name_en": "Peach Crush",
+    "category": "칵테일/하이볼",
+    "subCategory": "칵테일",
+    "abv": 5,
+    "sweetness": 5,
+    "body": 2,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "sad",
+      "celebrate",
+      "stress"
+    ],
+    "weather": [
+      "autumn",
+      "gloomy"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_tuna",
+      "snk_gukmul_dakbal",
+      "snk_kimchijjigae",
+      "snk_melon_prosciutto"
+    ]
+  },
+  {
+    "id": "alc_cocktail_midori",
+    "name_ko": "미도이사워",
+    "name_en": "Midori Sour",
+    "category": "칵테일/하이볼",
+    "subCategory": "칵테일",
+    "abv": 5,
+    "sweetness": 4,
+    "body": 2,
+    "carbonation": 2,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "romantic",
+      "sad"
+    ],
+    "weather": [
+      "rain",
+      "snow"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "추천",
+      "고급"
+    ],
+    "pairings": [
+      "snk_twigim",
+      "snk_dubu_kimchi",
+      "snk_kimchi_jeon",
+      "snk_dakgangjeong",
+      "snk_steak"
+    ]
+  },
+  {
+    "id": "alc_cocktail_amaretto",
+    "name_ko": "아마레또사워",
+    "name_en": "Amaretto Sour",
+    "category": "칵테일/하이볼",
+    "subCategory": "칵테일",
+    "abv": 5,
+    "sweetness": 4,
+    "body": 3,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 3,
+    "moods": [
+      "refresh",
+      "date"
+    ],
+    "weather": [
+      "rain",
+      "hot",
+      "autumn"
+    ],
+    "tags": [
+      "칵테일/하이볼",
+      "고급",
+      "인기"
+    ],
+    "pairings": [
+      "snk_odolppyeo",
+      "snk_dakbal",
+      "snk_sukju_bokkeum",
+      "snk_gamja_jeon",
+      "snk_yangnyeom_chicken",
+      "snk_french_fries"
+    ]
+  },
+  {
+    "id": "alc_whiskey_shot",
+    "name_ko": "위스키 샷",
+    "name_en": "Whiskey Shot",
+    "category": "위스키",
+    "subCategory": "싱글몰트",
+    "abv": 40,
+    "sweetness": 1,
+    "body": 4,
+    "carbonation": 0,
+    "country": "글로벌",
+    "priceLevel": 4,
+    "moods": [
+      "movie",
+      "stress"
+    ],
+    "weather": [
+      "rain",
+      "hot"
+    ],
+    "tags": [
+      "위스키",
+      "트렌디",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_meoktae",
+      "snk_truffle_fries"
+    ]
+  },
+  {
+    "id": "alc_vodka_tonic",
+    "name_ko": "보드카 토닉",
+    "name_en": "Vodka Tonic",
+    "category": "보드카",
+    "subCategory": "믹스",
+    "abv": 10,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 4,
+    "country": "글로벌",
+    "priceLevel": 2,
+    "moods": [
+      "romantic",
+      "hoesik",
+      "sad",
+      "party"
+    ],
+    "weather": [
+      "cold"
+    ],
+    "tags": [
+      "보드카",
+      "인기",
+      "추천"
+    ],
+    "pairings": [
+      "snk_odeng",
+      "snk_jwipo",
+      "snk_pizza",
+      "snk_dakbal",
+      "snk_daechang",
+      "snk_sausage"
+    ]
+  }
+]

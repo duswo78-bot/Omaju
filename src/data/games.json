@@ -1,0 +1,52 @@
+[
+  {
+    "id": "game_baskin",
+    "name": "베스킨라빈스 31",
+    "minPeople": 2,
+    "maxPeople": 10,
+    "difficulty": 1,
+    "funLevel": 3,
+    "description": "숫자를 1부터 차례대로 최대 3개까지 말할 수 있으며, 31을 말하는 사람이 지는 게임입니다. 단순하고 빠르게 진행하기 좋습니다.",
+    "tags": ["숫자게임", "간단한", "초보자용", "국민게임"]
+  },
+  {
+    "id": "game_strawberry",
+    "name": "딸기 게임",
+    "minPeople": 4,
+    "maxPeople": 8,
+    "difficulty": 3,
+    "funLevel": 5,
+    "description": "박자에 맞춰 '딸기'를 외치는 횟수를 늘려가며 진행하는 리듬 게임입니다. 박자감이 생명!",
+    "tags": ["리듬게임", "박자", "텐션업", "시끄러운"]
+  },
+  {
+    "id": "game_hunmin",
+    "name": "훈민정음",
+    "minPeople": 3,
+    "maxPeople": 10,
+    "difficulty": 2,
+    "funLevel": 4,
+    "description": "술래가 초성 두 개를 제시하면, 나머지 사람들이 그 초성에 맞는 단어를 외치며 엄지를 치켜세우는 게임입니다. 가장 늦게 말한 사람이 벌칙!",
+    "tags": ["단어게임", "순발력", "눈치게임", "머리쓰는"]
+  },
+  {
+    "id": "game_image",
+    "name": "이미지 게임",
+    "minPeople": 4,
+    "maxPeople": 10,
+    "difficulty": 1,
+    "funLevel": 4,
+    "description": "술래가 특정 질문(예: 가장 먼저 취할 것 같은 사람?)을 하면, 하나둘셋에 동시에 해당되는 사람을 지목하는 게임입니다. 가장 많은 지목을 받은 사람이 마십니다.",
+    "tags": ["엠티게임", "눈치게임", "친해지기", "지목게임"]
+  },
+  {
+    "id": "game_sonbyungho",
+    "name": "손병호 게임",
+    "minPeople": 3,
+    "maxPeople": 10,
+    "difficulty": 1,
+    "funLevel": 4,
+    "description": "다섯 손가락을 펴고, 돌아가면서 특정 조건을 말합니다. 해당 조건에 맞는 사람은 손가락을 하나씩 접으며, 다섯 개를 모두 접은 사람이 벌칙을 받습니다.",
+    "tags": ["눈치게임", "토크", "비밀알아내기", "질문게임"]
+  }
+]
