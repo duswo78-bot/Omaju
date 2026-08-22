@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import snacksData from '../data/snacks.json';
 import relationsData from '../data/relations.json';
 import { resolveAiAlcoholIds, buildPendingContext } from '../data/drinkIdMap';
+import { weightedSample } from '../workers/utils/random.js';
 
 function scoreToStars(score) {
   if (score >= 90) return 5;
@@ -12,7 +13,7 @@ function scoreToStars(score) {
   return 1;
 }
 
-function getSnackRecommendations(uiDrinkId, limit = 16) {
+function buildScoredSnacks(uiDrinkId) {
   const aiIds = new Set(resolveAiAlcoholIds(uiDrinkId));
   const snackById = new Map(snacksData.map((s) => [s.id, s]));
   const scores = new Map();
@@ -30,7 +31,6 @@ function getSnackRecommendations(uiDrinkId, limit = 16) {
   }
 
   return [...scores.entries()]
-    .sort((a, b) => b[1] - a[1])
     .map(([id, score]) => {
       const snack = snackById.get(id);
       if (!snack) return null;
@@ -42,7 +42,20 @@ function getSnackRecommendations(uiDrinkId, limit = 16) {
       };
     })
     .filter(Boolean)
-    .slice(0, limit);
+    .sort((a, b) => b.matchScore - a.matchScore);
+}
+
+/** 상위권 풀에서 가중 샘플링 → 같은 술이어도 매번 목록이 달라짐 */
+function getSnackRecommendations(uiDrinkId, limit = 16) {
+  const ranked = buildScoredSnacks(uiDrinkId);
+  if (!ranked.length) return [];
+  const topScore = ranked[0].matchScore;
+  const pool = ranked
+    .filter((s) => s.matchScore >= Math.max(68, topScore - 18))
+    .slice(0, Math.max(limit * 3, 48));
+  const sampled = weightedSample(pool, Math.min(limit, pool.length), (s) => s.matchScore);
+  // 화면에서는 점수순으로 보이게 재정렬
+  return sampled.sort((a, b) => b.matchScore - a.matchScore);
 }
 
 export default function Recommendation() {
@@ -51,10 +64,12 @@ export default function Recommendation() {
   const drink = location.state?.selectedDrink;
 
   const [showAll, setShowAll] = useState(false);
+  const [shuffleToken, setShuffleToken] = useState(0);
   const recommendations = useMemo(
     () => (drink ? getSnackRecommendations(drink.id, showAll ? 40 : 16) : []),
-    [drink, showAll]
+    [drink, showAll, shuffleToken]
   );
+  const reshuffle = useCallback(() => setShuffleToken((n) => n + 1), []);
 
   if (!drink) {
     return (
@@ -81,21 +96,38 @@ export default function Recommendation() {
         </h1>
       </header>
 
-      <button
-        onClick={askAi}
-        style={{
-          marginBottom: '1.25rem',
-          padding: '0.85rem 1rem',
-          borderRadius: '12px',
-          border: '1px solid rgba(168, 85, 247, 0.45)',
-          background: 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(236,72,153,0.2))',
-          color: '#fff',
-          fontWeight: 700,
-          cursor: 'pointer',
-        }}
-      >
-        OMAJU AI에게 {drink.name} 페어링 물어보기
-      </button>
+      <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.25rem' }}>
+        <button
+          onClick={askAi}
+          style={{
+            flex: 1,
+            padding: '0.85rem 1rem',
+            borderRadius: '12px',
+            border: '1px solid rgba(168, 85, 247, 0.45)',
+            background: 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(236,72,153,0.2))',
+            color: '#fff',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          OMAJU AI에게 물어보기
+        </button>
+        <button
+          onClick={reshuffle}
+          style={{
+            padding: '0.85rem 1rem',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.18)',
+            background: 'rgba(255,255,255,0.08)',
+            color: '#fff',
+            fontWeight: 700,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          다른 안주
+        </button>
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>

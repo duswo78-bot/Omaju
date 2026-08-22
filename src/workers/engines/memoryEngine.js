@@ -2,6 +2,7 @@ let chatHistory = []; // 최근 대화 기록 (최대 8턴)
 let lastRecommendation = null;
 let pendingContextText = '';
 let rejectedItems = new Set(); // 사용자가 거절한 아이템 ID 목록 (단기 기억)
+let recentRecommendedIds = []; // 최근 추천된 술/안주/게임 ID (다양성용)
 
 export function getHistory() {
   return chatHistory;
@@ -47,5 +48,16 @@ export function addRejectedItem(id) {
 
 export function clearRejectedItems() {
   rejectedItems.clear();
+}
+
+export function rememberRecommendedIds(ids = []) {
+  for (const id of ids) {
+    if (!id) continue;
+    recentRecommendedIds = [id, ...recentRecommendedIds.filter((x) => x !== id)].slice(0, 16);
+  }
+}
+
+export function getRecentRecommendedIds() {
+  return recentRecommendedIds;
 }
 

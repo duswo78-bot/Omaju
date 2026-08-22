@@ -2,11 +2,10 @@ import { cosineSimilarity } from '../utils/math.js';
 import { calculateScore } from './scoreEngine.js';
 import { embedQuery, getAlcoholEmbeddings, getSnackEmbeddings, getGameEmbeddings } from './embeddingEngine.js';
 import { getProfile } from './profileEngine.js';
-import { getRejectedItems } from './memoryEngine.js';
-import { pickRandom } from '../utils/random.js';
+import { getRejectedItems, getRecentRecommendedIds, rememberRecommendedIds } from './memoryEngine.js';
+import { pickRandom, pickFromScoreBand } from '../utils/random.js';
 import alcoholsData from '../../data/alcohols.json';
 import snacksData from '../../data/snacks.json';
-import gamesData from '../../data/games.json';
 import relationsData from '../../data/relations.json';
 
 // relations.json을 빠른 조회를 위한 Map으로 변환
@@ -20,11 +19,27 @@ function getRelationScore(alcId, snkId) {
   return relationMap.get(`${alcId}|${snkId}`) || 0;
 }
 
+function diversityPenalty(id, recentIds) {
+  const idx = recentIds.indexOf(id);
+  if (idx < 0) return 0;
+  // 최근에 추천됐을수록 더 큰 페널티
+  return Math.max(0.08, 0.28 - idx * 0.015);
+}
+
+function pickRelationCandidate(scoredList, minScore = 70) {
+  const eligible = scoredList
+    .filter((x) => x.score >= minScore)
+    .sort((a, b) => b.score - a.score);
+  if (!eligible.length) return null;
+  const top = eligible[0].score;
+  const band = eligible.filter((x) => top - x.score <= 10);
+  const pool = band.length >= 3 ? band : eligible.slice(0, Math.min(6, eligible.length));
+  return pickRandom(pool)?.item || null;
+}
+
 const SINGLE_CHAR_ALLOW = ['비', '눈', '회', '파', '단', '짠', '맵', '쓴', '빵', '밥', '면', '탕', '전', '편', '떡', '술'];
 
 export async function recommend(cleanText, userTokens, contextTokens, contextSignals) {
-  const isMock = false; // 향후 환경 변수 등으로 제어 가능
-
   let bestAlc = null, bestSnack = null, bestGame = null;
   let wantNonAlc = cleanText.includes('논알콜') || cleanText.includes('무알콜') || cleanText.includes('술빼고');
   let wantOnlySnack = cleanText.includes('안주만') || cleanText.includes('밥만') || cleanText.includes('식사만');
@@ -35,11 +50,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   let isLowConfidence = false;
 
   const userProfile = getProfile();
-
-  if (isMock) {
-    // Mock Logic (생략되지만 필요 시 복원 가능)
-    // 현재는 바로 Real RAG 로직으로 진행
-  }
+  const rejectedItems = getRejectedItems();
+  const recentIds = getRecentRecommendedIds();
 
   // Real RAG Logic (MiniLM) + Keyword Boosting
   const queryVec = await embedQuery(cleanText);
@@ -48,9 +60,6 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   const alcoholEmbeddings = getAlcoholEmbeddings();
   const snackEmbeddings = getSnackEmbeddings();
   const gameEmbeddings = getGameEmbeddings();
-
-  // 메모리 엔진에서 거절된 아이템 목록을 불러오기
-  const rejectedItems = getRejectedItems();
 
   // 1. 주류 검색
   if (!wantOnlySnack) {
@@ -63,10 +72,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, contextSignals, userProfile, hasNegativeContext, false, SINGLE_CHAR_ALLOW);
       
       let finalScore = score;
-      // 거절된 아이템은 큰 페널티를 주어 제외되도록 함
-      if (rejectedItems.includes(item.id)) {
-        finalScore -= 100.0;
-      }
+      if (rejectedItems.includes(item.id)) finalScore -= 100.0;
+      finalScore -= diversityPenalty(item.id, recentIds);
       
       if (isMatched) isAlcMatched = true;
       alcCandidates.push({ item, score: finalScore });
@@ -76,10 +83,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       alcCandidates.sort((a, b) => b.score - a.score);
       const maxScore = alcCandidates[0].score;
       if (maxScore < 0.2 && !isAlcMatched) isLowConfidence = true;
-      
-      // 최상위 점수와 0.05 이내로 차이나는 후보들 중 랜덤으로 선택 (항상 똑같은 결과 방지)
-      const topCandidates = alcCandidates.filter(c => maxScore - c.score < 0.05);
-      bestAlc = pickRandom(topCandidates).item;
+      // 기존 0.05 밴드가 너무 좁아 항상 같은 1등이 뽑힘 → 확대
+      bestAlc = pickFromScoreBand(alcCandidates, 'score', 0.18, 8)?.item || alcCandidates[0].item;
     }
   }
 
@@ -91,9 +96,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, contextSignals, userProfile, hasNegativeContext, true, SINGLE_CHAR_ALLOW);
       
       let finalScore = score;
-      if (rejectedItems.includes(item.id)) {
-        finalScore -= 100.0;
-      }
+      if (rejectedItems.includes(item.id)) finalScore -= 100.0;
+      finalScore -= diversityPenalty(item.id, recentIds);
 
       if (isMatched) isSnackMatched = true;
       snkCandidates.push({ item, score: finalScore });
@@ -103,83 +107,67 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       snkCandidates.sort((a, b) => b.score - a.score);
       const maxScore = snkCandidates[0].score;
       if (maxScore < 0.2 && !isSnackMatched) isLowConfidence = true;
-
-      // 최상위 점수와 0.05 이내로 차이나는 후보들 중 랜덤 선택
-      const topCandidates = snkCandidates.filter(c => maxScore - c.score < 0.05);
-      bestSnack = pickRandom(topCandidates).item;
+      bestSnack = pickFromScoreBand(snkCandidates, 'score', 0.18, 10)?.item || snkCandidates[0].item;
     }
   }
 
-  // 3. 짝꿍 매칭 (Relations DB 활용 강화)
+  // 3. 짝꿍 매칭 (Relations) — 최고점 1개 고정을 피하고 상위 밴드에서 랜덤
   if (isSnackMatched && !isAlcMatched && bestSnack) {
-    // 안주가 매칭됐으면 relations.json에서 가장 궁합 점수가 높은 술을 찾음
-    let bestRelScore = 0;
-    let bestRelAlc = null;
-    for (const alc of alcoholsData) {
-      const relScore = getRelationScore(alc.id, bestSnack.id);
-      if (relScore > bestRelScore) {
-        bestRelScore = relScore;
-        bestRelAlc = alc;
-      }
-    }
-    // relations에 점수가 있으면 그걸 우선, 없으면 기존 bestDrinks 사용
-    if (bestRelAlc && bestRelScore >= 70) {
-      bestAlc = bestRelAlc;
-    } else if (bestSnack.bestDrinks && bestSnack.bestDrinks.length > 0) {
+    const scored = alcoholsData.map((alc) => ({
+      item: alc,
+      score: getRelationScore(alc.id, bestSnack.id) - diversityPenalty(alc.id, recentIds) * 40,
+    }));
+    const picked = pickRelationCandidate(scored, 70);
+    if (picked) {
+      bestAlc = picked;
+    } else if (bestSnack.bestDrinks?.length) {
       const drinkId = pickRandom(bestSnack.bestDrinks);
       bestAlc = alcoholsData.find(a => a.id === drinkId) || bestAlc;
     }
     isLowConfidence = false;
   } else if (isAlcMatched && !isSnackMatched && bestAlc) {
-    // 술이 매칭됐으면 relations.json에서 가장 궁합 점수가 높은 안주를 찾음
-    let bestRelScore = 0;
-    let bestRelSnack = null;
-    for (const snk of snacksData) {
-      const relScore = getRelationScore(bestAlc.id, snk.id);
-      if (relScore > bestRelScore && !rejectedItems.includes(snk.id)) {
-        bestRelScore = relScore;
-        bestRelSnack = snk;
-      }
-    }
-    if (bestRelSnack && bestRelScore >= 70) {
-      bestSnack = bestRelSnack;
+    const scored = snacksData
+      .filter((snk) => !rejectedItems.includes(snk.id))
+      .map((snk) => ({
+        item: snk,
+        score: getRelationScore(bestAlc.id, snk.id) - diversityPenalty(snk.id, recentIds) * 40,
+      }));
+    const picked = pickRelationCandidate(scored, 70);
+    if (picked) {
+      bestSnack = picked;
     } else {
-      const matchingSnacks = snacksData.filter(s => s.bestDrinks && s.bestDrinks.includes(bestAlc.id));
+      const matchingSnacks = snacksData.filter(s => s.bestDrinks && s.bestDrinks.includes(bestAlc.id) && !rejectedItems.includes(s.id));
       if (matchingSnacks.length > 0) bestSnack = pickRandom(matchingSnacks);
     }
     isLowConfidence = false;
   } else if (bestAlc && bestSnack) {
-    // 둘 다 있을 때: relations.json에 더 좋은 궁합이 있으면 안주를 교체
     const currentRelScore = getRelationScore(bestAlc.id, bestSnack.id);
-    if (currentRelScore < 70) {
-      let betterSnack = null;
-      let betterScore = currentRelScore;
-      for (const snk of snacksData) {
-        const relScore = getRelationScore(bestAlc.id, snk.id);
-        if (relScore > betterScore && !rejectedItems.includes(snk.id)) {
-          betterScore = relScore;
-          betterSnack = snk;
-        }
-      }
-      if (betterSnack) bestSnack = betterSnack;
+    if (currentRelScore < 75) {
+      const scored = snacksData
+        .filter((snk) => !rejectedItems.includes(snk.id))
+        .map((snk) => ({
+          item: snk,
+          score: getRelationScore(bestAlc.id, snk.id) - diversityPenalty(snk.id, recentIds) * 40,
+        }));
+      const picked = pickRelationCandidate(scored, Math.max(70, currentRelScore + 1));
+      if (picked) bestSnack = picked;
     }
   }
 
-  // 4. Fallback (완전 랜덤)
+  // 4. Fallback
   if (!bestAlc && alcoholsData.length > 0 && !wantOnlySnack) bestAlc = pickRandom(alcoholsData);
   if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) bestSnack = pickRandom(snacksData);
 
-  // 5. 게임 검색
+  // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤
   if (gameEmbeddings.length > 0) {
-    let maxGameSim = -Infinity;
-    for (const { item, vector } of gameEmbeddings) {
-      let sim = cosineSimilarity(queryVec, vector);
-      if (sim > maxGameSim) {
-        maxGameSim = sim;
-        bestGame = item;
-      }
-    }
+    const gameCandidates = gameEmbeddings.map(({ item, vector }) => ({
+      item,
+      score: cosineSimilarity(queryVec, vector) - diversityPenalty(item.id, recentIds),
+    }));
+    bestGame = pickFromScoreBand(gameCandidates, 'score', 0.08, 4)?.item || gameCandidates[0]?.item || null;
   }
+
+  rememberRecommendedIds([bestAlc?.id, bestSnack?.id, bestGame?.id]);
 
   return { bestAlc, bestSnack, bestGame, isLowConfidence, isAlcMatched, isSnackMatched };
 }
