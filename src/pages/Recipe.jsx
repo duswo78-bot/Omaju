@@ -113,10 +113,6 @@ export default function Recipe() {
         )}
 
         <div>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '0.35rem', color: 'var(--primary-color)' }}>근처 가게 찾기</h3>
-          <p style={{ margin: '0 0 0.35rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-            위치·상권 기준으로 “{recipe.name_ko}”를 취급하는 가게를 찾습니다.
-          </p>
           <PlaceSearchButtons label="근처 가게 찾기" snackName={recipe.name_ko} drinkName={pairDrinks[0]} snackCategory={recipe.category} />
         </div>
       </div>

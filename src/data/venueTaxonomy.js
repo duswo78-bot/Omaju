@@ -72,7 +72,7 @@ export const NAME_RULES = [
   { match: /주먹밥|볶음밥|오므라이스/, aliases: null, suffixes: ['술집', '맛집'], venueType: '한식 술집' },
 ];
 
-export const DEFAULT_RADIUS_M = 2000;
+export const DEFAULT_RADIUS_M = 3000;
 export const RADIUS_OPTIONS = [
   { id: 1000, label: '1km' },
   { id: 2000, label: '2km' },

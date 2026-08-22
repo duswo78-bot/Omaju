@@ -27,14 +27,13 @@ export function buildVenueSearchIntent(snackName, drinkName, snackCategory) {
   const suffixes = nameRule?.suffixes || catRule.querySuffixes || ['술집'];
   const baseName = nameRule?.aliases?.[0] || name;
 
-  // 검색 후보: 구체적 → 넓은 순
+  // 검색 후보: 짧고 잘 걸리는 것부터
   const queries = unique([
     `${baseName} ${suffixes[0]}`,
-    drink ? `${baseName} ${drink}` : null,
-    drink ? `${suffixes[0]} ${drink}` : null,
-    `${baseName} ${suffixes[1] || '술집'}`,
     `${baseName} 맛집`,
-    `${venueType}`,
+    baseName,
+    drink ? `${baseName} ${drink}` : null,
+    `${baseName} ${suffixes[1] || '술집'}`,
   ]);
 
   const primaryQuery = queries[0];

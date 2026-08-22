@@ -35,18 +35,29 @@ $env:GITHUB_PAGES="true"; npm run build
 2. **위치** — 현재 위치(GPS) 또는 상권 프리셋(강남/홍대/성수 등)
 3. **목록** — 카카오 로컬 API로 반경 내 장소를 앱 안에 표시 후, 상세/길찾기로 연결
 
-카카오 키 설정 (권장: **JavaScript 키**):
+### 근처 가게 목록이 보이게 하려면
+
+로컬(추천):
 
 ```bash
 cp .env.example .env
-# VITE_KAKAO_JS_KEY=발급받은_JS_키
+# VITE_KAKAO_REST_KEY=카카오_REST_키
 npm run dev
 ```
 
-카카오 개발자 콘솔에서 사이트 도메인에 `http://localhost:5173` 과  
-`https://duswo78-bot.github.io` 를 등록하세요.
+`npm run dev` 는 Vite 프록시로 CORS를 우회하므로 **목록이 바로** 뜹니다.
 
-키가 없으면 변환된 키워드로 네이버/카카오 지도 검색 링크로 폴백합니다.
+GitHub Pages(배포 사이트)는 브라우저 CORS 때문에 프록시가 필요합니다.
+
+```bash
+# Cloudflare Worker 한 번 배포
+npx wrangler deploy workers/kakao-proxy.js --name omaju-kakao-proxy
+npx wrangler secret put KAKAO_REST_KEY   # REST 키 입력
+
+# GitHub Actions secret
+# VITE_KAKAO_API_BASE=https://omaju-kakao-proxy.<your-subdomain>.workers.dev
+# VITE_KAKAO_REST_KEY=...
+```
 
 ## Stack
 
