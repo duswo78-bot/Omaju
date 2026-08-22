@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { assetUrl } from '../utils/assets';
 
 export default function SobrietyTest() {
   const [position, setPosition] = useState(50);
@@ -125,7 +126,7 @@ export default function SobrietyTest() {
             filter: 'drop-shadow(0 15px 10px rgba(0,0,0,0.6))'
           }}
         >
-          <img src="/assets/drinks/3d_needle.png" alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src={assetUrl('assets/drinks/3d_needle.png')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </motion.div>
       </div>
 

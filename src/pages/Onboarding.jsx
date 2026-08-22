@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wine, UtensilsCrossed } from 'lucide-react';
+import { assetUrl } from '../utils/assets';
 
 const onboardingData = [
   {
     id: 0,
-    bg: '/assets/onboarding_1.png',
+    bg: assetUrl('assets/onboarding_1.png'),
     title: '오마주',
     subtitle: 'OMAJU',
     desc: '오늘의 술, 완벽한 안주를 만나다',
@@ -14,7 +15,7 @@ const onboardingData = [
   },
   {
     id: 1,
-    bg: '/assets/onboarding_2.png',
+    bg: assetUrl('assets/onboarding_2.png'),
     title: '완벽한 페어링',
     subtitle: 'PERFECT PAIRING',
     desc: '당신의 취향에 맞는 최고의 안주 조합을\n오마주가 추천해 드립니다.',
@@ -22,7 +23,7 @@ const onboardingData = [
   },
   {
     id: 2,
-    bg: '/assets/onboarding_3.png',
+    bg: assetUrl('assets/onboarding_3.png'),
     title: '지나친 음주는',
     subtitle: 'WARNING',
     desc: '뇌졸중, 기억력 손상이나 치매를 유발합니다.\n임신 중 음주는 기형아 출생 위험을 높입니다.',

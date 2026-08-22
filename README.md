@@ -1,16 +1,35 @@
-# React + Vite
+# Omaju (오마주)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+술·안주 페어링과 술게임을 위한 React 앱입니다. AI 추천은 브라우저 Web Worker + 온디바이스 임베딩으로 동작합니다.
 
-Currently, two official plugins are available:
+## Live
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **GitHub Pages:** https://duswo78-bot.github.io/Omaju/
+- `main` 브랜치에 푸시하면 Actions가 자동 빌드·배포합니다.
 
-## React Compiler
+## Local
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the Oxlint configuration
+프로덕션 빌드:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm run build
+npm run preview
+```
+
+GitHub Pages와 동일한 base(`/Omaju/`)로 로컬 빌드하려면:
+
+```powershell
+$env:GITHUB_PAGES="true"; npm run build
+```
+
+## Stack
+
+- React 19 + Vite 8
+- react-router-dom
+- Capacitor (네이티브 래핑 준비)
+- `@xenova/transformers` (온디바이스 AI)

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { assetUrl } from '../utils/assets';
 
 const jokes = [
   { q: '왕이 넘어지면?', a: '킹콩' },
@@ -83,7 +84,7 @@ export default function DadJokes() {
             width: '100%',
             height: '100%',
             backfaceVisibility: 'hidden',
-            backgroundImage: 'url(/assets/drinks/3d_card_front.png)',
+            backgroundImage: `url(${assetUrl('assets/drinks/3d_card_front.png')})`,
             backgroundSize: '100% 100%',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -114,7 +115,7 @@ export default function DadJokes() {
             width: '100%',
             height: '100%',
             backfaceVisibility: 'hidden',
-            backgroundImage: 'url(/assets/drinks/3d_card_back.png)',
+            backgroundImage: `url(${assetUrl('assets/drinks/3d_card_back.png')})`,
             backgroundSize: '100% 100%',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',

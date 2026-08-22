@@ -25,7 +25,7 @@ function App() {
 
   return (
     <DrinkProvider>
-      <Router>
+      <Router basename={(import.meta.env.BASE_URL || '/').replace(/\/$/, '') || '/'}>
       <div className="app-container">
         <main className="main-content">
           <Routes>

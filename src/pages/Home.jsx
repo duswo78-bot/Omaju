@@ -7,6 +7,7 @@ import { useDrag } from '@use-gesture/react';
 import confetti from 'canvas-confetti';
 import { useDrinkContext, mixCombinations, nonAlcoholicItems } from '../context/DrinkContext';
 import { buildPendingContext } from '../data/drinkIdMap';
+import { assetUrl } from '../utils/assets';
 
 function DrinkCard({ drink, handleDragStart, handleDrag, handleDragEnd, handleSelect, isDefaultDrink, isFavorite, toggleFavorite }) {
   const x = useMotionValue(0);
@@ -417,7 +418,7 @@ export default function Home() {
         ];
         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
         
-        setMixAnim({ color: '#ef4444', imagePath: '/assets/drinks/question.png', name: randomMsg, isValid: false });
+        setMixAnim({ color: '#ef4444', imagePath: assetUrl('assets/drinks/question.png'), name: randomMsg, isValid: false });
 
         // 폭죽 효과 제거, 대신 화면 렌더링 시 Framer Motion으로 큰 물음표 애니메이션 처리
         setTimeout(() => setMixAnim(null), 2300);

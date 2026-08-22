@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { assetUrl } from '../utils/assets';
 
 const funnyNicknames = [
   '부장님', '막내', '술부심', '안주킬러', '계산할사람',
@@ -117,7 +118,7 @@ export default function SpinBottle() {
         justifyContent: 'center', 
         alignItems: 'center', 
         marginBottom: '2rem',
-        backgroundImage: 'url(/assets/drinks/3d_roulette.png)',
+        backgroundImage: `url(${assetUrl('assets/drinks/3d_roulette.png')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         borderRadius: '50%',
@@ -178,7 +179,7 @@ export default function SpinBottle() {
           whileHover={!isSpinning ? { scale: 1.1 } : {}}
           whileTap={!isSpinning ? { scale: 0.9 } : {}}
         >
-          <img src="/assets/drinks/3d_bottle.png" alt="Bottle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src={assetUrl('assets/drinks/3d_bottle.png')} alt="Bottle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </motion.div>
       </div>
       

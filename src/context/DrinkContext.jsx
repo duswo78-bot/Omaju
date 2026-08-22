@@ -1,37 +1,38 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Wine, Beer, Martini, GlassWater, Citrus, Zap, CupSoda, Flame, Grape, Droplets, Coffee } from 'lucide-react';
+import { assetUrl } from '../utils/assets';
 
 export const initialDrinks = [
-  { id: 'soju', name: '소주', imagePath: '/assets/drinks/soju.png', color: '#4ade80' },
-  { id: 'beer', name: '맥주', imagePath: '/assets/drinks/beer.png', color: '#facc15' },
-  { id: 'wine', name: '와인', imagePath: '/assets/drinks/wine.png', color: '#f43f5e' },
-  { id: 'whiskey', name: '위스키', imagePath: '/assets/drinks/whiskey.png', color: '#fb923c' },
-  { id: 'makgeolli', name: '막걸리', imagePath: '/assets/drinks/makgeolli.png', color: '#fef08a' },
-  { id: 'highball', name: '하이볼', imagePath: '/assets/drinks/highball.png', color: '#fbbf24' }
+  { id: 'soju', name: '소주', imagePath: assetUrl('assets/drinks/soju.png'), color: '#4ade80' },
+  { id: 'beer', name: '맥주', imagePath: assetUrl('assets/drinks/beer.png'), color: '#facc15' },
+  { id: 'wine', name: '와인', imagePath: assetUrl('assets/drinks/wine.png'), color: '#f43f5e' },
+  { id: 'whiskey', name: '위스키', imagePath: assetUrl('assets/drinks/whiskey.png'), color: '#fb923c' },
+  { id: 'makgeolli', name: '막걸리', imagePath: assetUrl('assets/drinks/makgeolli.png'), color: '#fef08a' },
+  { id: 'highball', name: '하이볼', imagePath: assetUrl('assets/drinks/highball.png'), color: '#fbbf24' }
 ];
 
 export const mixCombinations = {
-  'beer_soju': { id: 'somaek', name: '소맥', imagePath: '/assets/drinks/somaek.png', color: '#60a5fa' },
-  'beer_whiskey': { id: 'bomb', name: '폭탄주', imagePath: '/assets/drinks/bomb.png', color: '#ef4444' },
-  'carbonated_whiskey': { id: 'highball', name: '하이볼', imagePath: '/assets/drinks/highball.png', color: '#fbbf24' },
-  'carbonated_wine': { id: 'wine_spritzer', name: '와인 스프리처', imagePath: '/assets/drinks/wine.png', color: '#ec4899' },
-  'beer_wine': { id: 'beer_sangria', name: '비어 상그리아', imagePath: '/assets/drinks/wine.png', color: '#f43f5e' },
-  'cola_whiskey': { id: 'jackcoke', name: '잭콕', imagePath: '/assets/drinks/jackcoke.png', color: '#78350f' },
-  'cola_soju': { id: 'socola', name: '소콜', imagePath: '/assets/drinks/cola.png', color: '#991b1b' },
-  'soju_sprite': { id: 'sosa', name: '소사', imagePath: '/assets/drinks/sprite.png', color: '#a7f3d0' },
-  'sprite_wine': { id: 'wine_ade', name: '와인에이드', imagePath: '/assets/drinks/wine.png', color: '#fbcfe8' },
-  'cola_sprite': { id: 'ssacol', name: '황금비율 싸콜?', imagePath: '/assets/drinks/ssacol.png', color: '#047857' },
-  'makgeolli_sprite': { id: 'maksa', name: '막사', imagePath: '/assets/drinks/maksa.png', color: '#f8fafc' },
-  'beer_cola': { id: 'diesel', name: '디젤', imagePath: '/assets/drinks/diesel.png', color: '#451a03' },
-  'cola_somaek': { id: 'gojin', name: '고진감래', imagePath: '/assets/drinks/gojin.png', color: '#9a3412' },
-  'diesel_soju': { id: 'gojin', name: '고진감래', imagePath: '/assets/drinks/gojin.png', color: '#9a3412' }
+  'beer_soju': { id: 'somaek', name: '소맥', imagePath: assetUrl('assets/drinks/somaek.png'), color: '#60a5fa' },
+  'beer_whiskey': { id: 'bomb', name: '폭탄주', imagePath: assetUrl('assets/drinks/bomb.png'), color: '#ef4444' },
+  'carbonated_whiskey': { id: 'highball', name: '하이볼', imagePath: assetUrl('assets/drinks/highball.png'), color: '#fbbf24' },
+  'carbonated_wine': { id: 'wine_spritzer', name: '와인 스프리처', imagePath: assetUrl('assets/drinks/wine.png'), color: '#ec4899' },
+  'beer_wine': { id: 'beer_sangria', name: '비어 상그리아', imagePath: assetUrl('assets/drinks/wine.png'), color: '#f43f5e' },
+  'cola_whiskey': { id: 'jackcoke', name: '잭콕', imagePath: assetUrl('assets/drinks/jackcoke.png'), color: '#78350f' },
+  'cola_soju': { id: 'socola', name: '소콜', imagePath: assetUrl('assets/drinks/cola.png'), color: '#991b1b' },
+  'soju_sprite': { id: 'sosa', name: '소사', imagePath: assetUrl('assets/drinks/sprite.png'), color: '#a7f3d0' },
+  'sprite_wine': { id: 'wine_ade', name: '와인에이드', imagePath: assetUrl('assets/drinks/wine.png'), color: '#fbcfe8' },
+  'cola_sprite': { id: 'ssacol', name: '황금비율 싸콜?', imagePath: assetUrl('assets/drinks/ssacol.png'), color: '#047857' },
+  'makgeolli_sprite': { id: 'maksa', name: '막사', imagePath: assetUrl('assets/drinks/maksa.png'), color: '#f8fafc' },
+  'beer_cola': { id: 'diesel', name: '디젤', imagePath: assetUrl('assets/drinks/diesel.png'), color: '#451a03' },
+  'cola_somaek': { id: 'gojin', name: '고진감래', imagePath: assetUrl('assets/drinks/gojin.png'), color: '#9a3412' },
+  'diesel_soju': { id: 'gojin', name: '고진감래', imagePath: assetUrl('assets/drinks/gojin.png'), color: '#9a3412' }
 };
 
 export const nonAlcoholicItems = [
-  { id: 'carbonated', name: '탄산수', imagePath: '/assets/drinks/carbonated.png', color: '#38bdf8' },
-  { id: 'cola', name: '콜라', imagePath: '/assets/drinks/cola.png', color: '#ef4444' },
-  { id: 'sprite', name: '사이다', imagePath: '/assets/drinks/sprite.png', color: '#22c55e' },
-  { id: 'water', name: '물', imagePath: '/assets/drinks/water.png', color: '#93c5fd' }
+  { id: 'carbonated', name: '탄산수', imagePath: assetUrl('assets/drinks/carbonated.png'), color: '#38bdf8' },
+  { id: 'cola', name: '콜라', imagePath: assetUrl('assets/drinks/cola.png'), color: '#ef4444' },
+  { id: 'sprite', name: '사이다', imagePath: assetUrl('assets/drinks/sprite.png'), color: '#22c55e' },
+  { id: 'water', name: '물', imagePath: assetUrl('assets/drinks/water.png'), color: '#93c5fd' }
 ];
 
 const DrinkContext = createContext();
