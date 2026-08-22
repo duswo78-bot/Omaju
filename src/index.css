@@ -461,12 +461,12 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.4), rgba(236, 72, 153, 0.2), transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.3), transparent 40%);
+  background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.22), rgba(236, 72, 153, 0.12), transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.14), transparent 40%);
   animation: aurora-move 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.35;
 }
 
 @keyframes aurora-move {
@@ -510,9 +510,9 @@ body {
   margin: 0 auto;
   max-width: 480px;
   z-index: 9999;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10, 14, 28, 0.94);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -524,8 +524,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  background: rgba(15, 23, 42, 0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  background: rgba(8, 12, 24, 0.92);
   z-index: 20;
 }
 
@@ -545,8 +545,8 @@ body {
   flex-shrink: 0;
   padding: 1rem;
   padding-bottom: calc(1rem + env(safe-area-inset-bottom, 1rem));
-  border-top: 1px solid rgba(255,255,255,0.1);
-  background: rgba(15, 23, 42, 0.3);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  background: rgba(8, 12, 24, 0.95);
   display: flex;
   gap: 0.5rem;
   align-items: flex-end;
@@ -558,12 +558,12 @@ body {
   max-width: 85%;
   padding: 0.8rem 1.2rem;
   border-radius: 20px 20px 20px 4px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(30, 41, 64, 0.95);
+  border: 1px solid rgba(255,255,255,0.18);
   color: #fff;
   font-size: 0.95rem;
   line-height: 1.5;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
   white-space: pre-wrap;
   word-break: keep-all;
 }
@@ -589,8 +589,8 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 0.9rem;
-  background: rgba(168, 85, 247, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(88, 28, 135, 0.72);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   color: #f5d0fe;
 }
 
@@ -642,8 +642,8 @@ body {
   text-align: left;
   border-radius: 14px;
   padding: 0.7rem 0.75rem;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(22, 32, 52, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #fff;
 }
 

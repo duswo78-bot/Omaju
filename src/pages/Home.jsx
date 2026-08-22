@@ -291,7 +291,6 @@ export default function Home() {
   const [showNonAlcModal, setShowNonAlcModal] = useState(false);
   const [trashHover, setTrashHover] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [debugMsg, setDebugMsg] = useState("Debug: Ready"); // 디버그 상태 추가
   const trashRef = useRef(null);
   
   // 드래그와 단순 클릭을 구분하기 위한 레퍼런스
@@ -307,7 +306,6 @@ export default function Home() {
   const handleDragStart = () => {
     isDragAction.current = true;
     setIsDragging(true);
-    setDebugMsg("Drag started");
   };
 
   const handleDragEnd = (event, info, dragDrink) => {
@@ -338,18 +336,13 @@ export default function Home() {
     }
 
     let closestDrink = null;
-    let closestRect = null;
     let minDistance = Infinity;
-    let debugTargets = ""; // 각 타겟과의 거리 로그용
 
     drinks.forEach(targetDrink => {
       if (targetDrink.id === dragDrink.id) return;
 
       const targetElement = document.getElementById(`drink-${targetDrink.id}`);
-      if (!targetElement) {
-        debugTargets += `${targetDrink.id}:null `;
-        return;
-      }
+      if (!targetElement) return;
 
       const targetRect = targetElement.getBoundingClientRect();
       const targetCenterX = targetRect.left + targetRect.width / 2;
@@ -361,8 +354,6 @@ export default function Home() {
         Math.pow(dragCY - targetCenterY, 2)
       );
 
-      debugTargets += `${targetDrink.id}:${Math.round(distance)}px `;
-
       // 카드의 중심이 타겟 카드 내부에 있는지 체크 (완전 겹침)
       const isInside = dragCX >= targetRect.left && dragCX <= targetRect.right &&
                        dragCY >= targetRect.top && dragCY <= targetRect.bottom;
@@ -372,7 +363,6 @@ export default function Home() {
         if (distance < minDistance) {
           minDistance = distance;
           closestDrink = targetDrink;
-          closestRect = targetRect;
         }
       }
     });
@@ -424,9 +414,6 @@ export default function Home() {
         setTimeout(() => setMixAnim(null), 2300);
       }
     }
-    
-    // 디버그 결과 상세화 (모바일에서 보일 수 있도록 축약)
-    setDebugMsg(`Drag(${Math.round(dragCX)},${Math.round(dragCY)}) | Targets: ${debugTargets} | Min:${closestDrink ? closestDrink.id : 'none'}(${Math.round(minDistance)})`);
   };
 
   const handleDrag = (event, info, dragDrink) => {
@@ -732,27 +719,6 @@ export default function Home() {
         </motion.button>
       )}
 
-      {/* 디버그 오버레이 배너 (모바일 실시간 확인용) */}
-      <div style={{
-        position: 'fixed',
-        bottom: '10px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '90%',
-        background: 'rgba(0,0,0,0.85)',
-        color: '#4ade80',
-        padding: '6px 12px',
-        borderRadius: '10px',
-        fontSize: '0.65rem',
-        fontFamily: 'monospace',
-        zIndex: 99999,
-        pointerEvents: 'none',
-        border: '1px solid rgba(255,255,255,0.1)',
-        wordWrap: 'break-word',
-        textAlign: 'center'
-      }}>
-        {debugMsg}
-      </div>
     </div>
   );
 }

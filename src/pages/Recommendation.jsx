@@ -4,6 +4,7 @@ import snacksData from '../data/snacks.json';
 import relationsData from '../data/relations.json';
 import { resolveAiAlcoholIds, buildPendingContext } from '../data/drinkIdMap';
 import { weightedSample } from '../workers/utils/random.js';
+import PlaceSearchButtons from '../components/PlaceSearchButtons';
 
 function scoreToStars(score) {
   if (score >= 90) return 5;
@@ -169,12 +170,15 @@ export default function Recommendation() {
                   {item.recipe.ingredients.length > 3 ? '…' : ''}
                 </div>
               )}
-              <button
-                onClick={() => navigate('/recipe', { state: { recipe: item } })}
-                style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '8px', border: 'none', background: 'var(--primary-color)', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                레시피 보기
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                <button
+                  onClick={() => navigate('/recipe', { state: { recipe: item } })}
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: 'none', background: 'var(--primary-color)', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  레시피 보기
+                </button>
+              </div>
+              <PlaceSearchButtons snackName={item.name_ko} drinkName={drink.name} />
             </div>
           ))
         )}

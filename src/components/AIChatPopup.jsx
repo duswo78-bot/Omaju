@@ -4,6 +4,7 @@ import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Ga
 import { useNavigate } from 'react-router-dom';
 import { aiWorker, aiState, subscribeToAI } from '../services/aiService';
 import snacksData from '../data/snacks.json';
+import PlaceSearchButtons from './PlaceSearchButtons';
 
 function RecommendationCards({ recommendation, onOpenSnack }) {
   if (!recommendation) return null;
@@ -45,6 +46,13 @@ function RecommendationCards({ recommendation, onOpenSnack }) {
           <div className="rec-card-title">{game.name}</div>
           {game.description && <div className="rec-card-meta">{game.description}</div>}
         </div>
+      )}
+      {(snack || alcohol) && (
+        <PlaceSearchButtons
+          compact
+          snackName={snack?.name_ko}
+          drinkName={alcohol?.name_ko}
+        />
       )}
     </div>
   );
