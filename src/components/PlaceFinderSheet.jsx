@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Navigation, ExternalLink, MessageSquareQuote } from 'lucide-react';
+import { X, Navigation, ExternalLink, MessageSquareQuote, Phone } from 'lucide-react';
 import { buildVenueSearchIntent } from '../utils/snackToVenueQuery';
 import { DEFAULT_RADIUS_M, REGION_PRESETS } from '../data/venueTaxonomy';
 import {
@@ -195,14 +195,10 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
               )}
 
               {!loading && places.map((p) => (
-                <a
+                <div
                   key={p.id}
-                  href={p.url || kakaoMapSearchUrl(p.name)}
-                  target="_blank"
-                  rel="noreferrer"
                   style={{
                     display: 'block',
-                    textDecoration: 'none',
                     color: '#fff',
                     borderRadius: 12,
                     padding: '0.8rem 0.85rem',
@@ -218,10 +214,18 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                   <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>
                     {p.address}
                   </div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: '0.72rem', color: '#86efac' }}>
-                    길찾기 <ExternalLink size={11} />
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+                    {p.phone && (
+                      <a href={`tel:${p.phone.replace(/[^0-9]/g, '')}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#93c5fd', textDecoration: 'none', background: 'rgba(59,130,246,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
+                        <Phone size={12} /> {p.phone}
+                      </a>
+                    )}
+                    <a href={p.url || kakaoMapSearchUrl(p.name)} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#86efac', textDecoration: 'none', background: 'rgba(34,197,94,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
+                      지도·길찾기 <ExternalLink size={12} />
+                    </a>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           </motion.div>
