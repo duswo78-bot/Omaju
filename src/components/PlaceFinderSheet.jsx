@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Navigation, ExternalLink } from 'lucide-react';
 import { buildVenueSearchIntent } from '../utils/snackToVenueQuery';
@@ -88,7 +89,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geo?.lat, geo?.lng]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -214,7 +215,8 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
