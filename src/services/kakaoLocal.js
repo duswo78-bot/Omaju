@@ -183,3 +183,52 @@ export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius
   if (!merged.length && lastError) throw lastError;
   return merged.sort((a, b) => (a.distance || 0) - (b.distance || 0));
 }
+
+export async function searchRegionCoordinates(query) {
+  const errors = [];
+  
+  try {
+    const key = getKakaoRestKey();
+    if (!key) throw new Error('NO_KAKAO_KEY');
+    
+    const params = new URLSearchParams({ query, size: '1' });
+    const url = `${apiBase()}/v2/local/search/keyword.json?${params}`;
+    const res = await fetch(url, { headers: { Authorization: `KakaoAK ${key}` } });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.documents?.length > 0) {
+        return {
+          lat: Number(data.documents[0].y),
+          lng: Number(data.documents[0].x),
+          label: query,
+          source: 'custom',
+        };
+      }
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+
+  try {
+    const kakao = await loadKakaoMapsSdk();
+    const places = new kakao.maps.services.Places();
+    return await new Promise((resolve, reject) => {
+      places.keywordSearch(query, (data, status) => {
+        if (status === kakao.maps.services.Status.OK && data.length > 0) {
+          resolve({
+            lat: Number(data[0].y),
+            lng: Number(data[0].x),
+            label: query,
+            source: 'custom',
+          });
+        } else {
+          reject(new Error('REGION_NOT_FOUND'));
+        }
+      }, { size: 1 });
+    });
+  } catch (e) {
+    errors.push(e);
+  }
+
+  throw new Error('REGION_SEARCH_FAIL');
+}

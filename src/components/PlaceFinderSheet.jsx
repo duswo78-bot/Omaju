@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Navigation, ExternalLink, MessageSquareQuote, Phone } from 'lucide-react';
+import { X, Navigation, ExternalLink, MessageSquareQuote, Phone, Search } from 'lucide-react';
 import { buildVenueSearchIntent } from '../utils/snackToVenueQuery';
 import { DEFAULT_RADIUS_M, REGION_PRESETS } from '../data/venueTaxonomy';
 import {
@@ -10,7 +10,7 @@ import {
   loadCachedGeo,
   formatDistance,
 } from '../services/geoService';
-import { hasKakaoKey, searchKakaoWithFallbackQueries } from '../services/kakaoLocal';
+import { hasKakaoKey, searchKakaoWithFallbackQueries, searchRegionCoordinates } from '../services/kakaoLocal';
 import { kakaoMapSearchUrl, naverMapSearchUrl } from '../utils/placeSearch';
 
 const QUICK_REGIONS = REGION_PRESETS.slice(0, 5);
@@ -25,6 +25,21 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [customRegion, setCustomRegion] = useState('');
+
+  const handleCustomRegionSearch = async (e) => {
+    e.preventDefault();
+    if (!customRegion.trim()) return;
+    setLoading(true);
+    setError('');
+    try {
+      const resultGeo = await searchRegionCoordinates(customRegion.trim());
+      setGeo(resultGeo);
+    } catch (err) {
+      setError(`"${customRegion}" 위치를 찾을 수 없습니다.`);
+      setLoading(false);
+    }
+  };
 
   const locate = async () => {
     try {
@@ -142,8 +157,8 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
               </button>
             </div>
 
-            {/* Location chips */}
-            <div style={{ display: 'flex', gap: 6, padding: '0.75rem 1rem 0.35rem', overflowX: 'auto' }}>
+            {/* Location chips & Custom Search */}
+            <div style={{ display: 'flex', gap: 6, padding: '0.75rem 1rem 0.35rem', overflowX: 'auto', alignItems: 'center' }}>
               <button type="button" onClick={locate} style={chip(geo?.source === 'gps')}>
                 <Navigation size={12} /> 내 위치
               </button>
@@ -157,6 +172,41 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                   {r.name}
                 </button>
               ))}
+              <form onSubmit={handleCustomRegionSearch} style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', flexShrink: 0 }}>
+                <input
+                  type="text"
+                  placeholder="예: 홍대입구"
+                  value={customRegion}
+                  onChange={(e) => setCustomRegion(e.target.value)}
+                  style={{
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '999px 0 0 999px',
+                    padding: '0.35rem 0.8rem',
+                    color: '#fff',
+                    fontSize: '0.78rem',
+                    width: '100px',
+                    outline: 'none',
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    background: 'rgba(34,211,238,0.2)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderLeft: 'none',
+                    borderRadius: '0 999px 999px 0',
+                    padding: '0.35rem 0.6rem',
+                    color: '#22d3ee',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Search size={14} />
+                </button>
+              </form>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 1rem 0.6rem' }}>
@@ -194,39 +244,49 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.55)' }}>검색 중…</div>
               )}
 
-              {!loading && places.map((p) => (
-                <div
-                  key={p.id}
-                  style={{
-                    display: 'block',
-                    color: '#fff',
-                    borderRadius: 12,
-                    padding: '0.8rem 0.85rem',
-                    marginBottom: 8,
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                    <strong style={{ fontSize: '0.95rem' }}>{p.name}</strong>
-                    <span style={{ color: '#67e8f9', fontSize: '0.78rem' }}>{formatDistance(p.distance)}</span>
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>
-                    {p.address}
-                  </div>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
-                    {p.phone && (
-                      <a href={`tel:${p.phone.replace(/[^0-9]/g, '')}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#93c5fd', textDecoration: 'none', background: 'rgba(59,130,246,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
-                        <Phone size={12} /> {p.phone}
+              {!loading && places.map((p) => {
+                const shortCategory = p.category ? p.category.split('>').pop().trim() : '';
+                return (
+                  <div
+                    key={p.id}
+                    style={{
+                      display: 'block',
+                      color: '#fff',
+                      borderRadius: 12,
+                      padding: '0.8rem 0.85rem',
+                      marginBottom: 8,
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <strong style={{ fontSize: '0.95rem' }}>{p.name}</strong>
+                        {shortCategory && (
+                          <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.15)', padding: '0.15rem 0.4rem', borderRadius: 4, color: '#e2e8f0', whiteSpace: 'nowrap' }}>
+                            {shortCategory}
+                          </span>
+                        )}
+                      </div>
+                      <span style={{ color: '#67e8f9', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>{formatDistance(p.distance)}</span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>
+                      {p.address}
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+                      {p.phone && (
+                        <a href={`tel:${p.phone.replace(/[^0-9]/g, '')}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#93c5fd', textDecoration: 'none', background: 'rgba(59,130,246,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
+                          <Phone size={12} /> {p.phone}
+                        </a>
+                      )}
+                      <a href={p.url || kakaoMapSearchUrl(p.name)} target="_blank" rel="noreferrer" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#86efac', textDecoration: 'none', background: 'rgba(34,197,94,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
+                        지도·길찾기 <ExternalLink size={12} />
                       </a>
-                    )}
-                    <a href={p.url || kakaoMapSearchUrl(p.name)} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#86efac', textDecoration: 'none', background: 'rgba(34,197,94,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
-                      지도·길찾기 <ExternalLink size={12} />
-                    </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>
