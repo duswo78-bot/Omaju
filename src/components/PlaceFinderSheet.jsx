@@ -129,10 +129,19 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   }, [open, intent.primaryQuery]);
 
   useEffect(() => {
-    if (!open || !geo?.lat) return;
-    runSearch(geo);
+    runSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geo?.lat, geo?.lng]);
+
+  useEffect(() => {
+    if (open) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [open]);
 
   return createPortal(
     <AnimatePresence>
@@ -277,7 +286,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
             </div>
 
             {/* List */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 0.75rem 0.75rem' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 0.75rem 0.75rem', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
               {error && !places.length && (
                 <div style={{ padding: '0.85rem', borderRadius: 12, background: 'rgba(244,63,94,0.12)', color: '#fecdd3', fontSize: '0.85rem', marginBottom: 8 }}>
                   {error}
