@@ -53,7 +53,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
         radius: Math.max(DEFAULT_RADIUS_M, 3000),
       });
       setPlaces(results.slice(0, 12));
-      if (!results.length) setError('근처 결과가 없습니다. 상권을 바꿔보세요.');
+      if (!results.length) setError('근처 결과가 없습니다. 지도에서 찾아보세요.');
     } catch (e) {
       setPlaces([]);
       const corsLikely = String(e?.message || '').includes('Failed to fetch') || e?.name === 'TypeError';
