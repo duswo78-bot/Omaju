@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Navigation, ExternalLink } from 'lucide-react';
+import { X, Navigation, ExternalLink, MessageSquareQuote } from 'lucide-react';
 import { buildVenueSearchIntent } from '../utils/snackToVenueQuery';
 import { DEFAULT_RADIUS_M, REGION_PRESETS } from '../data/venueTaxonomy';
 import {
@@ -159,8 +159,20 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
               ))}
             </div>
 
-            <div style={{ padding: '0.25rem 1rem 0.6rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
-              {geo?.label || '위치'}{loading ? ' · 검색 중…' : places.length ? ` · ${places.length}곳` : ''}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 1rem 0.6rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                {geo?.label || '위치'}{loading ? ' · 검색 중…' : places.length ? ` · ${places.length}곳` : ''}
+              </div>
+              {!loading && places.length > 0 && (
+                <motion.div
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.65rem', color: '#fef08a' }}
+                >
+                  <MessageSquareQuote size={11} />
+                  해당 메뉴가 있는지 꼭 물어보고 가세요
+                </motion.div>
+              )}
             </div>
 
             {/* List */}
