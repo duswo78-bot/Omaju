@@ -191,11 +191,28 @@ export async function searchRegionCoordinates(query) {
     const key = getKakaoRestKey();
     if (!key) throw new Error('NO_KAKAO_KEY');
     
-    const params = new URLSearchParams({ query, size: '1' });
-    const url = `${apiBase()}/v2/local/search/keyword.json?${params}`;
-    const res = await fetch(url, { headers: { Authorization: `KakaoAK ${key}` } });
-    if (res.ok) {
-      const data = await res.json();
+    // 1) 키워드 검색 시도 (홍대입구, 강남역 등 상호/지하철역)
+    const keywordParams = new URLSearchParams({ query, size: '1' });
+    const keywordUrl = `${apiBase()}/v2/local/search/keyword.json?${keywordParams}`;
+    const keywordRes = await fetch(keywordUrl, { headers: { Authorization: `KakaoAK ${key}` } });
+    if (keywordRes.ok) {
+      const data = await keywordRes.json();
+      if (data.documents?.length > 0) {
+        return {
+          lat: Number(data.documents[0].y),
+          lng: Number(data.documents[0].x),
+          label: query,
+          source: 'custom',
+        };
+      }
+    }
+
+    // 2) 주소 검색 시도 (언양, 제주도, 속초 등 행정구역/지명)
+    const addressParams = new URLSearchParams({ query, size: '1' });
+    const addressUrl = `${apiBase()}/v2/local/search/address.json?${addressParams}`;
+    const addressRes = await fetch(addressUrl, { headers: { Authorization: `KakaoAK ${key}` } });
+    if (addressRes.ok) {
+      const data = await addressRes.json();
       if (data.documents?.length > 0) {
         return {
           lat: Number(data.documents[0].y),
@@ -209,20 +226,26 @@ export async function searchRegionCoordinates(query) {
     errors.push(e);
   }
 
+  // 3) JS SDK 보조 수단
   try {
     const kakao = await loadKakaoMapsSdk();
     const places = new kakao.maps.services.Places();
+    const geocoder = new kakao.maps.services.Geocoder();
+
     return await new Promise((resolve, reject) => {
+      // 키워드 먼저
       places.keywordSearch(query, (data, status) => {
         if (status === kakao.maps.services.Status.OK && data.length > 0) {
-          resolve({
-            lat: Number(data[0].y),
-            lng: Number(data[0].x),
-            label: query,
-            source: 'custom',
-          });
+          resolve({ lat: Number(data[0].y), lng: Number(data[0].x), label: query, source: 'custom' });
         } else {
-          reject(new Error('REGION_NOT_FOUND'));
+          // 키워드 실패시 주소 검색
+          geocoder.addressSearch(query, (addrData, addrStatus) => {
+            if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
+              resolve({ lat: Number(addrData[0].y), lng: Number(addrData[0].x), label: query, source: 'custom' });
+            } else {
+              reject(new Error('REGION_NOT_FOUND'));
+            }
+          });
         }
       }, { size: 1 });
     });
