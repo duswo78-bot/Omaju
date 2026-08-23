@@ -15,7 +15,7 @@ export default function BottomNav({ toggleAiChat }) {
 
   return (
     <div className="bottom-nav-container glass-panel">
-      {navItems.slice(0, 2).map((item) => {
+      {navItems.map((item) => {
         const isActive = location.pathname.startsWith(item.path);
         return (
           <button
@@ -30,7 +30,7 @@ export default function BottomNav({ toggleAiChat }) {
         );
       })}
 
-      {/* Central Floating AI Button (Flawless CSS Bubble) */}
+      {/* Floating AI Button at Far Right */}
       <button className="nav-ai-button" onClick={toggleAiChat}>
         <div className="nav-ai-button-inner">
           <div style={{ position: 'absolute', top: '7px', right: '16px' }}>
@@ -45,21 +45,6 @@ export default function BottomNav({ toggleAiChat }) {
           </div>
         </div>
       </button>
-
-      {navItems.slice(2, 4).map((item) => {
-        const isActive = location.pathname.startsWith(item.path);
-        return (
-          <button
-            key={item.id}
-            className={`nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => navigate(item.path)}
-          >
-            <div className="nav-icon">{item.icon}</div>
-            <span className="nav-label">{item.label}</span>
-            {isActive && <div className="active-indicator" />}
-          </button>
-        );
-      })}
     </div>
   );
 }
