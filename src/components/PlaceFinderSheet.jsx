@@ -194,7 +194,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                 <button type="button" onClick={locate} style={chip(geo?.source === 'gps')}>
                   <Navigation size={12} /> 내 위치
                 </button>
-                <form onSubmit={handleCustomRegionSearch} style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', flexShrink: 0, width: '100%' }}>
+                <form onSubmit={handleCustomRegionSearch} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
                   <input
                     type="text"
                     placeholder="예: 홍대입구, 강남역"
@@ -202,6 +202,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                     onChange={(e) => setCustomRegion(e.target.value)}
                     style={{
                       flex: 1,
+                      minWidth: 0,
                       background: 'rgba(255,255,255,0.08)',
                       border: '1px solid rgba(255,255,255,0.15)',
                       borderRadius: '999px 0 0 999px',
