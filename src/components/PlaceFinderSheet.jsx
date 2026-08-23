@@ -26,6 +26,17 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [customRegion, setCustomRegion] = useState('');
+  const [history, setHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('omaju_region_history');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return QUICK_REGIONS.map(r => ({ ...r, isBuiltin: true }));
+  });
+
+  useEffect(() => {
+    localStorage.setItem('omaju_region_history', JSON.stringify(history));
+  }, [history]);
 
   const handleCustomRegionSearch = async (e) => {
     e.preventDefault();
@@ -33,8 +44,14 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     setLoading(true);
     setError('');
     try {
-      const resultGeo = await searchRegionCoordinates(customRegion.trim());
+      const q = customRegion.trim();
+      const resultGeo = await searchRegionCoordinates(q);
       setGeo(resultGeo);
+      setHistory(prev => {
+        const filtered = prev.filter(item => item.name !== q);
+        return [{ id: 'custom_' + Date.now(), name: q, lat: resultGeo.lat, lng: resultGeo.lng, isBuiltin: false }, ...filtered].slice(0, 10);
+      });
+      setCustomRegion('');
     } catch (err) {
       setError(`"${customRegion}" 위치를 찾을 수 없습니다.`);
       setLoading(false);
@@ -49,6 +66,19 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
       if (!geo) setGeo(geoFromRegion('gangnam'));
       setError('위치 권한이 없어 기본 상권으로 검색합니다.');
     }
+  };
+
+  const handleHistoryClick = (item) => {
+    if (item.isBuiltin) {
+      setGeo(geoFromRegion(item.id));
+    } else {
+      setGeo({ lat: item.lat, lng: item.lng, label: item.name, source: 'custom' });
+    }
+  };
+
+  const removeHistory = (e, id) => {
+    e.stopPropagation();
+    setHistory(prev => prev.filter(item => item.id !== id));
   };
 
   const runSearch = async (targetGeo = geo) => {
@@ -158,55 +188,75 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
             </div>
 
             {/* Location chips & Custom Search */}
-            <div style={{ display: 'flex', gap: 6, padding: '0.75rem 1rem 0.35rem', overflowX: 'auto', alignItems: 'center' }}>
-              <button type="button" onClick={locate} style={chip(geo?.source === 'gps')}>
-                <Navigation size={12} /> 내 위치
-              </button>
-              {QUICK_REGIONS.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => setGeo(geoFromRegion(r.id))}
-                  style={chip(geo?.regionId === r.id)}
-                >
-                  {r.name}
+            <div style={{ display: 'flex', flexDirection: 'column', padding: '0.75rem 1rem 0.35rem', gap: 10 }}>
+              {/* Top row: GPS & Search */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button type="button" onClick={locate} style={chip(geo?.source === 'gps')}>
+                  <Navigation size={12} /> 내 위치
                 </button>
-              ))}
-              <form onSubmit={handleCustomRegionSearch} style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', flexShrink: 0 }}>
-                <input
-                  type="text"
-                  placeholder="예: 홍대입구"
-                  value={customRegion}
-                  onChange={(e) => setCustomRegion(e.target.value)}
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '999px 0 0 999px',
-                    padding: '0.35rem 0.8rem',
-                    color: '#fff',
-                    fontSize: '0.78rem',
-                    width: '100px',
-                    outline: 'none',
-                  }}
-                />
-                <button
-                  type="submit"
-                  style={{
-                    background: 'rgba(34,211,238,0.2)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderLeft: 'none',
-                    borderRadius: '0 999px 999px 0',
-                    padding: '0.35rem 0.6rem',
-                    color: '#22d3ee',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Search size={14} />
-                </button>
-              </form>
+                <form onSubmit={handleCustomRegionSearch} style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', flexShrink: 0, width: '100%' }}>
+                  <input
+                    type="text"
+                    placeholder="예: 홍대입구, 강남역"
+                    value={customRegion}
+                    onChange={(e) => setCustomRegion(e.target.value)}
+                    style={{
+                      flex: 1,
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: '999px 0 0 999px',
+                      padding: '0.4rem 0.8rem',
+                      color: '#fff',
+                      fontSize: '0.8rem',
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      background: 'rgba(34,211,238,0.2)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderLeft: 'none',
+                      borderRadius: '0 999px 999px 0',
+                      padding: '0.4rem 0.8rem',
+                      color: '#22d3ee',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Search size={14} />
+                  </button>
+                </form>
+              </div>
+
+              {/* Bottom row: History chips */}
+              <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+                {history.map((h) => {
+                  const isActive = (h.isBuiltin && geo?.regionId === h.id) || (!h.isBuiltin && geo?.label === h.name);
+                  return (
+                    <button
+                      key={h.id}
+                      type="button"
+                      onClick={() => handleHistoryClick(h)}
+                      style={{
+                        ...chip(isActive),
+                        fontSize: '0.72rem',
+                        padding: '0.3rem 0.6rem',
+                      }}
+                    >
+                      {h.name}
+                      <span 
+                        onClick={(e) => removeHistory(e, h.id)}
+                        style={{ marginLeft: 2, color: 'rgba(255,255,255,0.4)', padding: '0 2px' }}
+                      >
+                        <X size={10} />
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 1rem 0.6rem' }}>
