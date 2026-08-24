@@ -5,27 +5,27 @@ import { assetUrl } from '../utils/assets';
 
 const DartPin = ({ size = 60 }) => (
   <svg viewBox="0 0 100 100" width={size} height={size} style={{ filter: 'drop-shadow(5px 15px 10px rgba(0,0,0,0.6))', display: 'block' }}>
-    {/* 바늘 (Tip) - 은빛 메탈 */}
-    <polygon points="50,95 47,65 53,65" fill="#e5e7eb" />
-    <polygon points="50,95 50,65 53,65" fill="#9ca3af" /> 
+    {/* 바늘 (Tip) - 위쪽(y=5)을 향하도록 배치 */}
+    <polygon points="50,5 47,35 53,35" fill="#e5e7eb" />
+    <polygon points="50,5 50,35 53,35" fill="#9ca3af" /> 
     
-    {/* 배럴 (Barrel) - 눈에 띄는 화려한 금장 */}
-    <rect x="44" y="45" width="12" height="20" fill="#fbbf24" rx="2" />
-    <rect x="43" y="48" width="14" height="2" fill="#d97706" />
-    <rect x="43" y="53" width="14" height="2" fill="#d97706" />
-    <rect x="43" y="58" width="14" height="2" fill="#d97706" />
+    {/* 배럴 (Barrel) - 화려한 금장 */}
+    <rect x="44" y="35" width="12" height="20" fill="#fbbf24" rx="2" />
+    <rect x="43" y="40" width="14" height="2" fill="#d97706" />
+    <rect x="43" y="45" width="14" height="2" fill="#d97706" />
+    <rect x="43" y="50" width="14" height="2" fill="#d97706" />
     
-    {/* 샤프트 (Shaft) - 화이트/실버 */}
-    <rect x="46" y="25" width="8" height="20" fill="#f3f4f6" />
-    <rect x="50" y="25" width="4" height="20" fill="#d1d5db" />
+    {/* 샤프트 (Shaft) */}
+    <rect x="46" y="55" width="8" height="20" fill="#f3f4f6" />
+    <rect x="50" y="55" width="4" height="20" fill="#d1d5db" />
     
-    {/* 플라이트 (Flight) - 크고 화려한 파란색 깃털 베이스에 빨간색 포인트 */}
-    {/* 큰 뒷배경 깃 (파란색) */}
-    <path d="M50,2 L25,25 L45,25 L50,12 L55,25 L75,25 Z" fill="#3b82f6" />
-    {/* 앞쪽 깃 (빨간색 포인트) */}
-    <path d="M50,2 L40,25 L50,12 L60,25 Z" fill="#ef4444" />
-    {/* 중앙 기둥 디테일 */}
-    <path d="M50,2 L48,25 L52,25 Z" fill="#1e3a8a" />
+    {/* 플라이트 (Flight) - 위로 갈수록(y=75방향) 좁아지고, 아래로 갈수록(y=98방향) 솟은/넓어진 모양 */}
+    {/* 파란색 뒷배경 깃 */}
+    <path d="M50,75 L20,95 L45,95 L50,85 L55,95 L80,95 Z" fill="#3b82f6" />
+    {/* 빨간색 포인트 깃 */}
+    <path d="M50,75 L35,95 L50,85 L65,95 Z" fill="#ef4444" />
+    {/* 딥블루 중앙선 */}
+    <path d="M50,75 L48,95 L52,95 Z" fill="#1e3a8a" />
   </svg>
 );
 
@@ -120,7 +120,7 @@ export default function DartGame() {
         게이지가 정중앙에 올 때 🎯 아이콘을 누르세요!
       </p>
 
-      {/* 게임 영역 (다트판이 무조건 화면 정중앙에 오도록 Absolute/Relative 활용) */}
+      {/* 게임 영역 */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '420px', height: '290px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         
         {/* 왼쪽: 세로 게이지 */}
@@ -136,7 +136,6 @@ export default function DartGame() {
           padding: '4px',
           zIndex: 10
         }}>
-          {/* 타겟 마커 */}
           <div style={{
             position: 'absolute',
             top: '50%',
@@ -158,13 +157,12 @@ export default function DartGame() {
             borderRadius: '12px',
             overflow: 'hidden'
           }}>
-            {/* 게이지 바 */}
             <div style={{
               position: 'absolute',
               bottom: 0,
               left: 0,
               right: 0,
-              height: `${position}%`,
+              height: \\%\,
               background: position > 40 && position < 60 
                 ? 'linear-gradient(to top, #22c55e, #4ade80)' 
                 : position > 20 && position < 80 
@@ -179,10 +177,9 @@ export default function DartGame() {
 
         {/* 중앙: 다트판 영역 */}
         <div style={{ position: 'relative', width: '290px', height: '290px' }}>
-          {/* 완벽하게 중심이 맞는 고해상도 생성 다트판 이미지 */}
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
-            backgroundImage: `url(${assetUrl('assets/drinks/dartboard2.jpg')})`,
+            backgroundImage: \url(\)\,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.8)',
@@ -194,9 +191,10 @@ export default function DartGame() {
           <AnimatePresence>
             {result && (
               <motion.div
-                // 우측 하단 버튼 위치에서 출발해서 1초 동안 날아가 꽂히는 애니메이션
-                initial={{ scale: 1.5, opacity: 1, x: 180, y: 125, rotate: 60 }}
-                animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: 0 }}
+                // 회전 없이(rotate 유지) 출발 각도 그대로 날아가서 꽂히게 함.
+                // 우측 하단에서 좌측 상단 과녁을 향해 날아가므로 -45도 정도로 비스듬하게 향함.
+                initial={{ scale: 1.5, opacity: 1, x: 180, y: 125, rotate: -45 }}
+                animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: -45 }}
                 transition={{ duration: 1, ease: 'easeOut' }}
                 style={{
                   position: 'absolute',
@@ -204,11 +202,13 @@ export default function DartGame() {
                   left: '50%',
                   width: '50px',
                   height: '50px',
-                  // 사이즈 50px일 때 바늘 끝(50,95)의 중심 보정: 좌우 -25px, 상하 -47.5px
+                  // 바늘 끝(y=5)이 꽂히는 지점이 되도록 중심 보정
+                  // SVG 중심(50,50) 대비 바늘 끝(50,5)은 y가 -45만큼 위.
+                  // 이를 상쇄하려면 marginTop을 +22.5px만큼(절반, 50px기준) 내려야 하지만, transform-origin으로 제어
                   marginLeft: '-25px',
-                  marginTop: '-47.5px',
+                  marginTop: '-25px',
                   zIndex: 20,
-                  transformOrigin: 'bottom center',
+                  transformOrigin: '50% 10%', // (50, 5) 부근이 핀 끝.
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center'
@@ -220,8 +220,8 @@ export default function DartGame() {
           </AnimatePresence>
         </div>
 
-        {/* 오른쪽: 원래 대형 다트 아이콘(🎯)을 발사 버튼으로 복구 */}
-        <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '250px' }}>
+        {/* 오른쪽: 버튼 위치를 330px로 변경 (기존 250px에서 80px 더 내림) */}
+        <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '330px' }}>
           <motion.button
             onClick={stopGame}
             whileHover={{ scale: 1.1 }}
@@ -237,7 +237,6 @@ export default function DartGame() {
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            {/* 거대한 🎯 이모지 */}
             <motion.div 
               animate={{ y: isPlaying ? [0, -10, 0] : 0 }}
               transition={{ repeat: Infinity, duration: 0.6 }}
@@ -261,7 +260,7 @@ export default function DartGame() {
         </div>
       </div>
 
-      {/* 결과 메시지를 다트판 아래 빈 공간에 Absolute로 표시하여 불필요한 스크롤 여백 제거 */}
+      {/* 결과 메시지 */}
       <div style={{ position: 'absolute', bottom: '0px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 30, pointerEvents: 'none' }}>
         <AnimatePresence>
           {result && !result.isFlying && (
