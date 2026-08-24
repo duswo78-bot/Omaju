@@ -80,61 +80,70 @@ export default function SobrietyTest() {
         좌우로 빠르게 움직이는 바늘을<br/>정확히 <strong>초록색 정중앙</strong>에서 멈추세요!
       </p>
 
-      {/* 3D 튜브/게이지 영역 */}
+      {/* 3D 튜브/게이지 영역 (세련된 사이버 펑크/네온 스타일) */}
       <div style={{ 
         position: 'relative', 
         width: '320px', 
-        height: '48px',
-        background: 'linear-gradient(90deg, #ef4444 0%, #fbbf24 30%, #4ade80 45%, #22c55e 50%, #4ade80 55%, #fbbf24 70%, #ef4444 100%)',
-        borderRadius: '24px',
-        // 안쪽 그림자(입체감) 및 유리 광택 효과
-        boxShadow: 'inset 0 10px 15px rgba(255,255,255,0.3), inset 0 -10px 15px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.5)',
+        height: '56px',
+        background: '#0a0a0a',
+        borderRadius: '28px',
+        boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.4)',
+        border: '3px solid #27272a',
+        padding: '6px',
         marginBottom: '3.5rem',
-        border: '1px solid rgba(255,255,255,0.1)',
-        overflow: 'visible'
       }}>
-        {/* 유리관 표면 반사광 */}
+        {/* 실제 색상 트랙 */}
         <div style={{
-          position: 'absolute',
-          top: '2px',
-          left: '10px',
-          right: '10px',
-          height: '14px',
-          background: 'linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%)',
-          borderRadius: '10px',
-          pointerEvents: 'none'
-        }} />
-
-        {/* 정중앙 타겟 마커 */}
-        <div style={{
-          position: 'absolute',
-          left: '50%',
-          top: '-8px',
-          bottom: '-8px',
-          width: '6px',
-          background: 'rgba(255,255,255,0.8)',
-          transform: 'translateX(-50%)',
-          borderRadius: '3px',
-          boxShadow: '0 0 10px #fff, 0 0 20px #4ade80',
-          border: '1px solid rgba(0,0,0,0.2)',
-          zIndex: 1
-        }} />
-        
-        {/* 고화질 3D 금속 바늘 이미지 */}
-        <motion.div
-          style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(90deg, #ef4444 0%, #fbbf24 25%, #4ade80 45%, #22c55e 50%, #4ade80 55%, #fbbf24 75%, #ef4444 100%)',
+          borderRadius: '20px',
+          boxShadow: 'inset 0 2px 5px rgba(255,255,255,0.3), inset 0 -5px 10px rgba(0,0,0,0.5), 0 0 15px rgba(34,197,94,0.4)',
+        }}>
+          {/* 유리관 표면 반사광 */}
+          <div style={{
             position: 'absolute',
-            left: `${position}%`,
-            top: '-30px', // 게이지 위쪽에서 찌르도록 위치
-            width: '28px',
-            height: '60px',
+            top: '2px',
+            left: '10px',
+            right: '10px',
+            height: '12px',
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)',
+            borderRadius: '10px',
+            pointerEvents: 'none'
+          }} />
+
+          {/* 정중앙 타겟 마커 */}
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top: '-5px',
+            bottom: '-5px',
+            width: '6px',
+            background: 'rgba(255,255,255,1)',
             transform: 'translateX(-50%)',
-            zIndex: 10,
-            filter: 'drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 15px 10px rgba(0,0,0,0.6))'
-          }}
-        >
-          <img src={assetUrl('assets/drinks/3d_needle.png')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-        </motion.div>
+            borderRadius: '3px',
+            boxShadow: '0 0 15px #fff, 0 0 25px #4ade80',
+            border: '1px solid rgba(0,0,0,0.2)',
+            zIndex: 1
+          }} />
+          
+          {/* 고화질 3D 금속 바늘 이미지 */}
+          <motion.div
+            style={{
+              position: 'absolute',
+              left: `${position}%`,
+              top: '-32px', // 게이지 위쪽에서 찌르도록 위치
+              width: '28px',
+              height: '65px',
+              transform: 'translateX(-50%)',
+              zIndex: 10,
+              filter: 'drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 15px 10px rgba(0,0,0,0.8))'
+            }}
+          >
+            <img src={assetUrl('assets/drinks/3d_needle.png')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </motion.div>
+        </div>
       </div>
 
       {/* 결과창 */}
@@ -168,11 +177,17 @@ export default function SobrietyTest() {
         </AnimatePresence>
       </div>
 
-      {/* 컨트롤 버튼 (3D 원형 팝업 버튼 스타일) */}
+      {/* 컨트롤 버튼 (아케이드 물리 버튼 완벽 구현) */}
       <motion.button 
         onClick={isPlaying ? stopGame : startGame}
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.9, y: 5 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ 
+          scale: 0.98, 
+          y: 15, 
+          boxShadow: isPlaying
+            ? '0 0px 0 #7f1d1d, 0 10px 20px rgba(239,68,68,0.4), inset 0 4px 10px rgba(255,255,255,0.5)'
+            : '0 0px 0 #14532d, 0 10px 20px rgba(74,222,128,0.4), inset 0 4px 10px rgba(255,255,255,0.5)'
+        }}
         style={{ 
           display: 'flex',
           alignItems: 'center',
@@ -184,18 +199,20 @@ export default function SobrietyTest() {
           background: isPlaying 
             ? 'linear-gradient(135deg, #ef4444, #b91c1c)' 
             : 'linear-gradient(135deg, #4ade80, #16a34a)',
-          border: '4px solid rgba(255,255,255,0.2)',
+          border: '4px solid rgba(255,255,255,0.3)',
           borderRadius: '50%',
           color: '#fff',
           cursor: 'pointer',
+          // 기본 상태에서 15px 두께의 그림자(기둥)을 만듦
           boxShadow: isPlaying 
-            ? '0 15px 0 #7f1d1d, 0 25px 40px rgba(239,68,68,0.6), inset 0 4px 10px rgba(255,255,255,0.5)' 
-            : '0 15px 0 #14532d, 0 25px 40px rgba(74,222,128,0.6), inset 0 4px 10px rgba(255,255,255,0.5)',
+            ? '0 15px 0 #7f1d1d, 0 25px 40px rgba(239,68,68,0.8), inset 0 6px 15px rgba(255,255,255,0.6)' 
+            : '0 15px 0 #14532d, 0 25px 40px rgba(74,222,128,0.8), inset 0 6px 15px rgba(255,255,255,0.6)',
           textShadow: '0 2px 6px rgba(0,0,0,0.4)',
           transform: 'translateZ(0)',
           outline: 'none',
           WebkitTapHighlightColor: 'transparent',
-          marginBottom: '2rem'
+          marginBottom: '2rem',
+          transition: 'box-shadow 0.1s, transform 0.1s' // 탭할 때 즉각 반응
         }}
       >
         {isPlaying ? 'STOP!' : (result ? '다시' : '시작')}
