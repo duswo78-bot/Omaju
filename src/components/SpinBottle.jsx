@@ -34,27 +34,26 @@ export default function SpinBottle() {
     setWinner(null);
 
     const extraRotation = Math.floor(Math.random() * 360);
-    // 더 많이 (12바퀴 기본) 회전하게 설정
-    const totalRotation = rotation + 4320 + extraRotation; 
+    // 기본 회전수: 8바퀴 ~ 12바퀴 사이 랜덤
+    const baseSpins = 8 + Math.floor(Math.random() * 5);
+    const totalRotation = rotation + (baseSpins * 360) + extraRotation; 
     setRotation(totalRotation);
 
-    const randomStyle = Math.random();
-    let animDuration = 4000;
+    // 속도(시간) 20% 범위 랜덤 (기본 10초 기준 ±2초)
+    const baseDuration = 10;
+    const variation = (Math.random() - 0.5) * 0.4; // -0.2 ~ +0.2
+    const finalDuration = baseDuration * (1 + variation);
     
-    // 회전 시간 대폭 증가 (8.5초 ~ 11.5초)
-    if (randomStyle < 0.3) {
-      setSpinTransition({ type: 'tween', ease: [0.15, 1.15, 0.8, 1], duration: 11.5 });
-      animDuration = 11500;
-    } else if (randomStyle < 0.6) {
-      setSpinTransition({ type: 'tween', ease: [0.05, 0.85, 0.1, 1], duration: 10.5 });
-      animDuration = 10500;
-    } else if (randomStyle < 0.8) {
-      setSpinTransition({ type: 'tween', ease: [0.1, 0.9, 0.2, 1], duration: 9.5 });
-      animDuration = 9500;
-    } else {
-      setSpinTransition({ type: 'tween', ease: [0.2, 1, 0.4, 1], duration: 8.5 });
-      animDuration = 8500;
-    }
+    // 살짝 넘어갔다 돌아오는(오버슛) 효과 랜덤 적용 (50% 확률)
+    const hasOvershoot = Math.random() > 0.5;
+    
+    // 오버슛이 있으면 끝부분 제어점 y값이 1보다 큼
+    const easeCurve = hasOvershoot 
+      ? [0.25, 1, 0.5, 1.05 + Math.random() * 0.05] // 살짝 넘어갔다가 1로 돌아옴
+      : [0.1, 0.9 + Math.random() * 0.1, 0.2, 1];   // 부드럽게 멈춤
+
+    setSpinTransition({ type: 'tween', ease: easeCurve, duration: finalDuration });
+    const animDurationMs = finalDuration * 1000;
 
     setTimeout(() => {
       const finalAngle = totalRotation % 360;
@@ -76,7 +75,7 @@ export default function SpinBottle() {
         origin: { y: 0.6 },
         colors: ['#4ade80', '#facc15', '#fbbf24', '#f43f5e', '#60a5fa']
       });
-    }, animDuration);
+    }, animDurationMs);
   };
 
   const reshuffleNames = () => {
