@@ -182,10 +182,16 @@ export default function AIChatPopup({ onClose }) {
     const opening = pendingContext || localStorage.getItem('omaju_pending_context') || '';
     const skipPrompt = Boolean(opening);
 
+    let profile = null;
+    try {
+      const p = localStorage.getItem('omaju_user_profile');
+      if (p) profile = JSON.parse(p);
+    } catch(e) {}
+
     aiWorker.postMessage({
       type: 'chat',
       text: userMessage,
-      payload: { opening, skipPrompt },
+      payload: { opening, skipPrompt, profile },
     });
 
     if (opening) clearPendingContext();

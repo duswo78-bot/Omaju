@@ -47,7 +47,8 @@ export async function handleRecommendation(text, cleanText, context) {
     wantOnlyAlc: cleanText.includes('술만'),
     wantOnlySnack: cleanText.includes('안주만') || cleanText.includes('밥만') || cleanText.includes('식사만'),
     skipPrompt: context.skipPrompt,
-    matchedOpening: context.matchedOpening
+    matchedOpening: context.matchedOpening,
+    profile: context.profile
   });
 
   const reasonParts = [];

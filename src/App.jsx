@@ -5,6 +5,7 @@ import Recommendation from './pages/Recommendation';
 import Recipe from './pages/Recipe';
 import Favorites from './pages/Favorites';
 import Game from './pages/Game';
+import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import BottomNav from './components/BottomNav';
 import AIChatPopup from './components/AIChatPopup';
@@ -35,7 +36,7 @@ function App() {
             <Route path="/recipe" element={<Recipe />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/game" element={<Game />} />
-            <Route path="/profile" element={<div style={{padding:'2rem',textAlign:'center'}}>내 정보 준비중...</div>} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
         <Routes>

@@ -83,6 +83,7 @@ self.addEventListener('message', async (event) => {
         isLowConfidence: payload?.isLowConfidence || false,
         skipPrompt,
         matchedOpening,
+        profile: payload?.profile || null,
         uiContext
       };
 

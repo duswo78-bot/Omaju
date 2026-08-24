@@ -32,7 +32,8 @@ export async function handleReroll(text, context) {
     wantOnlyAlc: combinedText.includes('술만'),
     wantOnlySnack: combinedText.includes('안주만') || combinedText.includes('밥만') || combinedText.includes('식사만'),
     skipPrompt: false,
-    matchedOpening: null
+    matchedOpening: null,
+    profile: context.profile
   });
 
   const reasonParts = [];

@@ -44,7 +44,7 @@ function formatTemplate(template, bestAlc, bestSnack, bestGame) {
   return text;
 }
 
-export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, skipPrompt, matchedOpening }) {
+export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, skipPrompt, matchedOpening, profile }) {
   let empathy = "";
   let reason = "";
   let explanation = "";
@@ -56,6 +56,13 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
   } else if (skipPrompt && intent === 'RECOMMEND') {
     const skipIntros = ["좋습니다! 바로 준비해 드릴게요. 🍸", "오마카세 모드 발동! 🚀"];
     empathy = pickRandom(skipIntros);
+  }
+
+  // 프로필 기반 개인화 인사 추가 (최초 1회성이나 랜덤)
+  if (profile && profile.name && empathy && Math.random() > 0.3) {
+    empathy = `${profile.name}님, ${empathy}`;
+  } else if (profile && profile.name && !empathy) {
+    empathy = `${profile.name}님!`;
   }
 
   // 2. 추천 이유 및 페어링 설명 (Reason & Explanation)
@@ -90,6 +97,15 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
         explanation = formatTemplate(pickRandom(snackTemplates), null, bestSnack, bestGame);
       }
       
+      // 프로필 취향 반영 문구 추가 (랜덤)
+      if (profile) {
+        if (profile.favoriteDrink && bestAlc && Math.random() > 0.5) {
+          reason = `(평소 ${profile.favoriteDrink}을(를) 좋아하시는 취향을 고려해 골라봤어요!)`;
+        } else if (profile.favoriteSnack && bestSnack && Math.random() > 0.5) {
+          reason = `(평소 ${profile.favoriteSnack}을(를) 즐기시니 이 안주도 맘에 드실 거예요!)`;
+        }
+      }
+      
       // 게임 추천이 있으면 텍스트에 덧붙임
       if (bestGame) {
         closing = formatTemplate(pickRandom(gameTemplates), null, null, bestGame);
@@ -98,8 +114,6 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
   }
 
   // 3. 마무리 (Closing)
-  // 게임 등 추가 제안이 있으면 closing에 들어감
-
   // 조립
   let finalAnswer = [empathy, reason, explanation, closing].filter(part => part.trim().length > 0).join('\n\n');
   return finalAnswer;
