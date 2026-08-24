@@ -31,24 +31,26 @@ export default function SpinBottle() {
     setWinner(null);
 
     const extraRotation = Math.floor(Math.random() * 360);
-    const totalRotation = rotation + 2160 + extraRotation; 
+    // 더 많이 (12바퀴 기본) 회전하게 설정
+    const totalRotation = rotation + 4320 + extraRotation; 
     setRotation(totalRotation);
 
     const randomStyle = Math.random();
     let animDuration = 4000;
     
+    // 회전 시간 대폭 증가 (8.5초 ~ 11.5초)
     if (randomStyle < 0.3) {
-      setSpinTransition({ type: 'tween', ease: [0.15, 1.15, 0.8, 1], duration: 7 });
-      animDuration = 7000;
+      setSpinTransition({ type: 'tween', ease: [0.15, 1.15, 0.8, 1], duration: 11.5 });
+      animDuration = 11500;
     } else if (randomStyle < 0.6) {
-      setSpinTransition({ type: 'tween', ease: [0.05, 0.85, 0.1, 1], duration: 7.5 });
-      animDuration = 7500;
+      setSpinTransition({ type: 'tween', ease: [0.05, 0.85, 0.1, 1], duration: 10.5 });
+      animDuration = 10500;
     } else if (randomStyle < 0.8) {
-      setSpinTransition({ type: 'tween', ease: [0.1, 0.9, 0.2, 1], duration: 6 });
-      animDuration = 6000;
+      setSpinTransition({ type: 'tween', ease: [0.1, 0.9, 0.2, 1], duration: 9.5 });
+      animDuration = 9500;
     } else {
-      setSpinTransition({ type: 'tween', ease: [0.2, 1, 0.4, 1], duration: 5.5 });
-      animDuration = 5500;
+      setSpinTransition({ type: 'tween', ease: [0.2, 1, 0.4, 1], duration: 8.5 });
+      animDuration = 8500;
     }
 
     setTimeout(() => {
