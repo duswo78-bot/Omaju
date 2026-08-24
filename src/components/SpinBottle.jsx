@@ -53,8 +53,11 @@ export default function SpinBottle() {
 
     setTimeout(() => {
       const finalAngle = totalRotation % 360;
+      // 병 이미지가 기본적으로 왼쪽(-90도)을 향하고 있으므로, 
+      // 시각적인 방향과 수학적 각도를 맞추기 위해 270도를 더해줌 (또는 90도를 뺌)
+      const effectiveAngle = (finalAngle + 270) % 360;
       const sliceAngle = 360 / playerCount;
-      const winnerIndex = Math.floor(((finalAngle + sliceAngle / 2) % 360) / sliceAngle) % playerCount;
+      const winnerIndex = Math.floor(((effectiveAngle + sliceAngle / 2) % 360) / sliceAngle) % playerCount;
       setWinner(players[winnerIndex]);
       setIsSpinning(false);
 
@@ -177,7 +180,8 @@ export default function SpinBottle() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.7))'
+            filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.7))',
+            WebkitTapHighlightColor: 'transparent'
           }}
           whileHover={!isSpinning ? { scale: 1.1 } : {}}
           whileTap={!isSpinning ? { scale: 0.9 } : {}}

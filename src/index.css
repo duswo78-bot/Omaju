@@ -716,3 +716,8 @@ body {
   width: 0px !important;
   height: 0px !important;
 }
+
+/* Remove tap highlight globally for touch devices */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
