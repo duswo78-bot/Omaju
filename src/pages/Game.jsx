@@ -6,14 +6,14 @@ import DadJokes from '../components/DadJokes';
 import SobrietyTest from '../components/SobrietyTest';
 import Baskin31 from '../components/Baskin31';
 import UpDownGame from '../components/UpDownGame';
-import ForbiddenWord from '../components/ForbiddenWord';
+import DartGame from '../components/DartGame';
 import GameRules from '../components/GameRules';
 
 const games = [
   { id: 'bottle', title: '돌려돌려 병', component: <SpinBottle /> },
   { id: 'baskin', title: '베스킨 31', component: <Baskin31 /> },
   { id: 'updown', title: '업앤다운', component: <UpDownGame /> },
-  { id: 'forbidden', title: '금지어', component: <ForbiddenWord /> },
+  { id: 'dart', title: '다트 복불복', component: <DartGame /> },
   { id: 'jokes', title: '아재개그', component: <DadJokes /> },
   { id: 'sobriety', title: '취함 테스트', component: <SobrietyTest /> },
   { id: 'rules', title: '규칙 카드', component: <GameRules /> },
@@ -64,8 +64,8 @@ export default function Game() {
       backgroundSize: '20px 20px',
       backgroundPosition: '0 0, 10px 10px',
     },
-    forbidden: {
-      backgroundImage: 'repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.08) 10px, transparent 10px, transparent 20px)',
+    dart: {
+      backgroundImage: 'repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 20px, rgba(239, 68, 68, 0.1) 20px, rgba(239, 68, 68, 0.1) 22px)',
     },
     jokes: {
       backgroundImage: 'radial-gradient(circle, rgba(168, 85, 247, 0.1) 2px, transparent 2px)',
