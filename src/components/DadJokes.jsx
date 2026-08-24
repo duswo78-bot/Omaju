@@ -38,11 +38,11 @@ export default function DadJokes() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '1rem 0' }}>
-      <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '0.5rem 0' }}>
+      <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.2rem', textAlign: 'center' }}>
         😎 아재개그 사전
       </h1>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
         아재개그 {jokes.length}선 · 카드를 터치하면 정답이 나옵니다. 웃으면 원샷!
       </p>
 
@@ -50,10 +50,10 @@ export default function DadJokes() {
       <div 
         style={{ 
           perspective: '1200px', 
-          width: '300px', 
-          height: '400px',
+          width: '280px', 
+          height: '350px',
           cursor: 'pointer',
-          marginBottom: '3rem',
+          marginBottom: '2rem',
           position: 'relative'
         }}
         onClick={flipCard}
@@ -160,8 +160,8 @@ export default function DadJokes() {
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95, y: 2 }}
         style={{ 
-          padding: '1rem 3rem', 
-          fontSize: '1.2rem', 
+          padding: '0.8rem 2.5rem', 
+          fontSize: '1.1rem', 
           fontWeight: '900', 
           background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05))', 
           border: '1px solid rgba(255,255,255,0.4)', 
