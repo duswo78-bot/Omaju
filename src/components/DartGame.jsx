@@ -105,7 +105,7 @@ export default function DartGame() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '0.5rem 0' }}>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '0.5rem 0' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
         <span className="emoji-icon">🎯</span> 다트 복불복
       </h1>
@@ -250,12 +250,12 @@ export default function DartGame() {
         </div>
       </div>
 
-      {/* 결과 메시지를 다트판 아래에 고정 표시 */}
-      <div style={{ height: '60px', marginTop: '3rem', display: 'flex', justifyContent: 'center', width: '100%' }}>
+      {/* 결과 메시지를 다트판 아래 빈 공간에 Absolute로 표시하여 불필요한 스크롤 여백 제거 */}
+      <div style={{ position: 'absolute', bottom: '0px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 30, pointerEvents: 'none' }}>
         <AnimatePresence>
           {result && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.5, y: -20 }}
+              initial={{ opacity: 0, scale: 0.5, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.5 }}
               style={{

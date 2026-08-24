@@ -86,7 +86,7 @@ export default function Game() {
       className="animate-fade-in" 
       style={{ 
         padding: '0', 
-        paddingBottom: '120px', 
+        paddingBottom: '20px', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
