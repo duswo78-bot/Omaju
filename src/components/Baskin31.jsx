@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playClick, playPop, playFail } from '../utils/audio';
 
 function nextCountOptions(current) {
   const left = 31 - current;
@@ -53,12 +54,14 @@ export default function Baskin31() {
     if (next >= 31) {
       setCount(31);
       setLoser(who);
+      playFail();
       return true;
     }
     return false;
   };
 
   const play = (n, who) => {
+    playPop();
     const next = count + n;
     pushLog(who, n, next);
     
@@ -89,6 +92,7 @@ export default function Baskin31() {
   }, [mode, isAITurn, loser, count]); // Added dependencies
 
   const startGame = () => {
+    playClick();
     setCount(0);
     setLog([]);
     setTurnIndex(0);
@@ -97,6 +101,7 @@ export default function Baskin31() {
   };
 
   const reset = () => {
+    playClick();
     setMode('setup');
   };
 
@@ -104,6 +109,12 @@ export default function Baskin31() {
     const copy = [...players];
     copy[index] = val;
     setPlayers(copy);
+  };
+
+  const handlePlayerCount = (change) => {
+    playClick();
+    const newCount = Math.max(1, Math.min(10, playerCount + change));
+    setPlayerCount(newCount);
   };
 
   // Baskin Robbins Theme Background (Pink & Blue dots on dark)
@@ -141,12 +152,12 @@ export default function Baskin31() {
               <div style={{ color: '#9ca3af', fontSize: '0.9rem', marginBottom: '0.5rem' }}>플레이어 수</div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
                 <button 
-                  onClick={() => setPlayerCount(Math.max(1, playerCount - 1))}
+                  onClick={() => handlePlayerCount(-1)}
                   style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}
                 >−</button>
                 <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff', minWidth: '40px' }}>{playerCount}명</span>
                 <button 
-                  onClick={() => setPlayerCount(Math.min(8, playerCount + 1))}
+                  onClick={() => handlePlayerCount(1)}
                   style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}
                 >+</button>
               </div>

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playClick, playUp, playDown, playSuccess, playFail } from '../utils/audio';
 
 const DEFAULT_NICKS = ['나', '알콜요정', '술고래', '안주킬러', '인싸', '꽐라', '맥주파괴자', '소주감별사'];
 
@@ -29,6 +30,12 @@ export default function UpDownGame() {
     }
   }, [playerCount, mode]);
 
+  const handlePlayerCount = (change) => {
+    playClick();
+    const newCount = Math.max(3, Math.min(10, playerCount + change));
+    setPlayerCount(newCount);
+  };
+
   const handleNameChange = (index, val) => {
     const copy = [...players];
     copy[index] = val;
@@ -36,6 +43,7 @@ export default function UpDownGame() {
   };
 
   const startGame = () => {
+    playClick();
     if (players.length < 3) {
       alert("양 옆에서 마시려면 최소 3명이 필요합니다!");
       return;
@@ -51,7 +59,10 @@ export default function UpDownGame() {
     setMode('playing');
   };
 
-  const reset = () => setMode('setup');
+  const reset = () => {
+    playClick();
+    setMode('setup');
+  };
 
   const submitGuess = (e) => {
     e?.preventDefault();
@@ -65,6 +76,8 @@ export default function UpDownGame() {
 
     if (num === targetNumber) {
       // 정답!
+      playSuccess();
+      setTimeout(playFail, 600);
       const leftIdx = (turnIndex - 1 + players.length) % players.length;
       const rightIdx = (turnIndex + 1) % players.length;
       const leftPlayer = players[leftIdx];
@@ -76,9 +89,11 @@ export default function UpDownGame() {
     } else {
       // 오답
       if (num < targetNumber) {
+        playUp();
         setMin(num + 1);
         setLog(prev => [{ player: currentPlayer, num, result: 'UP 🔺' }, ...prev]);
       } else {
+        playDown();
         setMax(num - 1);
         setLog(prev => [{ player: currentPlayer, num, result: 'DOWN 🔻' }, ...prev]);
       }
