@@ -93,23 +93,22 @@ export default function DartGame() {
     const dartY = Math.sin(angle) * finalRadius; 
 
     let score = '';
-    if (distance <= 4) {
-      score = 'BULLSEYE';
-      setTimeout(() => { playFanfare(); playApplause(); }, 400); 
-    } else if (distance <= 15) {
-      score = 'GOOD';
-      setTimeout(() => playPop(), 400);
-    } else if (distance <= 35) {
-      score = 'MISS';
-      setTimeout(() => playFail(), 400);
-    } else {
-      score = 'OUT';
-      setTimeout(() => playFail(), 400);
-    }
+    if (distance <= 4) score = 'BULLSEYE';
+    else if (distance <= 15) score = 'GOOD';
+    else if (distance <= 35) score = 'MISS';
+    else score = 'OUT';
     
+    // 날아가는 애니메이션 시작
+    setResult({ distance, score, dartX, dartY, isFlying: true });
+
+    // 1초(1000ms) 뒤 도착했을 때 사운드 및 결과 메시지 표시
     setTimeout(() => {
-      setResult({ distance, score, dartX, dartY });
-    }, 400); 
+      if (score === 'BULLSEYE') { playFanfare(); playApplause(); }
+      else if (score === 'GOOD') { playPop(); }
+      else { playFail(); }
+      
+      setResult(prev => ({ ...prev, isFlying: false }));
+    }, 1000); 
   };
 
   return (
@@ -195,10 +194,10 @@ export default function DartGame() {
           <AnimatePresence>
             {result && (
               <motion.div
-                // 우측 하단(버튼 위치)에서 출발해서 꽂히는 애니메이션
-                initial={{ scale: 3, opacity: 0, x: 200, y: 150, rotate: 90 }}
+                // 우측 하단 버튼 위치에서 출발해서 1초 동안 날아가 꽂히는 애니메이션
+                initial={{ scale: 1.5, opacity: 1, x: 180, y: 125, rotate: 60 }}
                 animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                transition={{ duration: 1, ease: 'easeOut' }}
                 style={{
                   position: 'absolute',
                   top: '50%',
@@ -221,7 +220,7 @@ export default function DartGame() {
           </AnimatePresence>
         </div>
 
-        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (오른쪽에 붙이되 250px 아래로) */}
+        {/* 오른쪽: 원래 대형 다트 아이콘(🎯)을 발사 버튼으로 복구 */}
         <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '250px' }}>
           <motion.button
             onClick={stopGame}
@@ -238,12 +237,16 @@ export default function DartGame() {
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            {/* 리얼한 다트 핀 렌더링 */}
+            {/* 거대한 🎯 이모지 */}
             <motion.div 
               animate={{ y: isPlaying ? [0, -10, 0] : 0 }}
               transition={{ repeat: Infinity, duration: 0.6 }}
+              style={{ 
+                fontSize: '3.5rem', 
+                filter: isPlaying ? 'drop-shadow(0 0 10px rgba(239,68,68,0.8)) drop-shadow(0 5px 10px rgba(0,0,0,0.8))' : 'drop-shadow(0 5px 10px rgba(0,0,0,0.8))' 
+              }}
             >
-              <DartPin size={80} />
+              <span className="emoji-icon">🎯</span>
             </motion.div>
             <div style={{ 
               color: isPlaying ? '#ef4444' : '#fff', 
@@ -261,7 +264,7 @@ export default function DartGame() {
       {/* 결과 메시지를 다트판 아래 빈 공간에 Absolute로 표시하여 불필요한 스크롤 여백 제거 */}
       <div style={{ position: 'absolute', bottom: '0px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 30, pointerEvents: 'none' }}>
         <AnimatePresence>
-          {result && (
+          {result && !result.isFlying && (
             <motion.div
               initial={{ opacity: 0, scale: 0.5, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
