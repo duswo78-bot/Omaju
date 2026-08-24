@@ -50,14 +50,14 @@
     "tags": ["눈치게임", "토크", "비밀알아내기", "질문게임"]
   },
   {
-    "id": "game_apartment",
-    "name": "아파트 게임",
+    "id": "game_updown",
+    "name": "업앤다운 (숫자 맞추기)",
     "minPeople": 3,
-    "maxPeople": 12,
-    "difficulty": 2,
-    "funLevel": 5,
-    "description": "박자에 맞춰 '아파트' 리듬을 타며 손뼉·탭을 이어갑니다. 박자를 놓치거나 타이밍이 어긋나면 벌칙!",
-    "tags": ["리듬게임", "박자", "텐션업", "국민게임"]
+    "maxPeople": 10,
+    "difficulty": 1,
+    "funLevel": 4,
+    "description": "1부터 100 사이의 랜덤 숫자를 맞추는 게임입니다. 정답을 맞춘 사람의 '양 옆 사람'이 벌칙을 받습니다!",
+    "tags": ["숫자게임", "간단한", "눈치게임", "복불복"]
   },
   {
     "id": "game_forbidden",

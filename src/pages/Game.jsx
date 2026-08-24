@@ -5,14 +5,14 @@ import SpinBottle from '../components/SpinBottle';
 import DadJokes from '../components/DadJokes';
 import SobrietyTest from '../components/SobrietyTest';
 import Baskin31 from '../components/Baskin31';
-import ApartmentGame from '../components/ApartmentGame';
+import UpDownGame from '../components/UpDownGame';
 import ForbiddenWord from '../components/ForbiddenWord';
 import GameRules from '../components/GameRules';
 
 const games = [
   { id: 'bottle', title: '돌려돌려 병', component: <SpinBottle /> },
   { id: 'baskin', title: '베스킨 31', component: <Baskin31 /> },
-  { id: 'apartment', title: '아파트', component: <ApartmentGame /> },
+  { id: 'updown', title: '업앤다운', component: <UpDownGame /> },
   { id: 'forbidden', title: '금지어', component: <ForbiddenWord /> },
   { id: 'jokes', title: '아재개그', component: <DadJokes /> },
   { id: 'sobriety', title: '취함 테스트', component: <SobrietyTest /> },
