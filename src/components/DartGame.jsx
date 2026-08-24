@@ -89,7 +89,7 @@ export default function DartGame() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '0.5rem 0' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
-        🎯 다트 복불복
+        <span className="emoji-icon">🎯</span> 다트 복불복
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
         게이지가 정중앙에 올 때 타이밍을 맞춰 발사하세요!

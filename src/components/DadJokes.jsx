@@ -40,7 +40,7 @@ export default function DadJokes() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '0.5rem 0' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.2rem', textAlign: 'center' }}>
-        😎 아재개그 사전
+        <span className="emoji-icon">😎</span> 아재개그 사전
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
         아재개그 {jokes.length}선 · 카드를 터치하면 정답이 나옵니다. 웃으면 원샷!

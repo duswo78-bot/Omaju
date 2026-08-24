@@ -74,7 +74,7 @@ export default function SobrietyTest() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '1rem 0' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
-        🥴 취기 테스트
+        <span className="emoji-icon">🥴</span> 취기 테스트
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
         좌우로 빠르게 움직이는 바늘을<br/>정확히 <strong>초록색 정중앙</strong>에서 멈추세요!

@@ -97,7 +97,7 @@ export default function SpinBottle() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '1rem 0' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
-        🍾 병 돌리기
+        <span className="emoji-icon">🍾</span> 병 돌리기
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
         걸리면 벌칙! 병을 터치해서 돌려보세요

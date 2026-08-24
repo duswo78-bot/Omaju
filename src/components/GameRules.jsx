@@ -12,7 +12,7 @@ export default function GameRules() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: '1rem', maxWidth: '520px' }}>
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.35rem', textAlign: 'center' }}>
-        술게임 규칙 카드
+        <span className="emoji-icon">🃏</span> 술게임 규칙
       </h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem', textAlign: 'center' }}>
         AI 추천에도 쓰이는 {games.length}개 게임 규칙집

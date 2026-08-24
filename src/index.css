@@ -731,3 +731,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none !important;
 }
 
+
+.emoji-icon {
+  -webkit-text-fill-color: initial !important;
+  background: none !important;
+}
+
