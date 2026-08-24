@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assetUrl } from '../utils/assets';
+import { playClick, playSuccess, playFail, playPop } from '../utils/audio';
 
 export default function SobrietyTest() {
   const [position, setPosition] = useState(50);
@@ -37,16 +38,18 @@ export default function SobrietyTest() {
   }, [isPlaying]);
 
   const startGame = () => {
+    playClick();
     setResult(null);
     setPosition(50);
-    // 무작위 방향과 속도 변동성 추가
+    // 무작위 방향과 속도 변동성 추가 (조금 더 천천히)
     direction.current = Math.random() > 0.5 ? 1 : -1;
-    speed.current = 2.5 + Math.random() * 1.5; // 2.5 ~ 4.0
+    speed.current = 1.5 + Math.random() * 1.5; // 1.5 ~ 3.0
     setIsPlaying(true);
   };
 
   const stopGame = () => {
     if (!isPlaying) return;
+    playClick();
     setIsPlaying(false);
     cancelAnimationFrame(requestRef.current);
 
@@ -54,12 +57,16 @@ export default function SobrietyTest() {
     const distance = Math.abs(50 - position);
     
     if (distance <= 3) {
+      playSuccess();
       setResult({ score: 'PERFECT', message: '당신은 완벽하게 멀쩡합니다! 🎯', color: '#4ade80' });
     } else if (distance <= 12) {
+      playPop();
       setResult({ score: 'GOOD', message: '오~ 아직 안 취하셨네요! 👍', color: '#60a5fa' });
     } else if (distance <= 25) {
+      playFail();
       setResult({ score: 'WARNING', message: '살짝 알딸딸하신데요? 🥴', color: '#fbbf24' });
     } else {
+      playFail();
       setResult({ score: 'DRUNK', message: '만취 상태! 당장 귀가하세요! 🚨', color: '#ef4444' });
     }
   };
@@ -123,7 +130,7 @@ export default function SobrietyTest() {
             height: '60px',
             transform: 'translateX(-50%)',
             zIndex: 10,
-            filter: 'drop-shadow(0 15px 10px rgba(0,0,0,0.6))'
+            filter: 'drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 15px 10px rgba(0,0,0,0.6))'
           }}
         >
           <img src={assetUrl('assets/drinks/3d_needle.png')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -161,31 +168,37 @@ export default function SobrietyTest() {
         </AnimatePresence>
       </div>
 
-      {/* 컨트롤 버튼 (3D 팝업 버튼 스타일) */}
+      {/* 컨트롤 버튼 (3D 원형 팝업 버튼 스타일) */}
       <motion.button 
         onClick={isPlaying ? stopGame : startGame}
         whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.95, y: 2 }}
+        whileTap={{ scale: 0.9, y: 5 }}
         style={{ 
-          padding: '1rem 3rem', 
-          fontSize: '1.2rem', 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '140px', 
+          height: '140px',
+          fontSize: '1.4rem', 
           fontWeight: '900', 
           background: isPlaying 
             ? 'linear-gradient(135deg, #ef4444, #b91c1c)' 
             : 'linear-gradient(135deg, #4ade80, #16a34a)',
-          border: 'none',
-          borderRadius: '16px',
+          border: '4px solid rgba(255,255,255,0.2)',
+          borderRadius: '50%',
           color: '#fff',
           cursor: 'pointer',
           boxShadow: isPlaying 
-            ? '0 10px 0 #7f1d1d, 0 20px 30px rgba(239,68,68,0.5), inset 0 2px 5px rgba(255,255,255,0.4)' 
-            : '0 10px 0 #14532d, 0 20px 30px rgba(74,222,128,0.5), inset 0 2px 5px rgba(255,255,255,0.4)',
-          width: '200px',
-          textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          transform: 'translateZ(0)'
+            ? '0 15px 0 #7f1d1d, 0 25px 40px rgba(239,68,68,0.6), inset 0 4px 10px rgba(255,255,255,0.5)' 
+            : '0 15px 0 #14532d, 0 25px 40px rgba(74,222,128,0.6), inset 0 4px 10px rgba(255,255,255,0.5)',
+          textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+          transform: 'translateZ(0)',
+          outline: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          marginBottom: '2rem'
         }}
       >
-        {isPlaying ? '🛑 정지!' : (result ? '🔄 다시하기' : '▶️ 시작')}
+        {isPlaying ? 'STOP!' : (result ? '다시' : '시작')}
       </motion.button>
     </div>
   );
