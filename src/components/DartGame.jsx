@@ -120,7 +120,7 @@ export default function DartGame() {
         <div
           style={{
             position: 'absolute',
-            left: \\%\,
+            left: `${position}%`,
             top: '50%',
             width: '24px',
             height: '24px',
