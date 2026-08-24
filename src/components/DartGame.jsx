@@ -139,7 +139,7 @@ export default function DartGame() {
               bottom: 0,
               left: 0,
               right: 0,
-              height: \\%\,
+              height: `${position}%`,
               background: position > 40 && position < 60 
                 ? 'linear-gradient(to top, #22c55e, #4ade80)' 
                 : position > 20 && position < 80 
@@ -157,7 +157,7 @@ export default function DartGame() {
           {/* 완벽하게 중심이 맞는 고해상도 생성 다트판 이미지 */}
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
-            backgroundImage: \url(\)\,
+            backgroundImage: `url(${assetUrl('assets/drinks/dartboard2.jpg')})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.8)',
