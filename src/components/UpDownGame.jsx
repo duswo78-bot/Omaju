@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { playClick, playUp, playDown, playSuccess, playFail } from '../utils/audio';
+import { playClick, playUp, playDown, playSuccess, playFail, playFanfare, playApplause } from '../utils/audio';
 
 const DEFAULT_NICKS = ['나', '알콜요정', '술고래', '안주킬러', '인싸', '꽐라', '맥주파괴자', '소주감별사'];
 
@@ -76,8 +76,8 @@ export default function UpDownGame() {
 
     if (num === targetNumber) {
       // 정답!
-      playSuccess();
-      setTimeout(playFail, 600);
+      playFanfare();
+      playApplause();
       const leftIdx = (turnIndex - 1 + players.length) % players.length;
       const rightIdx = (turnIndex + 1) % players.length;
       const leftPlayer = players[leftIdx];

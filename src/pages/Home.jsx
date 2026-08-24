@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { useDrinkContext, mixCombinations, nonAlcoholicItems } from '../context/DrinkContext';
 import { buildPendingContext } from '../data/drinkIdMap';
 import { assetUrl } from '../utils/assets';
+import { playFanfare, playApplause, playFail } from '../utils/audio';
 
 function DrinkCard({ drink, handleDragStart, handleDrag, handleDragEnd, handleSelect, isDefaultDrink, isFavorite, toggleFavorite }) {
   const x = useMotionValue(0);
@@ -376,6 +377,9 @@ export default function Home() {
       if (mixResult) {
         setMixAnim({ color: mixResult.color, imagePath: mixResult.imagePath, name: mixResult.name, isValid: true });
         
+        playFanfare();
+        playApplause();
+
         // 두 카드가 만난 지점에서 팡! 터지는 파티클 애니메이션
         confetti({
           particleCount: 100,
@@ -405,6 +409,7 @@ export default function Home() {
           '이 조합은 법으로 금지해야 🚓'
         ];
         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        playFail();
         
         setMixAnim({ color: '#ef4444', imagePath: assetUrl('assets/drinks/question.png'), name: randomMsg, isValid: false });
 

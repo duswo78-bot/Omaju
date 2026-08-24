@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { assetUrl } from '../utils/assets';
-import { playClick, playFail, startSpinSound, stopSpinSound } from '../utils/audio';
+import { playClick, playFanfare, playApplause, startSpinSound, stopSpinSound } from '../utils/audio';
 
 const funnyNicknames = [
   '부장님', '막내', '술부심', '안주킬러', '계산할사람',
@@ -64,7 +64,8 @@ export default function SpinBottle() {
       const winnerIndex = Math.floor(((effectiveAngle + sliceAngle / 2) % 360) / sliceAngle) % playerCount;
       
       stopSpinSound();
-      playFail();
+      playFanfare();
+      playApplause();
       
       setWinner(players[winnerIndex]);
       setIsSpinning(false);

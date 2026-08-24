@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { playClick, playPop, playFail } from '../utils/audio';
+import { playClick, playPop, playFanfare, playApplause } from '../utils/audio';
 
 function nextCountOptions(current) {
   const left = 31 - current;
@@ -54,7 +54,8 @@ export default function Baskin31() {
     if (next >= 31) {
       setCount(31);
       setLoser(who);
-      playFail();
+      playFanfare();
+      playApplause();
       return true;
     }
     return false;
