@@ -10,7 +10,7 @@ export default function DartGame() {
   
   const requestRef = useRef();
   const direction = useRef(1);
-  const speed = useRef(2);
+  const speed = useRef(2.5);
 
   const animate = () => {
     setPosition(prev => {
@@ -57,10 +57,10 @@ export default function DartGame() {
     cancelAnimationFrame(requestRef.current);
 
     const distance = Math.abs(50 - position);
-    // 다트판 크기 키움 (320px -> 반지름 160px). 140 반경 내에서 꽂히도록 수정.
-    const baseRadius = (distance / 50) * 140; 
+    // 290px 다트판 -> 반경 145px. 최대 135px까지 꽂힘.
+    const baseRadius = (distance / 50) * 125; 
     const randomScatter = Math.random() * 15 - 7.5; 
-    const finalRadius = Math.max(0, Math.min(150, baseRadius + randomScatter));
+    const finalRadius = Math.max(0, Math.min(135, baseRadius + randomScatter));
     
     const angle = Math.random() * 2 * Math.PI;
     const dartX = Math.cos(angle) * finalRadius;
@@ -91,31 +91,32 @@ export default function DartGame() {
       <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
         <span className="emoji-icon">🎯</span> 다트 복불복
       </h1>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
-        게이지가 정중앙에 올 때 타이밍을 맞춰 발사하세요!
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
+        게이지가 정중앙에 올 때 🎯 아이콘을 누르세요!
       </p>
 
-      {/* 게임 상단: 게이지와 다트판 (버튼은 분리해서 하단으로) */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', width: '100%', maxWidth: '400px' }}>
+      {/* 게임 영역 (다트판이 무조건 화면 정중앙에 오도록 Absolute/Relative 활용) */}
+      <div style={{ position: 'relative', width: '100%', maxWidth: '420px', height: '290px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         
-        {/* 아주 세련된 네온 스타일 세로 파워 게이지 */}
+        {/* 왼쪽: 세로 게이지 (크기 10% 축소에 맞춰서 높이 260px) */}
         <div style={{
-          position: 'relative',
-          width: '36px',
-          height: '320px', // 다트판 사이즈에 맞춰 높이 증가
+          position: 'absolute',
+          left: '5px',
+          width: '32px',
+          height: '260px', 
           background: '#09090b',
-          borderRadius: '18px',
+          borderRadius: '16px',
           boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 2px #27272a, 0 10px 15px rgba(0,0,0,0.5)',
           overflow: 'visible',
           padding: '4px',
-          flexShrink: 0
+          zIndex: 10
         }}>
           {/* 타겟 마커 */}
           <div style={{
             position: 'absolute',
             top: '50%',
-            left: '-8px',
-            right: '-8px',
+            left: '-6px',
+            right: '-6px',
             height: '4px',
             background: '#fff',
             transform: 'translateY(-50%)',
@@ -129,7 +130,7 @@ export default function DartGame() {
             width: '100%',
             height: '100%',
             background: '#18181b',
-            borderRadius: '14px',
+            borderRadius: '12px',
             overflow: 'hidden'
           }}>
             {/* 게이지 바 */}
@@ -138,7 +139,7 @@ export default function DartGame() {
               bottom: 0,
               left: 0,
               right: 0,
-              height: `${position}%`,
+              height: \\%\,
               background: position > 40 && position < 60 
                 ? 'linear-gradient(to top, #22c55e, #4ade80)' 
                 : position > 20 && position < 80 
@@ -146,21 +147,21 @@ export default function DartGame() {
                   : 'linear-gradient(to top, #dc2626, #f87171)',
               boxShadow: 'inset 0 2px 5px rgba(255,255,255,0.4), 0 0 20px ' + (position > 40 && position < 60 ? '#4ade80' : position > 20 && position < 80 ? '#fde047' : '#f87171'),
               transition: 'background 0.2s, box-shadow 0.2s',
-              borderRadius: '14px'
+              borderRadius: '12px'
             }} />
           </div>
         </div>
 
-        {/* 중앙: 다트판 영역 (크기 증가) */}
-        <div style={{ position: 'relative', width: '320px', height: '320px', flexShrink: 0 }}>
-          {/* 유저가 업로드한 리얼 다트판 이미지 */}
+        {/* 중앙: 다트판 영역 (화면 중앙 정렬 유지. 320px에서 10% 줄인 290px) */}
+        <div style={{ position: 'relative', width: '290px', height: '290px' }}>
+          {/* 완벽하게 중심이 맞는 고해상도 생성 다트판 이미지 */}
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
-            backgroundImage: `url(${assetUrl('assets/drinks/dartboard.png')})`,
+            backgroundImage: \url(\)\,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.5)',
-            border: '6px solid #1c1917'
+            boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.8)',
+            border: '4px solid #111'
           }}>
           </div>
 
@@ -178,7 +179,7 @@ export default function DartGame() {
                   height: '40px',
                   // 📍 이모지의 뾰족한 끝(하단 중앙)이 정확히 좌표에 오도록 세밀하게 보정
                   marginLeft: '-20px',
-                  marginTop: '-38px',
+                  marginTop: '-36px',
                   zIndex: 20,
                   transformOrigin: 'bottom center',
                   display: 'flex',
@@ -187,17 +188,57 @@ export default function DartGame() {
                 }}
               >
                 <div style={{ 
-                  fontSize: '46px', 
+                  fontSize: '44px', 
                   filter: 'drop-shadow(5px 15px 8px rgba(0,0,0,0.8))' 
                 }}>📍</div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+
+        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (다트판과 동일한 높이에 배치) */}
+        <div style={{ position: 'absolute', right: '5px', zIndex: 10 }}>
+          <motion.button
+            onClick={stopGame}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.85, rotate: -15 }}
+            style={{ 
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            {/* 크기를 대폭 키운 다트 아이콘 */}
+            <motion.div 
+              animate={{ y: isPlaying ? [0, -5, 0] : 0 }}
+              transition={{ repeat: Infinity, duration: 0.6 }}
+              style={{ 
+                fontSize: '3.5rem', 
+                filter: isPlaying ? 'drop-shadow(0 0 10px rgba(239,68,68,0.8)) drop-shadow(0 5px 10px rgba(0,0,0,0.8))' : 'drop-shadow(0 5px 10px rgba(0,0,0,0.8))' 
+              }}
+            >
+              <span className="emoji-icon">🎯</span>
+            </motion.div>
+            <div style={{ 
+              color: isPlaying ? '#ef4444' : '#fff', 
+              fontWeight: '900', 
+              fontSize: '1rem',
+              marginTop: '0.2rem',
+              textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+            }}>
+              {isPlaying ? 'STOP' : 'GO'}
+            </div>
+          </motion.button>
+        </div>
       </div>
 
-      {/* 결과 메시지를 다트판 위가 아닌 아래에 고정 표시 */}
-      <div style={{ height: '60px', marginTop: '2rem', display: 'flex', justifyContent: 'center', width: '100%' }}>
+      {/* 결과 메시지를 다트판 아래에 고정 표시 */}
+      <div style={{ height: '60px', marginTop: '3rem', display: 'flex', justifyContent: 'center', width: '100%' }}>
         <AnimatePresence>
           {result && (
             <motion.div
@@ -222,46 +263,6 @@ export default function DartGame() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* 오른쪽 좁은 공간에 있던 버튼을 아래로 200px 내려서 크게 배치 */}
-      <div style={{ marginTop: '100px', marginBottom: '60px', display: 'flex', justifyContent: 'center', width: '100%' }}>
-        <motion.button
-          onClick={stopGame}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ 
-            scale: 0.95, 
-            y: 12, 
-            boxShadow: isPlaying
-              ? '0 0px 0 #991b1b, 0 5px 10px rgba(220,38,38,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
-              : '0 0px 0 #166534, 0 5px 10px rgba(22,163,74,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
-          }}
-          style={{ 
-            width: '100px',
-            height: '100px',
-            borderRadius: '50%',
-            background: isPlaying ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
-            border: '4px solid rgba(255,255,255,0.3)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: '900',
-            fontSize: '1.1rem',
-            boxShadow: isPlaying 
-              ? '0 12px 0 #991b1b, 0 15px 25px rgba(220,38,38,0.7), inset 0 2px 5px rgba(255,255,255,0.4)' 
-              : '0 12px 0 #166534, 0 15px 25px rgba(22,163,74,0.7), inset 0 2px 5px rgba(255,255,255,0.4)',
-            WebkitTapHighlightColor: 'transparent',
-            outline: 'none',
-            transition: 'box-shadow 0.1s, transform 0.1s',
-            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-          }}
-        >
-          <div style={{ fontSize: '1.8rem', marginBottom: '2px' }}>🎯</div>
-          {isPlaying ? 'STOP' : 'GO'}
-        </motion.button>
       </div>
 
     </div>
