@@ -57,9 +57,10 @@ export default function DartGame() {
     cancelAnimationFrame(requestRef.current);
 
     const distance = Math.abs(50 - position);
-    const baseRadius = (distance / 50) * 110; 
+    // 다트판 크기 키움 (320px -> 반지름 160px). 140 반경 내에서 꽂히도록 수정.
+    const baseRadius = (distance / 50) * 140; 
     const randomScatter = Math.random() * 15 - 7.5; 
-    const finalRadius = Math.max(0, Math.min(125, baseRadius + randomScatter));
+    const finalRadius = Math.max(0, Math.min(150, baseRadius + randomScatter));
     
     const angle = Math.random() * 2 * Math.PI;
     const dartX = Math.cos(angle) * finalRadius;
@@ -94,20 +95,22 @@ export default function DartGame() {
         게이지가 정중앙에 올 때 타이밍을 맞춰 발사하세요!
       </p>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', width: '100%' }}>
+      {/* 게임 상단: 게이지와 다트판 (버튼은 분리해서 하단으로) */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', width: '100%', maxWidth: '400px' }}>
         
         {/* 아주 세련된 네온 스타일 세로 파워 게이지 */}
         <div style={{
           position: 'relative',
           width: '36px',
-          height: '280px',
+          height: '320px', // 다트판 사이즈에 맞춰 높이 증가
           background: '#09090b',
           borderRadius: '18px',
           boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 2px #27272a, 0 10px 15px rgba(0,0,0,0.5)',
           overflow: 'visible',
-          padding: '4px'
+          padding: '4px',
+          flexShrink: 0
         }}>
-          {/* 타겟 마커 (바깥쪽으로 살짝 튀어나온 디자인) */}
+          {/* 타겟 마커 */}
           <div style={{
             position: 'absolute',
             top: '50%',
@@ -148,8 +151,8 @@ export default function DartGame() {
           </div>
         </div>
 
-        {/* 중앙: 다트판 영역 */}
-        <div style={{ position: 'relative', width: '260px', height: '260px' }}>
+        {/* 중앙: 다트판 영역 (크기 증가) */}
+        <div style={{ position: 'relative', width: '320px', height: '320px', flexShrink: 0 }}>
           {/* 유저가 업로드한 리얼 다트판 이미지 */}
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
@@ -161,7 +164,7 @@ export default function DartGame() {
           }}>
           </div>
 
-          {/* 깔끔한 다트 핀 이모지 (지저분한 SVG나 합성 이미지 대신 가장 선명함) */}
+          {/* 깔끔한 다트 핀 이모지 */}
           <AnimatePresence>
             {result && (
               <motion.div
@@ -173,8 +176,9 @@ export default function DartGame() {
                   left: '50%',
                   width: '40px',
                   height: '40px',
+                  // 📍 이모지의 뾰족한 끝(하단 중앙)이 정확히 좌표에 오도록 세밀하게 보정
                   marginLeft: '-20px',
-                  marginTop: '-35px',
+                  marginTop: '-38px',
                   zIndex: 20,
                   transformOrigin: 'bottom center',
                   display: 'flex',
@@ -189,82 +193,77 @@ export default function DartGame() {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* 결과 메시지 팝업 */}
-          <AnimatePresence>
-            {result && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  background: 'rgba(9, 9, 11, 0.95)',
-                  padding: '1rem 2rem',
-                  borderRadius: '20px',
-                  color: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
-                  fontWeight: '900',
-                  fontSize: '1.4rem',
-                  zIndex: 30,
-                  whiteSpace: 'nowrap',
-                  border: '2px solid',
-                  borderColor: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.8)'
-                }}
-              >
-                {result.score === 'BULLSEYE' ? '정중앙! 🎉' : 
-                 result.score === 'GOOD' ? '안전권! 👍' : 
-                 '아웃! 🍻'}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 오른쪽: 진짜 아케이드 물리 버튼 스타일 */}
-        <div style={{ position: 'relative', width: '80px', height: '280px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          
-          <motion.button
-            onClick={stopGame}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ 
-              scale: 0.95, 
-              y: 12, 
-              boxShadow: isPlaying
-                ? '0 0px 0 #991b1b, 0 5px 10px rgba(220,38,38,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
-                : '0 0px 0 #166534, 0 5px 10px rgba(22,163,74,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
-            }}
-            style={{ 
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              background: isPlaying ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
-              border: '3px solid rgba(255,255,255,0.3)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#fff',
-              fontWeight: '900',
-              fontSize: '1rem',
-              boxShadow: isPlaying 
-                ? '0 12px 0 #991b1b, 0 15px 25px rgba(220,38,38,0.7), inset 0 2px 5px rgba(255,255,255,0.4)' 
-                : '0 12px 0 #166534, 0 15px 25px rgba(22,163,74,0.7), inset 0 2px 5px rgba(255,255,255,0.4)',
-              WebkitTapHighlightColor: 'transparent',
-              outline: 'none',
-              transition: 'box-shadow 0.1s, transform 0.1s',
-              textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-            }}
-          >
-            <div style={{ fontSize: '1.5rem', marginBottom: '2px' }}>🎯</div>
-            {isPlaying ? 'STOP' : 'GO'}
-          </motion.button>
-          
         </div>
       </div>
+
+      {/* 결과 메시지를 다트판 위가 아닌 아래에 고정 표시 */}
+      <div style={{ height: '60px', marginTop: '2rem', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <AnimatePresence>
+          {result && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              style={{
+                background: 'rgba(9, 9, 11, 0.95)',
+                padding: '0.8rem 2rem',
+                borderRadius: '16px',
+                color: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
+                fontWeight: '900',
+                fontSize: '1.4rem',
+                border: '2px solid',
+                borderColor: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.8)'
+              }}
+            >
+              {result.score === 'BULLSEYE' ? '정중앙! 🎉' : 
+               result.score === 'GOOD' ? '안전권! 👍' : 
+               '아웃! 🍻'}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 오른쪽 좁은 공간에 있던 버튼을 아래로 200px 내려서 크게 배치 */}
+      <div style={{ marginTop: '100px', marginBottom: '60px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <motion.button
+          onClick={stopGame}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ 
+            scale: 0.95, 
+            y: 12, 
+            boxShadow: isPlaying
+              ? '0 0px 0 #991b1b, 0 5px 10px rgba(220,38,38,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
+              : '0 0px 0 #166534, 0 5px 10px rgba(22,163,74,0.5), inset 0 2px 5px rgba(255,255,255,0.4)'
+          }}
+          style={{ 
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            background: isPlaying ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+            border: '4px solid rgba(255,255,255,0.3)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: '900',
+            fontSize: '1.1rem',
+            boxShadow: isPlaying 
+              ? '0 12px 0 #991b1b, 0 15px 25px rgba(220,38,38,0.7), inset 0 2px 5px rgba(255,255,255,0.4)' 
+              : '0 12px 0 #166534, 0 15px 25px rgba(22,163,74,0.7), inset 0 2px 5px rgba(255,255,255,0.4)',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none',
+            transition: 'box-shadow 0.1s, transform 0.1s',
+            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+          }}
+        >
+          <div style={{ fontSize: '1.8rem', marginBottom: '2px' }}>🎯</div>
+          {isPlaying ? 'STOP' : 'GO'}
+        </motion.button>
+      </div>
+
     </div>
   );
 }
