@@ -3,6 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { playClick, playPop, playFanfare, playApplause, playFail } from '../utils/audio';
 import { assetUrl } from '../utils/assets';
 
+const DartPin = ({ size = 60 }) => (
+  <svg viewBox="0 0 100 100" width={size} height={size} style={{ filter: 'drop-shadow(5px 15px 10px rgba(0,0,0,0.6))', display: 'block' }}>
+    {/* 바늘 (Tip) */}
+    <polygon points="50,95 48,65 52,65" fill="#d1d5db" />
+    {/* 배럴 (Barrel) */}
+    <rect x="45" y="45" width="10" height="20" fill="#9ca3af" rx="2" />
+    {/* 배럴 그립 무늬 */}
+    <rect x="44" y="48" width="12" height="2" fill="#4b5563" />
+    <rect x="44" y="53" width="12" height="2" fill="#4b5563" />
+    <rect x="44" y="58" width="12" height="2" fill="#4b5563" />
+    {/* 샤프트 (Shaft) */}
+    <rect x="47" y="25" width="6" height="20" fill="#1f2937" />
+    {/* 플라이트 (Flight) */}
+    <path d="M50,5 L35,25 L47,25 L50,15 L53,25 L65,25 Z" fill="#ef4444" />
+    <path d="M50,5 L45,25 L50,15 L55,25 Z" fill="#dc2626" />
+  </svg>
+);
+
 export default function DartGame() {
   const [position, setPosition] = useState(50); 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -98,7 +116,7 @@ export default function DartGame() {
       {/* 게임 영역 (다트판이 무조건 화면 정중앙에 오도록 Absolute/Relative 활용) */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '420px', height: '290px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         
-        {/* 왼쪽: 세로 게이지 (크기 10% 축소에 맞춰서 높이 260px) */}
+        {/* 왼쪽: 세로 게이지 */}
         <div style={{
           position: 'absolute',
           left: '5px',
@@ -139,7 +157,7 @@ export default function DartGame() {
               bottom: 0,
               left: 0,
               right: 0,
-              height: `${position}%`,
+              height: \\%\,
               background: position > 40 && position < 60 
                 ? 'linear-gradient(to top, #22c55e, #4ade80)' 
                 : position > 20 && position < 80 
@@ -152,12 +170,12 @@ export default function DartGame() {
           </div>
         </div>
 
-        {/* 중앙: 다트판 영역 (화면 중앙 정렬 유지. 320px에서 10% 줄인 290px) */}
+        {/* 중앙: 다트판 영역 */}
         <div style={{ position: 'relative', width: '290px', height: '290px' }}>
           {/* 완벽하게 중심이 맞는 고해상도 생성 다트판 이미지 */}
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
-            backgroundImage: `url(${assetUrl('assets/drinks/dartboard2.jpg')})`,
+            backgroundImage: \url(\)\,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.8)',
@@ -165,21 +183,23 @@ export default function DartGame() {
           }}>
           </div>
 
-          {/* 깔끔한 다트 핀 이모지 */}
+          {/* 깔끔한 다트 핀 모양 */}
           <AnimatePresence>
             {result && (
               <motion.div
-                initial={{ scale: 4, opacity: 0, y: 150, rotate: 45 }}
+                // 우측 하단(버튼 위치)에서 출발해서 꽂히는 애니메이션
+                initial={{ scale: 3, opacity: 0, x: 200, y: 150, rotate: 90 }}
                 animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                 style={{
                   position: 'absolute',
                   top: '50%',
                   left: '50%',
-                  width: '40px',
-                  height: '40px',
-                  // 📍 이모지의 뾰족한 끝(하단 중앙)이 정확히 좌표에 오도록 세밀하게 보정
-                  marginLeft: '-20px',
-                  marginTop: '-36px',
+                  width: '50px',
+                  height: '50px',
+                  // 사이즈 50px일 때 바늘 끝(50,95)의 중심 보정: 좌우 -25px, 상하 -47.5px
+                  marginLeft: '-25px',
+                  marginTop: '-47.5px',
                   zIndex: 20,
                   transformOrigin: 'bottom center',
                   display: 'flex',
@@ -187,10 +207,7 @@ export default function DartGame() {
                   alignItems: 'center'
                 }}
               >
-                <div style={{ 
-                  fontSize: '44px', 
-                  filter: 'drop-shadow(5px 15px 8px rgba(0,0,0,0.8))' 
-                }}>📍</div>
+                <DartPin size={50} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -213,22 +230,18 @@ export default function DartGame() {
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            {/* 크기를 대폭 키운 다트 아이콘 */}
+            {/* 리얼한 다트 핀 렌더링 */}
             <motion.div 
-              animate={{ y: isPlaying ? [0, -5, 0] : 0 }}
+              animate={{ y: isPlaying ? [0, -10, 0] : 0 }}
               transition={{ repeat: Infinity, duration: 0.6 }}
-              style={{ 
-                fontSize: '3.5rem', 
-                filter: isPlaying ? 'drop-shadow(0 0 10px rgba(239,68,68,0.8)) drop-shadow(0 5px 10px rgba(0,0,0,0.8))' : 'drop-shadow(0 5px 10px rgba(0,0,0,0.8))' 
-              }}
             >
-              <span className="emoji-icon">🎯</span>
+              <DartPin size={80} />
             </motion.div>
             <div style={{ 
               color: isPlaying ? '#ef4444' : '#fff', 
               fontWeight: '900', 
-              fontSize: '1rem',
-              marginTop: '0.2rem',
+              fontSize: '1.2rem',
+              marginTop: '0.5rem',
               textShadow: '0 2px 4px rgba(0,0,0,0.8)'
             }}>
               {isPlaying ? 'STOP' : 'GO'}
