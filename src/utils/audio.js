@@ -243,3 +243,36 @@ export function playApplause() {
   noise.start(ctx.currentTime);
   noise.stop(ctx.currentTime + 1.5);
 }
+
+export function playLaugh() {
+  const ctx = initAudio();
+  if (!ctx) return;
+  
+  // 하하하 웃는 소리 (간단한 신디사이징 패턴)
+  // 3~4번 연속으로 짧고 높은 주파수음을 냄
+  const count = 4;
+  for (let i = 0; i < count; i++) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    // 약간 떨리는 사람 목소리 느낌의 파형 (triangle)
+    osc.type = 'triangle';
+    
+    const startTime = ctx.currentTime + (i * 0.15);
+    const duration = 0.1;
+    
+    // 음높이를 점점 낮춤 (하! 하! 하!)
+    osc.frequency.setValueAtTime(600 - (i * 30), startTime);
+    osc.frequency.linearRampToValueAtTime(400, startTime + duration);
+    
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+    
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+}

@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { assetUrl } from '../utils/assets';
 import jokes from '../data/dadJokes.json';
+import { playClick, playLaugh } from '../utils/audio';
 
 export default function DadJokes() {
   const [currentIndex, setCurrentIndex] = useState(Math.floor(Math.random() * jokes.length));
   const [isFlipped, setIsFlipped] = useState(false);
+  const playedIndices = useRef(new Set([currentIndex]));
 
   const nextJoke = () => {
+    playClick();
     setIsFlipped(false);
     setTimeout(() => {
+      if (playedIndices.current.size >= jokes.length) {
+        // 모든 개그를 다 봤으면 초기화
+        playedIndices.current.clear();
+      }
+      
       let nextIdx = currentIndex;
-      while (nextIdx === currentIndex) {
+      while (playedIndices.current.has(nextIdx)) {
         nextIdx = Math.floor(Math.random() * jokes.length);
       }
+      playedIndices.current.add(nextIdx);
       setCurrentIndex(nextIdx);
     }, 300); // 카드가 다시 앞으로 돌아오는 시간을 줌
+  };
+
+  const flipCard = () => {
+    playClick();
+    const newFlipped = !isFlipped;
+    setIsFlipped(newFlipped);
+    
+    if (newFlipped) {
+      setTimeout(() => playLaugh(), 300);
+    }
   };
 
   return (
@@ -37,7 +56,7 @@ export default function DadJokes() {
           marginBottom: '3rem',
           position: 'relative'
         }}
-        onClick={() => setIsFlipped(!isFlipped)}
+        onClick={flipCard}
       >
         <motion.div
           animate={{ 
