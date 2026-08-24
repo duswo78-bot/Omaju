@@ -5,19 +5,27 @@ import { assetUrl } from '../utils/assets';
 
 const DartPin = ({ size = 60 }) => (
   <svg viewBox="0 0 100 100" width={size} height={size} style={{ filter: 'drop-shadow(5px 15px 10px rgba(0,0,0,0.6))', display: 'block' }}>
-    {/* 바늘 (Tip) */}
-    <polygon points="50,95 48,65 52,65" fill="#d1d5db" />
-    {/* 배럴 (Barrel) */}
-    <rect x="45" y="45" width="10" height="20" fill="#9ca3af" rx="2" />
-    {/* 배럴 그립 무늬 */}
-    <rect x="44" y="48" width="12" height="2" fill="#4b5563" />
-    <rect x="44" y="53" width="12" height="2" fill="#4b5563" />
-    <rect x="44" y="58" width="12" height="2" fill="#4b5563" />
-    {/* 샤프트 (Shaft) */}
-    <rect x="47" y="25" width="6" height="20" fill="#1f2937" />
-    {/* 플라이트 (Flight) */}
-    <path d="M50,5 L35,25 L47,25 L50,15 L53,25 L65,25 Z" fill="#ef4444" />
-    <path d="M50,5 L45,25 L50,15 L55,25 Z" fill="#dc2626" />
+    {/* 바늘 (Tip) - 은빛 메탈 */}
+    <polygon points="50,95 47,65 53,65" fill="#e5e7eb" />
+    <polygon points="50,95 50,65 53,65" fill="#9ca3af" /> 
+    
+    {/* 배럴 (Barrel) - 눈에 띄는 화려한 금장 */}
+    <rect x="44" y="45" width="12" height="20" fill="#fbbf24" rx="2" />
+    <rect x="43" y="48" width="14" height="2" fill="#d97706" />
+    <rect x="43" y="53" width="14" height="2" fill="#d97706" />
+    <rect x="43" y="58" width="14" height="2" fill="#d97706" />
+    
+    {/* 샤프트 (Shaft) - 화이트/실버 */}
+    <rect x="46" y="25" width="8" height="20" fill="#f3f4f6" />
+    <rect x="50" y="25" width="4" height="20" fill="#d1d5db" />
+    
+    {/* 플라이트 (Flight) - 크고 화려한 파란색 깃털 베이스에 빨간색 포인트 */}
+    {/* 큰 뒷배경 깃 (파란색) */}
+    <path d="M50,2 L25,25 L45,25 L50,12 L55,25 L75,25 Z" fill="#3b82f6" />
+    {/* 앞쪽 깃 (빨간색 포인트) */}
+    <path d="M50,2 L40,25 L50,12 L60,25 Z" fill="#ef4444" />
+    {/* 중앙 기둥 디테일 */}
+    <path d="M50,2 L48,25 L52,25 Z" fill="#1e3a8a" />
   </svg>
 );
 
@@ -213,8 +221,8 @@ export default function DartGame() {
           </AnimatePresence>
         </div>
 
-        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (오른쪽에 붙이되 100px 아래로) */}
-        <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '100px' }}>
+        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (오른쪽에 붙이되 250px 아래로) */}
+        <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '250px' }}>
           <motion.button
             onClick={stopGame}
             whileHover={{ scale: 1.1 }}
