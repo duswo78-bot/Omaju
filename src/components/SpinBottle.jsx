@@ -96,16 +96,19 @@ export default function SpinBottle() {
         <span style={{ color: '#9ca3af', fontSize: '0.9rem' }}>인원수</span>
         <button 
           onClick={() => setPlayerCount(Math.max(2, playerCount - 1))}
-          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #555', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          disabled={isSpinning}
+          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #555', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: isSpinning ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isSpinning ? 0.5 : 1 }}
         >−</button>
         <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#facc15', minWidth: '30px', textAlign: 'center' }}>{playerCount}</span>
         <button 
           onClick={() => setPlayerCount(Math.min(10, playerCount + 1))}
-          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #555', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          disabled={isSpinning}
+          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #555', background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: '1.2rem', cursor: isSpinning ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isSpinning ? 0.5 : 1 }}
         >+</button>
         <button 
           onClick={reshuffleNames}
-          style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid #a78bfa50', background: 'rgba(167, 139, 250, 0.1)', color: '#a78bfa', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 'bold' }}
+          disabled={isSpinning}
+          style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid #a78bfa50', background: 'rgba(167, 139, 250, 0.1)', color: '#a78bfa', fontSize: '0.8rem', cursor: isSpinning ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: isSpinning ? 0.5 : 1 }}
         >🎲 셔플</button>
       </div>
 
