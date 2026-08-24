@@ -92,19 +92,29 @@ export default function DartGame() {
     const dartX = Math.cos(angle) * finalRadius;
     const dartY = Math.sin(angle) * finalRadius; 
 
-    let score = '';
-    if (distance <= 4) score = 'BULLSEYE';
-    else if (distance <= 15) score = 'GOOD';
-    else if (distance <= 35) score = 'MISS';
-    else score = 'OUT';
+    let scoreNum = 0;
+    if (distance <= 4) scoreNum = 100;
+    else if (distance <= 15) scoreNum = 80;
+    else if (distance <= 35) scoreNum = 50;
+    else if (distance <= 60) scoreNum = 30;
+    else if (distance <= 90) scoreNum = 10;
+    else scoreNum = 0;
     
+    // 비행 각도 계산 (버튼 시작 위치 x: 200, y: 170 대비)
+    const startX = 200;
+    const startY = 170;
+    const flightAngleRad = Math.atan2(dartY - startY, dartX - startX);
+    const flightAngleDeg = (flightAngleRad * 180) / Math.PI;
+    // 다트 바늘이 위를 향하므로(0도), 날아가는 방향에 맞추려면 각도에 90을 더함
+    const dartRotation = flightAngleDeg + 90;
+
     // 날아가는 애니메이션 시작
-    setResult({ distance, score, dartX, dartY, isFlying: true });
+    setResult({ distance, score: scoreNum, dartX, dartY, dartRotation, startX, startY, isFlying: true });
 
     // 1초(1000ms) 뒤 도착했을 때 사운드 및 결과 메시지 표시
     setTimeout(() => {
-      if (score === 'BULLSEYE') { playFanfare(); playApplause(); }
-      else if (score === 'GOOD') { playPop(); }
+      if (scoreNum === 100) { playFanfare(); playApplause(); }
+      else if (scoreNum >= 50) { playPop(); }
       else { playFail(); }
       
       setResult(prev => ({ ...prev, isFlying: false }));
@@ -188,13 +198,13 @@ export default function DartGame() {
           </div>
 
           {/* 깔끔한 다트 핀 모양 */}
+          {/* 깔끔한 다트 핀 모양 */}
           <AnimatePresence>
             {result && (
               <motion.div
-                // 회전 없이(rotate 유지) 출발 각도 그대로 날아가서 꽂히게 함.
-                // 우측 하단에서 좌측 상단 과녁을 향해 날아가므로 -45도 정도로 비스듬하게 향함.
-                initial={{ scale: 1.5, opacity: 1, x: 180, y: 125, rotate: -45 }}
-                animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: -45 }}
+                // 계산된 비행 각도(dartRotation)를 유지하며 날아감
+                initial={{ scale: 1.5, opacity: 1, x: result.startX, y: result.startY, rotate: result.dartRotation }}
+                animate={{ scale: 1, opacity: 1, x: result.dartX, y: result.dartY, rotate: result.dartRotation }}
                 transition={{ duration: 1, ease: 'easeOut' }}
                 style={{
                   position: 'absolute',
@@ -202,13 +212,10 @@ export default function DartGame() {
                   left: '50%',
                   width: '50px',
                   height: '50px',
-                  // 바늘 끝(y=5)이 꽂히는 지점이 되도록 중심 보정
-                  // SVG 중심(50,50) 대비 바늘 끝(50,5)은 y가 -45만큼 위.
-                  // 이를 상쇄하려면 marginTop을 +22.5px만큼(절반, 50px기준) 내려야 하지만, transform-origin으로 제어
                   marginLeft: '-25px',
                   marginTop: '-25px',
                   zIndex: 20,
-                  transformOrigin: '50% 10%', // (50, 5) 부근이 핀 끝.
+                  transformOrigin: '50% 10%', 
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center'
@@ -260,8 +267,8 @@ export default function DartGame() {
         </div>
       </div>
 
-      {/* 결과 메시지 */}
-      <div style={{ position: 'absolute', bottom: '0px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 30, pointerEvents: 'none' }}>
+      {/* 결과 메시지: 과녁을 가리지 않도록 더 아래로(-30px) 내림 */}
+      <div style={{ position: 'absolute', bottom: '-30px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 30, pointerEvents: 'none' }}>
         <AnimatePresence>
           {result && !result.isFlying && (
             <motion.div
@@ -272,17 +279,17 @@ export default function DartGame() {
                 background: 'rgba(9, 9, 11, 0.95)',
                 padding: '0.8rem 2rem',
                 borderRadius: '16px',
-                color: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
+                color: result.score === 100 ? '#4ade80' : result.score >= 50 ? '#60a5fa' : '#ef4444',
                 fontWeight: '900',
                 fontSize: '1.4rem',
                 border: '2px solid',
-                borderColor: result.score === 'BULLSEYE' ? '#4ade80' : result.score === 'GOOD' ? '#60a5fa' : '#ef4444',
+                borderColor: result.score === 100 ? '#4ade80' : result.score >= 50 ? '#60a5fa' : '#ef4444',
                 boxShadow: '0 10px 30px rgba(0,0,0,0.8)'
               }}
             >
-              {result.score === 'BULLSEYE' ? '정중앙! 🎉' : 
-               result.score === 'GOOD' ? '안전권! 👍' : 
-               '아웃! 🍻'}
+              {result.score === 100 ? '100점! 정중앙! 🎉' : 
+               result.score > 0 ? `${result.score}점! 👍` : 
+               '0점! 아웃! 🍻'}
             </motion.div>
           )}
         </AnimatePresence>
