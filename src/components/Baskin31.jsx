@@ -117,17 +117,7 @@ export default function Baskin31() {
     setPlayerCount(newCount);
   };
 
-  // Baskin Robbins Theme Background (Pink & Blue dots on dark)
-  const brBackground = {
-    backgroundImage: `
-      radial-gradient(rgba(236, 72, 153, 0.15) 20%, transparent 20%),
-      radial-gradient(rgba(59, 130, 246, 0.15) 20%, transparent 20%)
-    `,
-    backgroundSize: '40px 40px',
-    backgroundPosition: '0 0, 20px 20px',
-    borderRadius: '16px',
-    border: '1px solid rgba(255,255,255,0.05)',
-  };
+  // Patterns will be handled by Game.jsx wrapper now
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '1rem 0' }}>
@@ -146,7 +136,7 @@ export default function Baskin31() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="glass-panel"
-            style={{ width: '100%', maxWidth: '360px', padding: '1.5rem', ...brBackground }}
+            style={{ width: '100%', maxWidth: '360px', padding: '1.5rem' }}
           >
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ color: '#9ca3af', fontSize: '0.9rem', marginBottom: '0.5rem' }}>플레이어 수</div>
@@ -196,7 +186,7 @@ export default function Baskin31() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="glass-panel"
-            style={{ width: '100%', maxWidth: '360px', padding: '1.5rem', textAlign: 'center', ...brBackground }}
+            style={{ width: '100%', maxWidth: '360px', padding: '1.5rem', textAlign: 'center' }}
           >
             <div style={{ fontSize: '1rem', fontWeight: 'bold', color: loser ? '#ef4444' : '#60a5fa', marginBottom: '0.5rem', background: 'rgba(0,0,0,0.4)', padding: '0.5rem', borderRadius: '999px', display: 'inline-block' }}>
               {loser ? `🚨 ${loser} 당첨! 🚨` : `👉 ${currentTurnPlayer} 차례`}

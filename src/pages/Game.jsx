@@ -50,9 +50,53 @@ export default function Game() {
     })
   };
 
+  const gameBackgrounds = {
+    bottle: {
+      backgroundImage: 'radial-gradient(circle at center, rgba(234,179,8,0.15) 0%, transparent 60%)',
+    },
+    baskin: {
+      backgroundImage: 'radial-gradient(rgba(236, 72, 153, 0.15) 20%, transparent 20%), radial-gradient(rgba(59, 130, 246, 0.15) 20%, transparent 20%)',
+      backgroundSize: '40px 40px',
+      backgroundPosition: '0 0, 20px 20px',
+    },
+    updown: {
+      backgroundImage: 'linear-gradient(45deg, rgba(74, 222, 128, 0.08) 25%, transparent 25%, transparent 75%, rgba(74, 222, 128, 0.08) 75%, rgba(74, 222, 128, 0.08)), linear-gradient(45deg, rgba(74, 222, 128, 0.08) 25%, transparent 25%, transparent 75%, rgba(74, 222, 128, 0.08) 75%, rgba(74, 222, 128, 0.08))',
+      backgroundSize: '20px 20px',
+      backgroundPosition: '0 0, 10px 10px',
+    },
+    forbidden: {
+      backgroundImage: 'repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.08) 10px, transparent 10px, transparent 20px)',
+    },
+    jokes: {
+      backgroundImage: 'radial-gradient(circle, rgba(168, 85, 247, 0.1) 2px, transparent 2px)',
+      backgroundSize: '20px 20px',
+    },
+    sobriety: {
+      backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+      backgroundSize: '20px 20px',
+    },
+    rules: {
+      backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
+      backgroundSize: '15px 15px',
+    }
+  };
+
   return (
-    <div className="animate-fade-in" style={{ padding: '0', paddingBottom: '120px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', overflowX: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '1.5rem', marginTop: '1rem' }}>
+    <div 
+      className="animate-fade-in" 
+      style={{ 
+        padding: '0', 
+        paddingBottom: '120px', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        minHeight: '100vh', 
+        overflowX: 'hidden',
+        transition: 'background 0.3s ease',
+        ...gameBackgrounds[games[currentIndex].id]
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '1.5rem', marginTop: '1rem', zIndex: 10 }}>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => paginate(-1)}
