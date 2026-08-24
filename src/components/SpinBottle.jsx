@@ -224,28 +224,6 @@ export default function SpinBottle() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <motion.button 
-        onClick={spinBottle}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="glass-panel"
-        style={{ 
-          padding: '1rem 3rem', 
-          fontSize: '1.2rem', 
-          fontWeight: 'bold', 
-          background: isSpinning 
-            ? 'rgba(100,100,100,0.2)' 
-            : 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(250, 204, 21, 0.2))', 
-          border: '1px solid #facc1550', 
-          color: isSpinning ? '#666' : '#facc15', 
-          cursor: isSpinning ? 'wait' : 'pointer',
-          marginTop: winner ? '0' : '-10px'
-        }}
-        disabled={isSpinning}
-      >
-        {isSpinning ? '돌아가는 중...' : '🍾 돌리기!'}
-      </motion.button>
     </div>
   );
 }
