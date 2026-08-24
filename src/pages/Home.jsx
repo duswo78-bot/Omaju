@@ -243,23 +243,21 @@ function DrinkCard({ drink, handleDragStart, handleDrag, handleDragEnd, handleSe
       {/* 하단 그라데이션 */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%)', zIndex: 1, pointerEvents: 'none' }} />
 
-      {/* 하트 아이콘 (조합 주종만) */}
-      {!isDefaultDrink(drink.id) && (
-        <div 
-          className="favorite-btn"
-          style={{ position: 'absolute', top: '12px', right: '12px', cursor: 'pointer', zIndex: 80, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', padding: '6px', borderRadius: '50%' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleFavorite(drink.id);
-          }}
-        >
-          <Heart 
-            size={18} 
-            color={isFavorite(drink.id) ? '#ef4444' : '#fff'}
-            fill={isFavorite(drink.id) ? '#ef4444' : 'transparent'}
-          />
-        </div>
-      )}
+      {/* 하트 아이콘 */}
+      <div 
+        className="favorite-btn"
+        style={{ position: 'absolute', top: '12px', right: '12px', cursor: 'pointer', zIndex: 80, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', padding: '6px', borderRadius: '50%' }}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFavorite(drink.id);
+        }}
+      >
+        <Heart 
+          size={18} 
+          color={isFavorite(drink.id) ? '#ef4444' : '#fff'}
+          fill={isFavorite(drink.id) ? '#ef4444' : 'transparent'}
+        />
+      </div>
 
       {/* 글래스모피즘 텍스트 태그 */}
       <div style={{ 

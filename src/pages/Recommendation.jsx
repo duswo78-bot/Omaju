@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { RefreshCw, Heart } from 'lucide-react';
 import snacksData from '../data/snacks.json';
 import relationsData from '../data/relations.json';
 import { resolveAiAlcoholIds, buildPendingContext } from '../data/drinkIdMap';
+import { useDrinkContext } from '../context/DrinkContext';
 import { weightedSample } from '../workers/utils/random.js';
 import PlaceSearchButtons from '../components/PlaceSearchButtons';
 
@@ -60,9 +62,10 @@ function getSnackRecommendations(uiDrinkId, limit = 16) {
 }
 
 export default function Recommendation() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const drink = location.state?.selectedDrink;
+  const { toggleFavoriteSnack, isFavoriteSnack } = useDrinkContext();
 
   const [showAll, setShowAll] = useState(false);
   const [shuffleToken, setShuffleToken] = useState(0);
@@ -140,8 +143,19 @@ export default function Recommendation() {
           </div>
         ) : (
           recommendations.map((item) => (
-            <div key={item.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+            <div key={item.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'relative' }}>
+              <button
+                onClick={() => toggleFavoriteSnack(item.id)}
+                style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                aria-label="안주 찜하기"
+              >
+                <Heart 
+                  size={22} 
+                  color={isFavoriteSnack(item.id) ? '#f43f5e' : 'rgba(255,255,255,0.4)'}
+                  fill={isFavoriteSnack(item.id) ? '#f43f5e' : 'none'}
+                />
+              </button>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '0.75rem', paddingRight: '2rem' }}>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>{item.name_ko}</h2>
                 <span style={{ color: '#facc15', whiteSpace: 'nowrap' }}>
                   {'★'.repeat(item.stars)}{'☆'.repeat(5 - item.stars)}

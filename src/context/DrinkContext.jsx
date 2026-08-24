@@ -40,11 +40,15 @@ const DrinkContext = createContext();
 export function DrinkProvider({ children }) {
   const [drinks, setDrinks] = useState(initialDrinks);
   const [favorites, setFavorites] = useState([]);
+  const [favoriteSnacks, setFavoriteSnacks] = useState([]);
 
   // Load favorites from local storage on mount
   useEffect(() => {
     const savedFavorites = JSON.parse(localStorage.getItem('omaju_favorites') || '[]');
     setFavorites(savedFavorites);
+
+    const savedSnacks = JSON.parse(localStorage.getItem('omaju_favorite_snacks') || '[]');
+    setFavoriteSnacks(savedSnacks);
 
     // Reconstruct drink objects for saved favorites
     const loadedDrinks = [...initialDrinks];
@@ -65,10 +69,9 @@ export function DrinkProvider({ children }) {
     setDrinks(loadedDrinks);
   }, []);
 
-  const addDrink = (newDrink) => {
-    if (!drinks.find(d => d.id === newDrink.id)) {
-      setDrinks(prev => [...prev, newDrink]);
-    }
+  const addDrink = (drink) => {
+    if (initialDrinks.some(d => d.id === drink.id)) return;
+    setDrinks(prev => [...prev, drink]);
   };
 
   const removeDrink = (drinkId) => {
@@ -98,6 +101,23 @@ export function DrinkProvider({ children }) {
 
   const isFavorite = (drinkId) => favorites.includes(drinkId);
 
+  // Snacks favorites functions
+  const toggleFavoriteSnack = (snackId) => {
+    setFavoriteSnacks(prev => {
+      let newFavs;
+      if (prev.includes(snackId)) {
+        newFavs = prev.filter(id => id !== snackId);
+      } else {
+        newFavs = [...prev, snackId];
+      }
+      localStorage.setItem('omaju_favorite_snacks', JSON.stringify(newFavs));
+      return newFavs;
+    });
+  };
+
+  const isFavoriteSnack = (snackId) => favoriteSnacks.includes(snackId);
+  const getFavoriteSnackIds = () => favoriteSnacks;
+
   // Check if a drink is a default (initial) drink
   const isDefaultDrink = (drinkId) => initialDrinks.some(d => d.id === drinkId);
 
@@ -105,13 +125,14 @@ export function DrinkProvider({ children }) {
     const catalog = [
       ...initialDrinks,
       ...Object.values(mixCombinations),
-      ...nonAlcoholicItems,
-      ...drinks,
+      ...nonAlcoholicItems
     ];
+    
     const byId = new Map();
     catalog.forEach((d) => {
       if (d?.id && !byId.has(d.id)) byId.set(d.id, d);
     });
+    
     return favorites.map((id) => byId.get(id)).filter(Boolean);
   };
 
@@ -126,6 +147,10 @@ export function DrinkProvider({ children }) {
         isFavorite,
         isDefaultDrink,
         getFavoriteDrinks,
+        favoriteSnacks,
+        toggleFavoriteSnack,
+        isFavoriteSnack,
+        getFavoriteSnackIds
       }}
     >
       {children}
