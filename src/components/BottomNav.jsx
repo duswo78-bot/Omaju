@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Heart, User, Dices, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function BottomNav({ toggleAiChat }) {
   const navigate = useNavigate();
@@ -31,7 +32,12 @@ export default function BottomNav({ toggleAiChat }) {
       })}
 
       {/* Floating AI Button at Far Right */}
-      <button className="nav-ai-button" onClick={toggleAiChat}>
+      <motion.button 
+        className="nav-ai-button" 
+        onClick={toggleAiChat}
+        animate={{ y: [0, -8, 0] }}
+        transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+      >
         <div className="nav-ai-button-inner">
           <div style={{ position: 'absolute', top: '7px', right: '16px' }}>
             <Star size={10} fill="#f472b6" color="#f472b6" />
@@ -44,7 +50,7 @@ export default function BottomNav({ toggleAiChat }) {
             <Star size={7} fill="#a855f7" color="#a855f7" />
           </div>
         </div>
-      </button>
+      </motion.button>
     </div>
   );
 }
