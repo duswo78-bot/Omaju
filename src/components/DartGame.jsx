@@ -196,8 +196,8 @@ export default function DartGame() {
           </AnimatePresence>
         </div>
 
-        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (다트판과 동일한 높이에 배치) */}
-        <div style={{ position: 'absolute', right: '5px', zIndex: 10 }}>
+        {/* 오른쪽: 배경이 제거된 대형 아이콘 버튼 (오른쪽에 붙이되 100px 아래로) */}
+        <div style={{ position: 'absolute', right: '5px', zIndex: 10, marginTop: '100px' }}>
           <motion.button
             onClick={stopGame}
             whileHover={{ scale: 1.1 }}
