@@ -86,11 +86,10 @@ export default function Game() {
       className="animate-fade-in" 
       style={{ 
         padding: '0', 
-        paddingBottom: '20px', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
-        minHeight: '100vh', 
+        flex: 1, 
         overflowX: 'hidden',
         transition: 'background 0.3s ease',
         ...gameBackgrounds[games[currentIndex].id]

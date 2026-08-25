@@ -29,7 +29,7 @@ export default function Favorites() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ padding: '2rem', paddingBottom: '6rem', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="animate-fade-in" style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
       <header style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '1.5rem', cursor: 'pointer' }}>
           ←

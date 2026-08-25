@@ -458,7 +458,7 @@ export default function Home() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ padding: '2rem', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', justifyContent: 'center', position: 'relative' }}>
+    <div className="animate-fade-in" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center', position: 'relative' }}>
       
       {/* ===== 믹스 애니메이션 오버레이 (포탈 방식으로 overflow 문제 해결) ===== */}
       {createPortal(
@@ -584,7 +584,7 @@ export default function Home() {
               boxShadow: '0 0 40px rgba(139, 92, 246, 0.4)'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #333', }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#a78bfa' }}>비주류 보물상자 ✨</h3>
               <button onClick={() => setShowNonAlcModal(false)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
             </div>

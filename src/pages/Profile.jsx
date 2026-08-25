@@ -94,7 +94,7 @@ export default function Profile() {
   });
 
   return (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', paddingBottom: '120px', minHeight: '100vh' }}>
+    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', flex: 1 }}>
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 className="text-gradient" style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.5rem' }}>MY 오마주</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>
@@ -105,7 +105,7 @@ export default function Profile() {
       <div className="glass-panel" style={{ padding: '2rem 1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
         
         {/* 기본 정보 섹션 */}
-        <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <h2 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1.3rem' }}>👤</span> 기본 정보
           </h2>
