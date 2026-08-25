@@ -95,9 +95,8 @@ export default function DartGame() {
     let scoreNum = 0;
     if (distance <= 2) scoreNum = 100;
     else if (distance <= 10) scoreNum = 80;
-    else if (distance <= 25) scoreNum = 50;
-    else if (distance <= 40) scoreNum = 30;
-    else if (distance <= 48) scoreNum = 10;
+    else if (distance <= 20) scoreNum = 50;
+    else if (distance <= 30) scoreNum = 30;
     else scoreNum = 0;
     
     // 비행 각도 계산 (버튼 시작 위치 x: 200, y: 170 대비)
@@ -288,7 +287,8 @@ export default function DartGame() {
               }}
             >
               {result.score === 100 ? '100점! 정중앙! 🎉' : 
-               result.score > 0 ? `${result.score}점! 👍` : 
+               result.score >= 50 ? `${result.score}점! 👍` : 
+               result.score > 0 ? `${result.score}점! 까비 😅` : 
                '0점! 아웃! 🍻'}
             </motion.div>
           )}
