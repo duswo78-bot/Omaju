@@ -49,7 +49,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     try {
       const q = customRegion.trim();
       const resultGeo = await searchRegionCoordinates(q);
-      setGeo(resultGeo);
+      setGeo({ ...resultGeo, _t: Date.now() });
       setHistory(prev => {
         const filtered = prev.filter(item => item.name !== q);
         return [{ id: 'custom_' + Date.now(), name: q, lat: resultGeo.lat, lng: resultGeo.lng, isBuiltin: false }, ...filtered].slice(0, 10);
@@ -63,19 +63,21 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
 
   const locate = async () => {
     try {
+      setLoading(true);
       const pos = await getCurrentPosition({ timeout: 8000 });
-      setGeo(pos);
+      setGeo({ ...pos, _t: Date.now() });
     } catch {
-      if (!geo) setGeo(geoFromRegion('gangnam'));
+      if (!geo) setGeo({ ...geoFromRegion('gangnam'), _t: Date.now() });
       setError('위치 권한이 없어 기본 상권으로 검색합니다.');
+      setLoading(false);
     }
   };
 
   const handleHistoryClick = (item) => {
     if (item.isBuiltin) {
-      setGeo(geoFromRegion(item.id));
+      setGeo({ ...geoFromRegion(item.id), _t: Date.now() });
     } else {
-      setGeo({ lat: item.lat, lng: item.lng, label: item.name, source: 'custom' });
+      setGeo({ lat: item.lat, lng: item.lng, label: item.name, source: 'custom', _t: Date.now() });
     }
   };
 
@@ -117,24 +119,21 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
 
   useEffect(() => {
     if (!open) return;
-    const start = async () => {
-      let g = loadCachedGeo() || geo || geoFromRegion('gangnam');
-      if (!g) g = geoFromRegion('gangnam');
-      setGeo(g);
-      // GPS는 백그라운드 — 실패해도 기본 상권으로 이미 검색
-      getCurrentPosition({ timeout: 6000 })
-        .then((pos) => setGeo(pos))
-        .catch(() => {});
-      await runSearch(g);
-    };
-    start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, intent.primaryQuery]);
+    let g = loadCachedGeo() || geo || geoFromRegion('gangnam');
+    if (!g) g = geoFromRegion('gangnam');
+    setGeo({ ...g, _t: Date.now() });
+    
+    // GPS background update
+    getCurrentPosition({ timeout: 6000 })
+      .then((pos) => setGeo({ ...pos, _t: Date.now() }))
+      .catch(() => {});
+  }, [open]);
 
   useEffect(() => {
-    runSearch();
+    if (!open || !geo?.lat) return;
+    runSearch(geo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geo?.lat, geo?.lng]);
+  }, [geo?.lat, geo?.lng, geo?._t, intent.primaryQuery, open]);
 
   useEffect(() => {
     if (open) {
