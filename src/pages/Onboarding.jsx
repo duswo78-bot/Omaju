@@ -49,7 +49,14 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="onboarding-container" style={{ backgroundImage: `url(${onboardingData[step].bg})`, transition: 'background-image 0.5s ease-in-out' }}>
+    <div className="onboarding-container">
+      <div 
+        className="onboarding-bg" 
+        style={{ 
+          backgroundImage: `url(${onboardingData[step].bg})`, 
+          transition: 'background-image 0.5s ease-in-out' 
+        }} 
+      />
       <div className="onboarding-overlay"></div>
       
       <AnimatePresence mode="wait">
