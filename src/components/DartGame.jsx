@@ -212,7 +212,7 @@ export default function DartGame() {
                   width: '50px',
                   height: '50px',
                   marginLeft: '-25px',
-                  marginTop: '-25px',
+                  marginTop: '-5px',
                   zIndex: 20,
                   transformOrigin: '50% 10%', 
                   display: 'flex',
