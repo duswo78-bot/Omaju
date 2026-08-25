@@ -10,6 +10,7 @@ import {
   geoFromRegion,
   loadCachedGeo,
   formatDistance,
+  haversineMeters,
 } from '../services/geoService';
 import { hasKakaoKey, searchKakaoWithFallbackQueries, searchRegionCoordinates } from '../services/kakaoLocal';
 import { kakaoMapSearchUrl, naverMapSearchUrl } from '../utils/placeSearch';
@@ -25,6 +26,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   );
 
   const [geo, setGeo] = useState(() => loadCachedGeo() || geoFromRegion('gangnam'));
+  const [userGeo, setUserGeo] = useState(null);
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -65,6 +67,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     try {
       setLoading(true);
       const pos = await getCurrentPosition({ timeout: 8000 });
+      setUserGeo(pos);
       setGeo({ ...pos, _t: Date.now() });
     } catch {
       if (!geo) setGeo({ ...geoFromRegion('gangnam'), _t: Date.now() });
@@ -125,7 +128,10 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     
     // GPS background update
     getCurrentPosition({ timeout: 6000 })
-      .then((pos) => setGeo({ ...pos, _t: Date.now() }))
+      .then((pos) => {
+        setUserGeo(pos);
+        setGeo({ ...pos, _t: Date.now() });
+      })
       .catch(() => {});
   }, [open]);
 
@@ -308,6 +314,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
 
               {!loading && places.map((p) => {
                 const shortCategory = p.category ? p.category.split('>').pop().trim() : '';
+                const displayDistance = userGeo ? haversineMeters(userGeo, p) : p.distance;
                 return (
                   <div
                     key={p.id}
@@ -330,7 +337,10 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                           </span>
                         )}
                       </div>
-                      <span style={{ color: '#67e8f9', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>{formatDistance(p.distance)}</span>
+                      <span style={{ color: '#67e8f9', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                        {formatDistance(displayDistance)}
+                        {userGeo && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginLeft: 4 }}>(내 위치)</span>}
+                      </span>
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>
                       {p.address}
