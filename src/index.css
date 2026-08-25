@@ -116,8 +116,14 @@ body {
 
 .main-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+.main-content > * {
+  flex: 1;
 }
 
 .bottom-nav-container {
@@ -357,9 +363,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: flex-end;
-  padding: 0 2rem 4rem 2rem;
-  gap: 2rem;
+  justify-content: space-between;
+  padding: 6rem 2rem 4rem 2rem;
 }
 
 .onboarding-header {
@@ -367,7 +372,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-top: auto;
+  margin-top: 10vh;
 }
 
 .logo-icon-container {
