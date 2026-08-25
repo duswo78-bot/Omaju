@@ -133,7 +133,7 @@ export default function SpinBottle() {
         justifyContent: 'center', 
         alignItems: 'center', 
         marginBottom: '2rem',
-        backgroundImage: `url(${assetUrl('assets/drinks/3d_roulette.png')})`,
+        backgroundImage: `url(${assetUrl('assets/drinks/3d_roulette.webp')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         borderRadius: '50%',
@@ -195,7 +195,7 @@ export default function SpinBottle() {
           whileHover={!isSpinning ? { scale: 1.1 } : {}}
           whileTap={!isSpinning ? { scale: 0.9 } : {}}
         >
-          <img src={assetUrl('assets/drinks/3d_bottle.png')} alt="Bottle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src={assetUrl('assets/drinks/3d_bottle.webp')} alt="Bottle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </motion.div>
       </div>
       

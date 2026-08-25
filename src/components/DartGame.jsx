@@ -366,7 +366,7 @@ export default function DartGame() {
         <div style={{ position: 'relative', width: '290px', height: '290px' }}>
           <div style={{
             width: '100%', height: '100%', borderRadius: '50%',
-            backgroundImage: `url(${assetUrl('assets/drinks/dartboard2.jpg')})`,
+            backgroundImage: `url(${assetUrl('assets/drinks/dartboard2.webp')})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             boxShadow: '0 20px 40px rgba(0,0,0,0.8), inset 0 10px 20px rgba(0,0,0,0.8)',

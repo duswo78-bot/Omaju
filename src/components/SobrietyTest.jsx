@@ -141,7 +141,7 @@ export default function SobrietyTest() {
               filter: 'drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 15px 10px rgba(0,0,0,0.8))'
             }}
           >
-            <img src={assetUrl('assets/drinks/3d_needle.png')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={assetUrl('assets/drinks/3d_needle.webp')} alt="Needle" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </motion.div>
         </div>
       </div>

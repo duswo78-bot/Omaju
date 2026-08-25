@@ -411,7 +411,7 @@ export default function Home() {
         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
         playFail();
         
-        setMixAnim({ color: '#ef4444', imagePath: assetUrl('assets/drinks/question.png'), name: randomMsg, isValid: false });
+        setMixAnim({ color: '#ef4444', imagePath: assetUrl('assets/drinks/question.webp'), name: randomMsg, isValid: false });
 
         // 폭죽 효과 제거, 대신 화면 렌더링 시 Framer Motion으로 큰 물음표 애니메이션 처리
         setTimeout(() => setMixAnim(null), 2300);
