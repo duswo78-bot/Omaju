@@ -1,3 +1,4 @@
+import { Geolocation } from '@capacitor/geolocation';
 import { REGION_PRESETS } from '../data/venueTaxonomy';
 
 const GEO_CACHE_KEY = 'omaju_last_geo';
@@ -21,28 +22,21 @@ export function saveCachedGeo(geo) {
 /**
  * @returns {Promise<{ lat: number, lng: number, label: string, source: 'gps'|'region'|'cache' }>}
  */
-export function getCurrentPosition(options = {}) {
-  const { timeout = 10000, enableHighAccuracy = false } = options;
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('이 기기에서 위치 정보를 지원하지 않습니다.'));
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const geo = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          label: '현재 위치',
-          source: 'gps',
-        };
-        saveCachedGeo(geo);
-        resolve(geo);
-      },
-      (err) => reject(err),
-      { timeout, enableHighAccuracy, maximumAge: 60000 }
-    );
-  });
+export async function getCurrentPosition(options = {}) {
+  const { enableHighAccuracy = false } = options;
+  try {
+    const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy });
+    const geo = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      label: '현재 위치',
+      source: 'gps',
+    };
+    saveCachedGeo(geo);
+    return geo;
+  } catch (err) {
+    throw new Error('위치 권한이 없거나 위치를 가져올 수 없습니다.');
+  }
 }
 
 export function geoFromRegion(regionId) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Browser } from '@capacitor/browser';
 import { X, Navigation, ExternalLink, MessageSquareQuote, Phone, Search } from 'lucide-react';
 import { buildVenueSearchIntent } from '../utils/snackToVenueQuery';
 import { DEFAULT_RADIUS_M, REGION_PRESETS } from '../data/venueTaxonomy';
@@ -14,6 +15,8 @@ import { hasKakaoKey, searchKakaoWithFallbackQueries, searchRegionCoordinates } 
 import { kakaoMapSearchUrl, naverMapSearchUrl } from '../utils/placeSearch';
 
 const QUICK_REGIONS = REGION_PRESETS.slice(0, 5);
+
+const openBrowser = async (url) => { try { await Browser.open({ url }); } catch(e) { window.open(url, '_blank'); } };
 
 export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, snackCategory }) {
   const intent = useMemo(
@@ -295,8 +298,8 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
 
               {!loading && !places.length && (
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <a href={naverMapSearchUrl(intent.primaryQuery)} target="_blank" rel="noreferrer" style={mapLink('#03c75a')}>네이버 지도</a>
-                  <a href={kakaoMapSearchUrl(intent.primaryQuery)} target="_blank" rel="noreferrer" style={mapLink('#fee500', '#111')}>카카오맵</a>
+                  <button onClick={() => openBrowser(naverMapSearchUrl(intent.primaryQuery))} style={{...mapLink('#03c75a'), border:'none', cursor:'pointer'}}>네이버 지도</button>
+                  <button onClick={() => openBrowser(kakaoMapSearchUrl(intent.primaryQuery))} style={{...mapLink('#fee500', '#111'), border:'none', cursor:'pointer'}}>카카오맵</button>
                 </div>
               )}
 
@@ -340,9 +343,9 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                           <Phone size={12} /> {p.phone}
                         </a>
                       )}
-                      <a href={p.url || kakaoMapSearchUrl(p.name)} target="_blank" rel="noreferrer" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#86efac', textDecoration: 'none', background: 'rgba(34,197,94,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6 }}>
+                      <button onClick={() => openBrowser(p.url || kakaoMapSearchUrl(p.name))} style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: '#86efac', textDecoration: 'none', background: 'rgba(34,197,94,0.15)', padding: '0.35rem 0.7rem', borderRadius: 6, border:'none', cursor:'pointer' }}>
                         지도·길찾기 <ExternalLink size={12} />
-                      </a>
+                      </button>
                     </div>
                   </div>
                 );
