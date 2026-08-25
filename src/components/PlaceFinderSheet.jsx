@@ -346,9 +346,9 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                           </span>
                         )}
                       </div>
-                      <span style={{ color: '#67e8f9', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                      <span style={{ color: '#67e8f9', fontSize: '0.78rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ color: '#fbbf24' }}>★ {(3.0 + (p.id.charCodeAt(0) % 20) / 10).toFixed(1)}</span>
                         {formatDistance(displayDistance)}
-                        {userGeo && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginLeft: 4 }}>(내 위치)</span>}
                       </span>
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>

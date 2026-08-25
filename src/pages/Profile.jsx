@@ -152,37 +152,44 @@ export default function Profile() {
             <span style={{ fontSize: '1.3rem' }}>🍸</span> 음주 취향
           </h2>
 
-          <div style={sectionStyle}>
-            <label style={labelStyle}>가장 좋아하는 주종</label>
-            <input 
-              name="favoriteDrink" 
-              value={profile.favoriteDrink} 
-              onChange={handleChange} 
-              style={inputStyle} 
-              placeholder="예: 소주, 달달한 하이볼" 
-            />
-          </div>
-
-          <div style={sectionStyle}>
-            <label style={labelStyle}>선호하는 안주 취향</label>
-            <input 
-              name="favoriteSnack" 
-              value={profile.favoriteSnack} 
-              onChange={handleChange} 
-              style={inputStyle} 
-              placeholder="예: 매콤한 국물, 가벼운 과일" 
-            />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label style={labelStyle}>주종</label>
+              <select name="favoriteDrink" value={profile.favoriteDrink} onChange={handleChange} style={{ ...inputStyle, appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ca3af%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '0.65rem auto' }}>
+                <option value="">선택</option>
+                <option value="소주">소주</option>
+                <option value="맥주">맥주</option>
+                <option value="막걸리">막걸리/전통주</option>
+                <option value="와인">와인</option>
+                <option value="위스키">위스키/보드카</option>
+                <option value="하이볼">달달한 하이볼</option>
+                <option value="논알콜">논알콜</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>주량</label>
+              <select name="tolerance" value={profile.tolerance} onChange={handleChange} style={{ ...inputStyle, appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ca3af%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '0.65rem auto' }}>
+                <option value="">선택</option>
+                <option value="알쓰">알쓰 (반 잔)</option>
+                <option value="가볍게">가볍게 (1~2잔)</option>
+                <option value="보통">보통 (반 병)</option>
+                <option value="잘마심">잘 마심 (1병 이상)</option>
+                <option value="술고래">술고래 (무한)</option>
+              </select>
+            </div>
           </div>
 
           <div style={{ marginBottom: '2rem' }}>
-            <label style={labelStyle}>나의 주량</label>
-            <input 
-              name="tolerance" 
-              value={profile.tolerance} 
-              onChange={handleChange} 
-              style={inputStyle} 
-              placeholder="예: 소주 1병, 맥주 2캔" 
-            />
+            <label style={labelStyle}>선호하는 안주 취향</label>
+            <select name="favoriteSnack" value={profile.favoriteSnack} onChange={handleChange} style={{ ...inputStyle, appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ca3af%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '0.65rem auto' }}>
+              <option value="">선택</option>
+              <option value="국물류">뜨끈하고 얼큰한 국물류</option>
+              <option value="볶음/구이">든든한 볶음/구이류</option>
+              <option value="튀김/전">바삭한 튀김/전</option>
+              <option value="해산물">깔끔한 해산물/회</option>
+              <option value="마른안주">가벼운 마른안주/견과류</option>
+              <option value="과일/디저트">상큼한 과일/디저트</option>
+            </select>
           </div>
         </div>
 

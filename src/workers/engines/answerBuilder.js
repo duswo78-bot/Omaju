@@ -59,10 +59,17 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
   }
 
   // 프로필 기반 개인화 인사 추가 (최초 1회성이나 랜덤)
-  if (profile && profile.name && empathy && Math.random() > 0.3) {
-    empathy = `${profile.name}님, ${empathy}`;
-  } else if (profile && profile.name && !empathy) {
-    empathy = `${profile.name}님!`;
+  if (profile && profile.name) {
+    if (empathy && Math.random() > 0.3) {
+      empathy = `${profile.name}님, ${empathy}`;
+    } else if (!empathy) {
+      empathy = `${profile.name}님!`;
+    }
+    
+    if (profile.mbti && intent === 'RECOMMEND') {
+      const mbtiMsg = `\n(오마주 AI: ${profile.name}님은 ${profile.mbti.toUpperCase()}니까, 이 조합이 딱 맞을 것 같아요! 😉)\n`;
+      empathy += mbtiMsg;
+    }
   }
 
   // 2. 추천 이유 및 페어링 설명 (Reason & Explanation)
