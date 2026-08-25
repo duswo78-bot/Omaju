@@ -85,9 +85,9 @@ export default function Profile() {
     flex: 1,
     padding: '0.8rem',
     borderRadius: '12px',
-    border: isSelected ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.1)',
-    background: isSelected ? 'rgba(74, 222, 128, 0.1)' : 'rgba(255,255,255,0.05)',
-    color: isSelected ? 'var(--primary)' : '#fff',
+    border: isSelected ? '1px solid var(--primary-color)' : '1px solid rgba(255,255,255,0.1)',
+    background: isSelected ? 'rgba(229, 90, 78, 0.1)' : 'rgba(255,255,255,0.05)',
+    color: isSelected ? 'var(--primary-color)' : '#fff',
     fontWeight: isSelected ? 'bold' : 'normal',
     cursor: 'pointer',
     transition: 'all 0.2s'
@@ -193,7 +193,7 @@ export default function Profile() {
           style={{
             width: '100%',
             padding: '1.2rem',
-            background: saved ? 'var(--primary)' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+            background: saved ? '#4ade80' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
             color: saved ? '#000' : '#fff',
             border: 'none',
             borderRadius: '16px',
