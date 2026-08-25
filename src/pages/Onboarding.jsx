@@ -144,6 +144,23 @@ export default function Onboarding() {
           </div>
         </motion.div>
       </AnimatePresence>
+
+      <div style={{
+        position: 'absolute',
+        bottom: '5vh',
+        left: 0,
+        width: '100%',
+        textAlign: 'center',
+        color: 'rgba(255, 255, 255, 0.4)',
+        fontSize: '0.75rem',
+        letterSpacing: '1px',
+        zIndex: 10,
+        opacity: step === 0 ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+        pointerEvents: 'none'
+      }}>
+        2026 Producer No.J
+      </div>
     </div>
   );
 }
