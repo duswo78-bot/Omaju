@@ -82,32 +82,40 @@ export default function Onboarding() {
           </div>
 
           <div className="onboarding-footer">
-            {step === 2 ? (
-              <button 
-                className="btn-primary glass-panel"
-                onClick={() => navigate('/home')}
-                style={{ width: '100%', padding: '1rem', borderRadius: '12px', fontSize: '1.2rem', fontWeight: 'bold' }}
-              >
-                시작하기
-              </button>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '1rem' }}>
+              {step === 2 ? (
+                <button 
+                  className="btn-primary glass-panel"
+                  onClick={() => navigate('/home')}
+                  style={{ width: '100%', padding: '1rem', borderRadius: '12px', fontSize: '1.2rem', fontWeight: 'bold' }}
+                >
+                  시작하기
+                </button>
+              ) : (
                 <button 
                   onClick={handleNext}
                   style={{ width: '100%', padding: '1rem', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', fontSize: '1.1rem', cursor: 'pointer' }}
                 >
                   다음으로
                 </button>
-                {step === 0 && (
-                  <button 
-                    onClick={() => navigate('/home')}
-                    style={{ width: '100%', padding: '0.8rem', background: 'transparent', color: '#9ca3af', border: 'none', fontSize: '0.9rem', cursor: 'pointer' }}
-                  >
-                    건너뛰기
-                  </button>
-                )}
-              </div>
-            )}
+              )}
+              
+              <button 
+                onClick={() => navigate('/home')}
+                style={{ 
+                  width: '100%', 
+                  padding: '0.8rem', 
+                  background: 'transparent', 
+                  color: '#9ca3af', 
+                  border: 'none', 
+                  fontSize: '0.9rem', 
+                  cursor: 'pointer',
+                  visibility: step === 0 ? 'visible' : 'hidden'
+                }}
+              >
+                건너뛰기
+              </button>
+            </div>
             
             <div className="pagination-dots" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '8px' }}>
               {[0, 1, 2].map((i) => (
