@@ -20,9 +20,14 @@ const DartPin = ({ size = 60 }) => (
   </svg>
 );
 
+const funNames = ['소주요정', '알콜스레기', '술고래', '안주빨', '원샷장인', '꽐라', '맥주킬러', '숙취요정', '폭탄주제조기', '간상태메롱', '음주가무', '술천재', '막걸리도사', '이슬만먹음'];
+
 export default function DartGame() {
   const [gameState, setGameState] = useState('setup'); // setup, playing, finished
-  const [numPlayers, setNumPlayers] = useState(2);
+  const [playerNames, setPlayerNames] = useState(() => {
+    const shuffled = [...funNames].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 2);
+  });
   const [players, setPlayers] = useState([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [throwCount, setThrowCount] = useState(0);
@@ -61,9 +66,9 @@ export default function DartGame() {
 
   const handleStartGame = () => {
     playClick();
-    const initialPlayers = Array.from({ length: numPlayers }, (_, i) => ({
+    const initialPlayers = playerNames.map((name, i) => ({
       id: i,
-      name: `플레이어 ${i + 1}`,
+      name: name || `플레이어 ${i + 1}`,
       scores: [],
       total: 0
     }));
@@ -140,7 +145,7 @@ export default function DartGame() {
         if (throwCount < 2) {
           setThrowCount(tc => tc + 1);
         } else {
-          if (currentPlayerIndex < numPlayers - 1) {
+          if (currentPlayerIndex < playerNames.length - 1) {
             setCurrentPlayerIndex(idx => idx + 1);
             setThrowCount(0);
           } else {
@@ -170,35 +175,62 @@ export default function DartGame() {
           참여할 인원을 선택해주세요. (1인당 3번 투척)
         </p>
 
-        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Users size={32} color="var(--primary-color)" />
-            <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff' }}>참여 인원</span>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => { playClick(); setNumPlayers(Math.max(1, numPlayers - 1)); }}
-              style={{ width: '50px', height: '50px', borderRadius: '25px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}
-            >-</motion.button>
-            
-            <div style={{ fontSize: '3rem', fontWeight: '900', color: '#fff', width: '60px', textAlign: 'center' }}>
-              {numPlayers}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', border: '1px solid rgba(255,255,255,0.1)', width: '100%', maxWidth: '350px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <Users size={24} color="var(--primary-color)" />
+              <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#fff' }}>참여 인원 ({playerNames.length}명)</span>
             </div>
             
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => { playClick(); setNumPlayers(Math.min(8, numPlayers + 1)); }}
-              style={{ width: '50px', height: '50px', borderRadius: '25px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}
-            >+</motion.button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  playClick();
+                  if (playerNames.length > 1) {
+                    setPlayerNames(playerNames.slice(0, -1));
+                  }
+                }}
+                style={{ width: '36px', height: '36px', borderRadius: '18px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+              >-</motion.button>
+              
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  playClick();
+                  if (playerNames.length < 8) {
+                    const available = funNames.filter(n => !playerNames.includes(n));
+                    const randomName = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : `참가자 ${playerNames.length + 1}`;
+                    setPlayerNames([...playerNames, randomName]);
+                  }
+                }}
+                style={{ width: '36px', height: '36px', borderRadius: '18px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+              >+</motion.button>
+            </div>
+          </div>
+
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '5px' }}>
+            {playerNames.map((name, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 'bold', minWidth: '20px', textAlign: 'right' }}>{idx + 1}</span>
+                <input 
+                  value={name}
+                  onChange={(e) => {
+                    const newNames = [...playerNames];
+                    newNames[idx] = e.target.value;
+                    setPlayerNames(newNames);
+                  }}
+                  style={{ flex: 1, padding: '0.6rem 1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: '1rem', outline: 'none' }}
+                />
+              </div>
+            ))}
           </div>
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleStartGame}
-            style={{ marginTop: '1rem', background: 'var(--primary-color)', color: '#fff', border: 'none', padding: '1rem 3rem', borderRadius: '16px', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 10px 20px rgba(229, 90, 78, 0.3)' }}
+            style={{ width: '100%', background: 'var(--primary-color)', color: '#fff', border: 'none', padding: '1rem', borderRadius: '16px', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 10px 20px rgba(229, 90, 78, 0.3)' }}
           >
             <Play fill="currentColor" size={20} /> 게임 시작
           </motion.button>
