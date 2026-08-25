@@ -25,6 +25,13 @@ export function saveCachedGeo(geo) {
 export async function getCurrentPosition(options = {}) {
   const { enableHighAccuracy = false } = options;
   try {
+    const perm = await Geolocation.checkPermissions();
+    if (perm.location !== 'granted') {
+      const req = await Geolocation.requestPermissions();
+      if (req.location !== 'granted') {
+        throw new Error('Permission denied');
+      }
+    }
     const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy });
     const geo = {
       lat: pos.coords.latitude,

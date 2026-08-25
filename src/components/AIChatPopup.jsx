@@ -1,3 +1,4 @@
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
@@ -148,13 +149,15 @@ export default function AIChatPopup({ onClose }) {
     return () => recognition.stop();
   }, [isListening]);
 
-  const speak = (text) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    utterance.rate = 1.0;
-    window.speechSynthesis.speak(utterance);
+  const speak = async (text) => {
+    await TextToSpeech.stop();
+    await TextToSpeech.speak({
+      text: text.replace(/\*\*/g, ''),
+      lang: 'ko-KR',
+      rate: 1.0,
+      volume: 1.0,
+      pitch: 1.0,
+    });
   };
 
   const scrollToBottom = () => {
