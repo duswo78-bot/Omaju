@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { DEFAULT_RADIUS_M } from '../data/venueTaxonomy';
 import { haversineMeters } from './geoService';
 
@@ -22,6 +23,7 @@ export function hasKakaoKey() {
 
 function apiBase() {
   if (import.meta.env.VITE_KAKAO_API_BASE) return import.meta.env.VITE_KAKAO_API_BASE.replace(/\/$/, '');
+  if (Capacitor.isNativePlatform()) return 'https://dapi.kakao.com';
   // 로컬/프리뷰는 Vite 프록시
   if (import.meta.env.DEV) return '/api/kakao';
   // 같은 origin 프록시가 있을 때 (커스텀 도메인 등)
