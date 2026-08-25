@@ -8,6 +8,7 @@ import Baskin31 from '../components/Baskin31';
 import UpDownGame from '../components/UpDownGame';
 import DartGame from '../components/DartGame';
 import GameRules from '../components/GameRules';
+import { playClick } from '../utils/audio';
 
 const games = [
   { id: 'bottle', title: '돌려돌려 병', component: <SpinBottle /> },
@@ -24,6 +25,7 @@ export default function Game() {
   const [direction, setDirection] = useState(0);
 
   const paginate = (newDirection) => {
+    playClick();
     setDirection(newDirection);
     setCurrentIndex((prev) => {
       let next = prev + newDirection;

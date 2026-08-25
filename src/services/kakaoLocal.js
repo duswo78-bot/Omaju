@@ -186,70 +186,76 @@ export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius
   return merged.sort((a, b) => (a.distance || 0) - (b.distance || 0));
 }
 
-export async function searchRegionCoordinates(query) {
+export async function searchRegionCoordinates(query, userLat, userLng) {
+  const key = getKakaoRestKey();
   const errors = [];
-  
-  try {
-    const key = getKakaoRestKey();
-    if (!key) throw new Error('NO_KAKAO_KEY');
-    
-    // 1) 주소 검색 시도 (언양, 제주도, 마포구 등 행정구역/지명)
-    const addressParams = new URLSearchParams({ query, size: '1' });
-    const addressUrl = `${apiBase()}/v2/local/search/address.json?${addressParams}`;
-    const addressRes = await fetch(addressUrl, { headers: { Authorization: `KakaoAK ${key}` } });
-    if (addressRes.ok) {
-      const data = await addressRes.json();
-      if (data.documents?.length > 0) {
-        return {
-          lat: Number(data.documents[0].y),
-          lng: Number(data.documents[0].x),
-          label: query,
-          source: 'custom',
-        };
-      }
-    }
 
-    // 2) 키워드 검색 시도 (홍대입구, 강남역 등 상호/지하철역)
-    const keywordParams = new URLSearchParams({ query, size: '1' });
-    const keywordUrl = `${apiBase()}/v2/local/search/keyword.json?${keywordParams}`;
-    const keywordRes = await fetch(keywordUrl, { headers: { Authorization: `KakaoAK ${key}` } });
-    if (keywordRes.ok) {
-      const data = await keywordRes.json();
-      if (data.documents?.length > 0) {
-        return {
-          lat: Number(data.documents[0].y),
-          lng: Number(data.documents[0].x),
-          label: query,
-          source: 'custom',
-        };
+  if (key) {
+    try {
+      const keywordParams = new URLSearchParams({ query, size: '1' });
+      if (userLat && userLng) {
+        keywordParams.append('y', String(userLat));
+        keywordParams.append('x', String(userLng));
       }
+      const keywordUrl = `${apiBase()}/v2/local/search/keyword.json?${keywordParams}`;
+      const keywordRes = await fetch(keywordUrl, { headers: { Authorization: `KakaoAK ${key}` } });
+      if (keywordRes.ok) {
+        const data = await keywordRes.json();
+        if (data.documents?.length > 0) {
+          return {
+            lat: Number(data.documents[0].y),
+            lng: Number(data.documents[0].x),
+            label: query,
+            source: 'custom',
+          };
+        }
+      }
+      
+      // Fallback to Address Search if Keyword Search finds nothing
+      const addressParams = new URLSearchParams({ query, size: '1' });
+      const addressUrl = `${apiBase()}/v2/local/search/address.json?${addressParams}`;
+      const addressRes = await fetch(addressUrl, { headers: { Authorization: `KakaoAK ${key}` } });
+      if (addressRes.ok) {
+        const data = await addressRes.json();
+        if (data.documents?.length > 0) {
+          return {
+            lat: Number(data.documents[0].y),
+            lng: Number(data.documents[0].x),
+            label: query,
+            source: 'custom',
+          };
+        }
+      }
+    } catch (e) {
+      errors.push(e);
     }
-  } catch (e) {
-    errors.push(e);
   }
 
-  // 3) JS SDK 보조 수단
+  // JS SDK 보조 수단
   try {
     const kakao = await loadKakaoMapsSdk();
     const places = new kakao.maps.services.Places();
     const geocoder = new kakao.maps.services.Geocoder();
 
     return await new Promise((resolve, reject) => {
-      // 주소 먼저
-      geocoder.addressSearch(query, (addrData, addrStatus) => {
-        if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
-          resolve({ lat: Number(addrData[0].y), lng: Number(addrData[0].x), label: query, source: 'custom' });
+      const options = { size: 1 };
+      if (userLat && userLng) {
+        options.location = new kakao.maps.LatLng(userLat, userLng);
+      }
+      places.keywordSearch(query, (data, status) => {
+        if (status === kakao.maps.services.Status.OK && data.length > 0) {
+          resolve({ lat: Number(data[0].y), lng: Number(data[0].x), label: query, source: 'custom' });
         } else {
-          // 주소 실패시 키워드 검색
-          places.keywordSearch(query, (data, status) => {
-            if (status === kakao.maps.services.Status.OK && data.length > 0) {
-              resolve({ lat: Number(data[0].y), lng: Number(data[0].x), label: query, source: 'custom' });
+          // Fallback to JS Address Search
+          geocoder.addressSearch(query, (addrData, addrStatus) => {
+            if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
+              resolve({ lat: Number(addrData[0].y), lng: Number(addrData[0].x), label: query, source: 'custom' });
             } else {
               reject(new Error('REGION_NOT_FOUND'));
             }
-          }, { size: 1 });
+          });
         }
-      });
+      }, options);
     });
   } catch (e) {
     errors.push(e);

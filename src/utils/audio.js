@@ -1,3 +1,5 @@
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+
 let audioCtx = null;
 
 function initAudio() {
@@ -12,6 +14,7 @@ function initAudio() {
 }
 
 export function playClick() {
+  Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   const osc = ctx.createOscillator();
@@ -31,6 +34,7 @@ export function playClick() {
 }
 
 export function playPop() {
+  Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   const osc = ctx.createOscillator();
@@ -50,6 +54,7 @@ export function playPop() {
 }
 
 export function playUp() {
+  Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   const osc = ctx.createOscillator();
@@ -69,6 +74,7 @@ export function playUp() {
 }
 
 export function playDown() {
+  Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   const osc = ctx.createOscillator();
@@ -88,6 +94,7 @@ export function playDown() {
 }
 
 export function playSuccess() {
+  Haptics.notification({ type: NotificationType.Success }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   
@@ -113,6 +120,7 @@ export function playSuccess() {
 }
 
 export function playFail() {
+  Haptics.notification({ type: NotificationType.Error }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   
@@ -176,6 +184,7 @@ export function stopSpinSound() {
 }
 
 export function playFanfare() {
+  Haptics.notification({ type: NotificationType.Success }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   
@@ -207,6 +216,7 @@ export function playFanfare() {
 }
 
 export function playApplause() {
+  Haptics.impact({ style: ImpactStyle.Heavy }).catch(() => {});
   const ctx = initAudio();
   if (!ctx) return;
   

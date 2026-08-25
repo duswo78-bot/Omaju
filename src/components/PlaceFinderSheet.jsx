@@ -19,6 +19,8 @@ const QUICK_REGIONS = REGION_PRESETS.slice(0, 5);
 
 const openBrowser = async (url) => { try { await Browser.open({ url }); } catch(e) { window.open(url, '_blank'); } };
 
+let initialGpsFetched = false;
+
 export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, snackCategory }) {
   const intent = useMemo(
     () => buildVenueSearchIntent(snackName, drinkName, snackCategory),
@@ -50,7 +52,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     setError('');
     try {
       const q = customRegion.trim();
-      const resultGeo = await searchRegionCoordinates(q);
+      const resultGeo = await searchRegionCoordinates(q, userGeo?.lat, userGeo?.lng);
       setGeo({ ...resultGeo, _t: Date.now() });
       setHistory(prev => {
         const filtered = prev.filter(item => item.name !== q);
@@ -126,13 +128,20 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     if (!g) g = geoFromRegion('gangnam');
     setGeo({ ...g, _t: Date.now() });
     
-    // GPS background update
-    getCurrentPosition({ timeout: 6000 })
-      .then((pos) => {
-        setUserGeo(pos);
-        setGeo({ ...pos, _t: Date.now() });
-      })
-      .catch(() => {});
+    if (!initialGpsFetched) {
+      initialGpsFetched = true;
+      getCurrentPosition({ timeout: 6000 })
+        .then((pos) => {
+          setUserGeo(pos);
+          setGeo({ ...pos, _t: Date.now() });
+        })
+        .catch(() => {});
+    } else {
+      const cached = loadCachedGeo();
+      if (cached?.source === 'gps') {
+        setUserGeo(cached);
+      }
+    }
   }, [open]);
 
   useEffect(() => {

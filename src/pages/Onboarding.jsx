@@ -65,7 +65,7 @@ export default function Onboarding() {
           onDragEnd={handleDragEnd}
           style={{ width: '100%' }}
         >
-          <div className="onboarding-header" style={{ marginTop: step === 0 ? '4rem' : '6rem' }}>
+          <div className="onboarding-header">
             {onboardingData[step].hasIcon && (
               <div className="logo-icon-container">
                 <Wine size={40} className="logo-icon" />
