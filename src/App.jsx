@@ -28,6 +28,7 @@ function AppContent() {
 
   return (
     <div className="app-container">
+      <div className="status-bar-bg" />
       <main className="main-content" style={{ paddingBottom: location.pathname === '/' ? 0 : 80 }}>
         <Routes>
           <Route path="/" element={<Onboarding />} />

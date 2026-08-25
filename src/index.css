@@ -116,6 +116,7 @@ body {
 
 .main-content {
   flex: 1;
+  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -738,3 +739,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   background: none !important;
 }
 
+
+.status-bar-bg {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: env(safe-area-inset-top, 0px);
+  background-color: var(--bg-color);
+  z-index: 9999;
+}
