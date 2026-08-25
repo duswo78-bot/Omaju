@@ -93,11 +93,11 @@ export default function DartGame() {
     const dartY = Math.sin(angle) * finalRadius; 
 
     let scoreNum = 0;
-    if (distance <= 4) scoreNum = 100;
-    else if (distance <= 15) scoreNum = 80;
-    else if (distance <= 35) scoreNum = 50;
-    else if (distance <= 60) scoreNum = 30;
-    else if (distance <= 90) scoreNum = 10;
+    if (distance <= 2) scoreNum = 100;
+    else if (distance <= 10) scoreNum = 80;
+    else if (distance <= 25) scoreNum = 50;
+    else if (distance <= 40) scoreNum = 30;
+    else if (distance <= 48) scoreNum = 10;
     else scoreNum = 0;
     
     // 비행 각도 계산 (버튼 시작 위치 x: 200, y: 170 대비)
