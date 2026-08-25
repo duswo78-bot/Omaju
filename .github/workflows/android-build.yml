@@ -27,6 +27,11 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
+    - name: Setup Environment Variables
+      run: |
+        echo "VITE_KAKAO_JS_KEY=167bb3713d47a624020a8820a96b95b3" >> .env
+        echo "VITE_KAKAO_REST_KEY=167bb3713d47a624020a8820a96b95b3" >> .env
+
     - name: Build Web App
       run: npm run build
 

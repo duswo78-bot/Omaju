@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">omaju</string>
+    <string name="title_activity_main">omaju</string>
+    <string name="package_name">com.omaju.app</string>
+    <string name="custom_url_scheme">com.omaju.app</string>
+</resources>
