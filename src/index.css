@@ -777,3 +777,4 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   background-color: var(--bg-color);
   z-index: 9999;
 }
+select option { background-color: #374151; color: #ffffff; }
