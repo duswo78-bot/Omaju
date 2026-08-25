@@ -145,6 +145,10 @@ body {
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
 }
 
+body.keyboard-open .bottom-nav-container {
+  display: none !important;
+}
+
 .nav-item {
   background: none;
   border: none;

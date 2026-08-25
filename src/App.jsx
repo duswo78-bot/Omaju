@@ -26,6 +26,29 @@ function AppContent() {
     return () => window.removeEventListener('omaju:open-ai-chat', openAi);
   }, []);
 
+  useEffect(() => {
+    const handleFocusIn = (e) => {
+      const tag = e.target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') {
+        document.body.classList.add('keyboard-open');
+      }
+    };
+    const handleFocusOut = (e) => {
+      const tag = e.target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') {
+        document.body.classList.remove('keyboard-open');
+      }
+    };
+
+    window.addEventListener('focusin', handleFocusIn);
+    window.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      window.removeEventListener('focusin', handleFocusIn);
+      window.removeEventListener('focusout', handleFocusOut);
+    };
+  }, []);
+
   return (
     <div className="app-container">
       <div className="status-bar-bg" />
