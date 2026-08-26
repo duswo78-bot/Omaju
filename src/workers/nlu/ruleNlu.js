@@ -13,6 +13,7 @@ import {
   DENY,
   GUIDE_TRIGGERS,
 } from './domainLexicon.js';
+import { matchCorpus } from './normalizeKorean.js';
 
 const ALC_CATEGORY_HINTS = [
   '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하',
@@ -172,16 +173,20 @@ function pickGuideHint(hints, constraints, signals, text = '') {
  * @returns {import('./schema.js').NluFrame}
  */
 export function ruleNlu(rawText, cleanText) {
-  const text = rawText || '';
-  const clean = cleanText || text.replace(/\s/g, '');
-  const signals = detectSignals(text);
-  const hints = extractHints(text);
-  const constraints = extractConstraints(text);
-  const domainScore = scoreDomain(text);
+  const corpus = matchCorpus(rawText || '');
+  // 매칭은 정규화본 중심, rawText는 프레임에 원문 보존
+  const text = corpus.normalized || rawText || '';
+  const clean = corpus.compact || cleanText || text.replace(/\s/g, '');
+  const hay = corpus.haystack;
+
+  const signals = detectSignals(hay);
+  const hints = extractHints(hay);
+  const constraints = extractConstraints(hay);
+  const domainScore = scoreDomain(hay);
   const hasEntity = hints.alcoholHints.length > 0 || hints.snackHints.length > 0;
   const wantGame =
-    /술게임|게임\s*추천|재밌는\s*게임|놀\s*거리|랜덤\s*게임/.test(text) ||
-    (text.includes('게임') && domainScore >= 0);
+    /술게임|게임\s*추천|재밌는\s*게임|놀\s*거리|랜덤\s*게임/.test(hay) ||
+    (hay.includes('게임') && domainScore >= 0);
 
   // --- Intent 우선순위 ---
   let intent = 'GUIDE';
@@ -198,15 +203,22 @@ export function ruleNlu(rawText, cleanText) {
     confidence = 0.85;
   }
   // 2) 인사/감사
-  else if (['안녕', '하이', '반가', '방가', 'ㅎㅇ', '오랜만'].some((g) => clean.includes(g)) && clean.length <= 8) {
+  else if (
+    ['안녕', '하이', '반가', '방가', 'ㅎㅇ', 'ㅎ2', '안녕하세요', '안녕하세여', '오랜만'].some((g) =>
+      hay.includes(g)
+    ) && clean.length <= 10
+  ) {
     intent = 'GREETING';
     confidence = 0.92;
-  } else if (['고마', '감사', '땡큐', '최고야', '완벽해'].some((t) => clean.includes(t)) && clean.length <= 12) {
+  } else if (
+    ['고마', '감사', '땡큐', '최고야', '완벽해', '고마워', '고마워요', 'ㄱㅅ'].some((t) => hay.includes(t)) &&
+    clean.length <= 14
+  ) {
     intent = 'THANKS';
     confidence = 0.9;
   }
   // 3) 앱 메타 질문
-  else if (META_APP.some((k) => text.includes(k)) && !hasEntity) {
+  else if (META_APP.some((k) => hay.includes(k)) && !hasEntity) {
     intent = 'QUESTION';
     confidence = 0.88;
   }
@@ -218,17 +230,17 @@ export function ruleNlu(rawText, cleanText) {
   }
   // 5) 리롤 / 거절 ("치킨 말고"는 제외 제약이므로 리롤 아님)
   else if (
-    ['다른거', '다른거로', '다시추천', '별로야', '패스', '바꿔줘', '노잼', '틀렸'].some((r) => clean.includes(r)) ||
-    ((clean.includes('다른') || clean.includes('다시') || clean.includes('별로')) &&
-      !/말고|제외|빼고/.test(text))
+    ['다른거', '다른거로', '다시추천', '별로야', '패스', '바꿔줘', '노잼', '틀렸'].some((r) => hay.includes(r)) ||
+    ((hay.includes('다른') || hay.includes('다시') || hay.includes('별로')) &&
+      !/말고|제외|빼고/.test(hay))
   ) {
     const moodOnly =
       ['덥', '추', '비', '눈', '우울', '슬퍼', '화나', '짜증', '피곤', '힘들', '심심', '외로'].some((wm) =>
-        clean.includes(wm)
+        hay.includes(wm)
       ) &&
-      !clean.includes('추천') &&
-      !clean.includes('술') &&
-      !clean.includes('안주') &&
+      !hay.includes('추천') &&
+      !hay.includes('술') &&
+      !hay.includes('안주') &&
       !hasEntity;
     intent = moodOnly ? 'SMALLTALK' : 'REROLL';
     confidence = 0.8;
@@ -237,7 +249,7 @@ export function ruleNlu(rawText, cleanText) {
   else if (
     signals.detectedEmotion &&
     !hasEntity &&
-    !/추천|골라|뭐\s*마시|뭐\s*먹|안주|술\s*추천/.test(text)
+    !/추천|골라|뭐\s*마시|뭐\s*먹|안주|술\s*추천|먹고싶|마시고싶/.test(hay)
   ) {
     intent = 'SMALLTALK';
     confidence = 0.78;
@@ -250,11 +262,11 @@ export function ruleNlu(rawText, cleanText) {
     !constraints.onlySnack &&
     !constraints.nonAlcoholic &&
     !wantGame &&
-    GUIDE_TRIGGERS.some((g) => text.includes(g))
+    GUIDE_TRIGGERS.some((g) => hay.includes(g))
   ) {
     intent = 'GUIDE';
     confidence = 0.78;
-    guideHint = pickGuideHint(hints, constraints, signals, text);
+    guideHint = pickGuideHint(hints, constraints, signals, hay);
     needsClarification = '술·안주·상황 중 어떤 힌트를 줄까요?';
   }
   // 8) 명확한 추천 신호 + 엔티티/제약/게임
@@ -264,7 +276,7 @@ export function ruleNlu(rawText, cleanText) {
     constraints.onlySnack ||
     constraints.nonAlcoholic ||
     wantGame ||
-    (/페어링|어울리|당기|땡겨|마실래|먹고싶/.test(text) && domainScore >= 2)
+    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶/.test(hay) && domainScore >= 2)
   ) {
     intent = 'RECOMMEND';
     confidence = hasEntity ? 0.88 : 0.75;
@@ -273,7 +285,7 @@ export function ruleNlu(rawText, cleanText) {
   else if (domainScore === 0 || (domainScore > 0 && !hasEntity)) {
     intent = 'GUIDE';
     confidence = 0.7;
-    guideHint = pickGuideHint(hints, constraints, signals, text);
+    guideHint = pickGuideHint(hints, constraints, signals, hay);
     needsClarification =
       guideHint === 'general'
         ? '술·안주·상황 중 어떤 힌트를 줄까요?'
@@ -311,9 +323,10 @@ export function ruleNlu(rawText, cleanText) {
     needsClarification,
     guideHint,
     source: 'rule',
-    rawText: text,
+    rawText: rawText || text,
     matchedOpening: signals.matchedOpening,
   });
 }
 
 export { detectSignals, scoreDomain };
+export { matchCorpus, normalizeKorean } from './normalizeKorean.js';

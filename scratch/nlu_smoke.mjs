@@ -61,4 +61,15 @@ check('meta', '오마주는 뭐하는 앱이야', { intent: 'QUESTION' });
 check('exclude', '치킨 말고 안주', { intent: 'RECOMMEND', hasSnackHint: true });
 check('driving', '운전해야 해서 술 없이', { intent: 'RECOMMEND', nonAlcoholic: true });
 
+// 한글 변이/슬랭
+check('slang chimaek', '치맥ㄱㄱ', { intent: 'RECOMMEND', hasAlcHint: true, hasSnackHint: true });
+check('slang soju', '소쥬 추천좀요', { intent: 'RECOMMEND', hasAlcHint: true });
+check('slang mak', '마걸리 한잔', { intent: 'RECOMMEND', hasAlcHint: true });
+check('slang hungry', '배고프당 암거나', { intent: 'GUIDE' });
+check('slang honsul', '혼맥할래여', { intent: 'RECOMMEND', hasAlcHint: true });
+check('slang nonalc', '논알로 부탁해여', { intent: 'RECOMMEND', nonAlcoholic: true });
+check('slang affirm', '조아', { intent: 'AFFIRM' });
+check('slang thanks', 'ㄱㅅ', { intent: 'THANKS' });
+check('typo hangover', '혀장 뭐먹지', { intent: 'GUIDE' });
+
 console.log('\nAll enhanced NLU smoke checks passed.');
