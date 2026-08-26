@@ -3,10 +3,40 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { aiState, subscribeToAI, runTurn } from '../services/aiService';
-import { probeSystemLlm } from '../services/llm/getProvider';
+import { getSystemLlmProvider, probeSystemLlm, resetLlmProviderCache } from '../services/llm/getProvider';
 import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
+
+function ledStyle(mode, reason) {
+  if (mode === LLM_MODES.FULL) {
+    return {
+      background: '#22c55e',
+      boxShadow: '0 0 6px 2px rgba(34, 197, 94, 0.85)',
+      title: '온디바이스 LLM Front/Back 활성',
+    };
+  }
+  if (reason === 'downloadable' || reason === 'downloading' || String(reason).startsWith('download')) {
+    return {
+      background: '#f59e0b',
+      boxShadow: '0 0 6px 2px rgba(245, 158, 11, 0.75)',
+      title: 'AICore 모델 다운로드 중…',
+    };
+  }
+  return {
+    background: 'rgba(255,255,255,0.18)',
+    boxShadow: 'none',
+    title: `NLU 파이프라인 (${reason || 'lite'})`,
+  };
+}
+
+function modeLabel(mode, reason) {
+  if (mode === LLM_MODES.FULL) return '온디바이스 LLM';
+  if (!Capacitor.isNativePlatform()) return '웹 · NLU만 (앱 설치 필요)';
+  if (reason === 'downloadable' || reason === 'downloading') return 'AICore 다운로드 중…';
+  return `NLU 파이프라인 · ${reason || 'unavailable'}`;
+}
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
 
@@ -78,6 +108,7 @@ export default function AIChatPopup({ onClose }) {
   const [modelStatus, setModelStatus] = useState(aiState.statusMessage);
   const [isReady, setIsReady] = useState(aiState.isReady);
   const [llmMode, setLlmMode] = useState(aiState.mode);
+  const [probeReason, setProbeReason] = useState(aiState.probeReason || 'init');
   const [speechHint, setSpeechHint] = useState('');
 
   useEffect(() => {
@@ -93,14 +124,59 @@ export default function AIChatPopup({ onClose }) {
       setModelStatus('');
     }
     setLlmMode(aiState.mode);
+    setProbeReason(aiState.probeReason || 'init');
 
-    // 챗 열릴 때 시스템 LLM(AICore) 가용 여부 재확인 → LED 반영
-    probeSystemLlm({ force: true }).then((p) => {
+    let cancelled = false;
+    let pollTimer = null;
+    let downloadHandle = null;
+
+    const applyProbe = (p) => {
+      if (cancelled || !p) return;
       const mode = p.available ? LLM_MODES.FULL : LLM_MODES.LITE;
+      const reason = p.reason || (p.available ? 'ok' : 'unavailable');
       aiState.mode = mode;
       aiState.lastProvider = p.provider || 'stub';
+      aiState.probeReason = reason;
       setLlmMode(mode);
-    }).catch(() => setLlmMode(LLM_MODES.LITE));
+      setProbeReason(reason);
+      return reason;
+    };
+
+    const refreshProbe = () =>
+      probeSystemLlm({ force: true })
+        .then(applyProbe)
+        .catch(() => applyProbe({ available: false, reason: Capacitor.isNativePlatform() ? 'probe_error' : 'web' }));
+
+    resetLlmProviderCache();
+    refreshProbe().then((reason) => {
+      if (cancelled) return;
+      // 다운로드 대기 중이면 주기적 재probe
+      if (reason === 'downloadable' || reason === 'downloading') {
+        pollTimer = setInterval(() => {
+          refreshProbe().then((r) => {
+            if (r === 'ok' && pollTimer) {
+              clearInterval(pollTimer);
+              pollTimer = null;
+            }
+          });
+        }, 4000);
+      }
+    });
+
+    getSystemLlmProvider().then((provider) => {
+      if (cancelled || !provider?.addDownloadListener) return;
+      provider.addDownloadListener((ev) => {
+        const state = ev?.state || '';
+        if (state === 'completed') {
+          resetLlmProviderCache();
+          refreshProbe();
+        } else if (state.startsWith('failed')) {
+          setProbeReason(state);
+        } else if (state === 'started' || state === 'progress') {
+          setProbeReason('downloading');
+        }
+      }).then((h) => { downloadHandle = h; }).catch(() => {});
+    }).catch(() => {});
 
     const unsubscribe = subscribeToAI((data) => {
       const { type } = data;
@@ -117,6 +193,9 @@ export default function AIChatPopup({ onClose }) {
     });
 
     return () => {
+      cancelled = true;
+      if (pollTimer) clearInterval(pollTimer);
+      downloadHandle?.remove?.();
       unsubscribe();
       window.speechSynthesis?.cancel();
       stopListening().catch(() => {});
@@ -222,6 +301,7 @@ export default function AIChatPopup({ onClose }) {
     try {
       const result = await runTurn(userMessage, { opening, skipPrompt, profile });
       setLlmMode(result.mode || aiState.mode);
+      if (result.probeReason) setProbeReason(result.probeReason);
       setMessages((prev) => [
         ...prev,
         {
@@ -289,29 +369,31 @@ export default function AIChatPopup({ onClose }) {
                 letterSpacing: '1px',
                 marginTop: '2px'
               }}>AI</span>
-              {/* FULL=LLM front/back 활성(녹색), LITE=NLU 파이프라인(소등) */}
-              <div
-                title={llmMode === 'FULL' ? '온디바이스 LLM Front/Back 활성' : 'NLU 규칙 파이프라인'}
-                style={{
-                  position: 'absolute',
-                  bottom: '6px',
-                  left: '7px',
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
-                  background: llmMode === 'FULL' ? '#22c55e' : 'rgba(255,255,255,0.18)',
-                  boxShadow: llmMode === 'FULL'
-                    ? '0 0 6px 2px rgba(34, 197, 94, 0.85)'
-                    : 'none',
-                  border: '1px solid rgba(255,255,255,0.25)',
-                }}
-              />
+              {(() => {
+                const led = ledStyle(llmMode, probeReason);
+                return (
+                  <div
+                    title={led.title}
+                    style={{
+                      position: 'absolute',
+                      bottom: '6px',
+                      left: '7px',
+                      width: 7,
+                      height: 7,
+                      borderRadius: '50%',
+                      background: led.background,
+                      boxShadow: led.boxShadow,
+                      border: '1px solid rgba(255,255,255,0.25)',
+                    }}
+                  />
+                );
+              })()}
             </div>
           </div>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
-              {llmMode === 'FULL' ? '온디바이스 LLM' : 'NLU 추천 파이프라인'}
+              {modeLabel(llmMode, probeReason)}
             </div>
           </div>
         </div>

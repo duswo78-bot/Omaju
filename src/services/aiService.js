@@ -12,6 +12,8 @@ export const aiState = {
   progress: 0,
   mode: LLM_MODES.LITE,
   lastProvider: 'stub',
+  /** probe reason: ok | downloadable | downloading | unavailable | web | ... */
+  probeReason: 'init',
 };
 
 const listeners = new Set();
@@ -94,11 +96,13 @@ aiWorker.onerror = (error) => {
  * Capacitor 시스템 LLM은 메인 스레드에서만 호출한다.
  */
 export async function runTurn(text, payload = {}) {
-  const probe = await probeSystemLlm();
+  // 미가용(다운로드 중 등)이면 매 턴 재probe
+  const probe = await probeSystemLlm({ force: !aiState.mode || aiState.mode === LLM_MODES.LITE });
   const provider = await getSystemLlmProvider();
   const mode = probe.available ? LLM_MODES.FULL : LLM_MODES.LITE;
   aiState.mode = mode;
   aiState.lastProvider = probe.provider || 'stub';
+  aiState.probeReason = probe.reason || (probe.available ? 'ok' : 'unavailable');
 
   let frontDraft = null;
   if (mode === LLM_MODES.FULL) {
@@ -151,6 +155,7 @@ export async function runTurn(text, payload = {}) {
     mode,
     nlgSource,
     provider: probe.provider || 'stub',
+    probeReason: aiState.probeReason,
   };
 }
 
@@ -159,7 +164,8 @@ const initialProfile = JSON.parse(
     '{"favoriteAlcohols":[],"favoriteFoods":[],"favoriteGames":[],"dislikedAlcohols":[],"favoriteMood":[],"monthlyBudget":0}'
 );
 aiWorker.postMessage({ type: 'init', userProfile: initialProfile });
-probeSystemLlm().then((p) => {
+probeSystemLlm({ force: true }).then((p) => {
   aiState.mode = p.available ? LLM_MODES.FULL : LLM_MODES.LITE;
   aiState.lastProvider = p.provider || 'stub';
+  aiState.probeReason = p.reason || (p.available ? 'ok' : 'unavailable');
 });

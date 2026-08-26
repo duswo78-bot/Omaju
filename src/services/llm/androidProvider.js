@@ -1,6 +1,5 @@
 /**
- * Android AICore / ML Kit GenAI Prompt API 연동 자리.
- * Phase 3에서 Capacitor 플러그인(OmajuSystemLlm)을 연결한다.
+ * Android AICore / ML Kit GenAI Prompt API
  */
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { buildFrontPrompt, buildBackPrompt } from './prompts.js';
@@ -19,8 +18,12 @@ export const androidProvider = {
         reason: result?.reason || (result?.available ? 'ok' : 'unavailable'),
         provider: 'android',
       };
-    } catch {
-      return { available: false, reason: 'plugin_missing', provider: 'android' };
+    } catch (err) {
+      return {
+        available: false,
+        reason: `plugin_error:${err?.message || 'unknown'}`,
+        provider: 'android',
+      };
     }
   },
 
@@ -31,7 +34,8 @@ export const androidProvider = {
         prompt: buildFrontPrompt(text),
       });
       return (res?.text || '').trim() || null;
-    } catch {
+    } catch (err) {
+      console.warn('[OmajuSystemLlm] front failed', err);
       return null;
     }
   },
@@ -43,8 +47,13 @@ export const androidProvider = {
         prompt: buildBackPrompt(facts, profile),
       });
       return (res?.text || '').trim() || null;
-    } catch {
+    } catch (err) {
+      console.warn('[OmajuSystemLlm] back failed', err);
       return null;
     }
+  },
+
+  addDownloadListener(cb) {
+    return OmajuSystemLlm.addListener('aicoreDownload', cb);
   },
 };
