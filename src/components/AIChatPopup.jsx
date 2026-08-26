@@ -9,6 +9,37 @@ import { getSystemLlmProvider, probeSystemLlm, resetLlmProviderCache } from '../
 import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
 
+/** 생각 중… 회전 멘트 (3초마다) — 진짜 고심하는 느낌 */
+const THINKING_LINES = [
+  '오늘의 한 잔, 머릿속에서 시음 중…',
+  '기분 온도계 확인하는 중…',
+  '술장고 문 열고 슬쩍 보는 중…',
+  '안주랑 케미 계산기 돌리는 중…',
+  '“이건 좀 과한가?” 고민 중…',
+  '취향 레이더 미세 조정 중…',
+  '짠— 하기 좋은 조합 고르는 중…',
+  '가볍게? 진하게? 저울질 중…',
+  '혀가 기억할 페어링 찾는 중…',
+  '오마주 감 작동 중… 거의 다 왔어요',
+];
+
+const POLISHING_LINES = [
+  '문장에 여운 살짝 입히는 중…',
+  '말투만 한 스푼 더 부드럽게…',
+  '온디바이스가 문장 다듬는 중…',
+  '추천은 확정, 표현만 폴리싱…',
+];
+
+function pickThinkingLine(prev) {
+  if (THINKING_LINES.length <= 1) return THINKING_LINES[0];
+  let next = THINKING_LINES[Math.floor(Math.random() * THINKING_LINES.length)];
+  // 바로 이전과 겹치면 한 번 더
+  if (next === prev) {
+    next = THINKING_LINES[(THINKING_LINES.indexOf(prev) + 1) % THINKING_LINES.length];
+  }
+  return next;
+}
+
 function ledStyle(mode, reason) {
   if (mode === LLM_MODES.FULL || String(reason).startsWith('ok:')) {
     return {
@@ -105,7 +136,8 @@ export default function AIChatPopup({ onClose }) {
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  const [thinkingLabel, setThinkingLabel] = useState('생각 중…');
+  const [thinkingLabel, setThinkingLabel] = useState(() => THINKING_LINES[0]);
+  const [polishLabel, setPolishLabel] = useState(() => POLISHING_LINES[0]);
   const [hasPartialAnswer, setHasPartialAnswer] = useState(false);
   const pendingAiMsgIdRef = useRef(null);
   const [pendingContext, setPendingContext] = useState(() => localStorage.getItem('omaju_pending_context') || '');
@@ -133,6 +165,28 @@ export default function AIChatPopup({ onClose }) {
       document.body.style.overflow = '';
     };
   }, []);
+
+  // 생각 중: 3초마다 센스 있는 멘트 교체
+  useEffect(() => {
+    if (!isThinking || hasPartialAnswer) return undefined;
+    setThinkingLabel(pickThinkingLine(''));
+    const timer = setInterval(() => {
+      setThinkingLabel((prev) => pickThinkingLine(prev));
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [isThinking, hasPartialAnswer]);
+
+  // 초안 후 다듬기: 3초마다 폴리싱 멘트
+  useEffect(() => {
+    if (!isThinking || !hasPartialAnswer) return undefined;
+    setPolishLabel(POLISHING_LINES[0]);
+    let i = 0;
+    const timer = setInterval(() => {
+      i = (i + 1) % POLISHING_LINES.length;
+      setPolishLabel(POLISHING_LINES[i]);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [isThinking, hasPartialAnswer]);
 
   useEffect(() => {
     if (aiState.isReady) {
@@ -314,7 +368,8 @@ export default function AIChatPopup({ onClose }) {
     setMessages((prev) => [...prev, newMsg]);
     setInput('');
     setIsThinking(true);
-    setThinkingLabel('생각 중…');
+    setThinkingLabel(pickThinkingLine(''));
+    setPolishLabel(POLISHING_LINES[0]);
     setHasPartialAnswer(false);
     pendingAiMsgIdRef.current = null;
 
@@ -336,9 +391,6 @@ export default function AIChatPopup({ onClose }) {
         opening,
         skipPrompt,
         profile,
-        onProgress: (_stage, label) => {
-          if (label) setThinkingLabel(label);
-        },
         onPartial: ({ answer, recommendation, nlgSource, pendingPolish }) => {
           const id = pendingAiMsgIdRef.current || Date.now();
           pendingAiMsgIdRef.current = id;
@@ -397,7 +449,6 @@ export default function AIChatPopup({ onClose }) {
     } finally {
       turnInFlightRef.current = false;
       setIsThinking(false);
-      setThinkingLabel('생각 중…');
       setHasPartialAnswer(false);
       pendingAiMsgIdRef.current = null;
     }
@@ -528,10 +579,10 @@ export default function AIChatPopup({ onClose }) {
                   <Volume2 size={16} color="rgba(255,255,255,0.7)" />
                 </button>
               )}
-              {msg.isAi && msg.polishing && (
+              {msg.isAi && msg.polishing && isThinking && (
                 <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: '#9ca3af', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <Loader2 size={12} className="spin" />
-                  온디바이스로 문장 다듬는 중…
+                  {polishLabel}
                 </div>
               )}
               {msg.isAi && msg.recommendation && (
@@ -542,14 +593,16 @@ export default function AIChatPopup({ onClose }) {
 
           {isThinking && !hasPartialAnswer && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              key={thinkingLabel}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
               className="chat-bubble-ai"
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9ca3af' }}
             >
               <Loader2 size={16} className="spin" />
-              {thinkingLabel || '생각 중…'}
+              {thinkingLabel}
             </motion.div>
           )}
         </AnimatePresence>
