@@ -1,10 +1,10 @@
-import { pickRandom } from '../utils/random.js';
 import guideTemplates from '../templates/guide.json';
+import { composeGuideAnswer } from '../utils/composeGuide.js';
 
 export function handleGuide(text, context) {
   const hint = context.frame?.guideHint || 'general';
   const pool = guideTemplates[hint] || guideTemplates.general;
-  let answer = pickRandom(pool);
+  let answer = composeGuideAnswer(pool);
 
   if (context.frame?.matchedOpening) {
     answer = `${context.frame.matchedOpening}\n\n${answer}`;
@@ -12,7 +12,6 @@ export function handleGuide(text, context) {
     answer = `${context.profile.name}님, ${answer}`;
   }
 
-  // ASKING: 다음 짧은 긍정 → 추천으로 자연 연결
   return {
     answer,
     bestAlc: null,

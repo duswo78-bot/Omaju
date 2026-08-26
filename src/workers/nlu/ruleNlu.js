@@ -141,10 +141,24 @@ function isPureShortReply(cleanText, list, maxLen = 6) {
   return list.some((w) => cleanText === w || cleanText === `${w}${w}` || cleanText === `${w}요`);
 }
 
-function pickGuideHint(hints, constraints, signals) {
+function pickGuideHint(hints, constraints, signals, text = '') {
   if (constraints.nonAlcoholic) return 'nonalc';
+  if (constraints.hangover || /해장|숙취/.test(text)) return 'hangover';
   if (constraints.onlySnack) return 'snack';
   if (constraints.onlyAlcohol) return 'alcohol';
+  if (/혼술|혼자\s*마시|혼맥|혼소/.test(text) || signals.detectedSituation?.id === 'sit_honsul') {
+    return 'honsul';
+  }
+  if (/회식|회식자리|회사\s*술|회식안주/.test(text) || signals.detectedSituation?.id === 'sit_hoesik') {
+    return 'hoesik';
+  }
+  if (/데이트|소개팅|기념일|분위기\s*있게/.test(text) || signals.detectedSituation?.id === 'sit_date') {
+    return 'date';
+  }
+  if (/파티|생일파티|집들이|펑펑/.test(text) || signals.detectedSituation?.id === 'sit_party') {
+    return 'party';
+  }
+  if (/술게임|게임\s*추천|무슨\s*게임/.test(text)) return 'game_guide';
   if (signals.detectedEmotion || signals.moods?.length) return 'mood';
   if (signals.detectedSituation || signals.weather?.length) return 'situation';
   if (hints.alcoholHints.length && !hints.snackHints.length) return 'pair_snack';
@@ -240,7 +254,7 @@ export function ruleNlu(rawText, cleanText) {
   ) {
     intent = 'GUIDE';
     confidence = 0.78;
-    guideHint = pickGuideHint(hints, constraints, signals);
+    guideHint = pickGuideHint(hints, constraints, signals, text);
     needsClarification = '술·안주·상황 중 어떤 힌트를 줄까요?';
   }
   // 8) 명확한 추천 신호 + 엔티티/제약/게임
@@ -259,7 +273,7 @@ export function ruleNlu(rawText, cleanText) {
   else if (domainScore === 0 || (domainScore > 0 && !hasEntity)) {
     intent = 'GUIDE';
     confidence = 0.7;
-    guideHint = pickGuideHint(hints, constraints, signals);
+    guideHint = pickGuideHint(hints, constraints, signals, text);
     needsClarification =
       guideHint === 'general'
         ? '술·안주·상황 중 어떤 힌트를 줄까요?'
