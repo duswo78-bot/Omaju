@@ -12,7 +12,6 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.genai.common.DownloadCallback;
 import com.google.mlkit.genai.common.FeatureStatus;
 import com.google.mlkit.genai.common.GenAiException;
@@ -21,19 +20,25 @@ import com.google.mlkit.genai.prompt.GenerateContentResponse;
 import com.google.mlkit.genai.prompt.Generation;
 import com.google.mlkit.genai.prompt.TextPart;
 import com.google.mlkit.genai.prompt.java.GenerativeModelFutures;
-import com.google.android.gms.tasks.Tasks;
 import com.google.mlkit.genai.rewriting.Rewriter;
 import com.google.mlkit.genai.rewriting.RewriterOptions;
 import com.google.mlkit.genai.rewriting.Rewriting;
 import com.google.mlkit.genai.rewriting.RewritingRequest;
+import com.google.mlkit.genai.rewriting.RewritingResult;
+import com.google.mlkit.genai.rewriting.RewritingSuggestion;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 온디바이스 GenAI 멀티 capability:
  * - Prompt (S26 등) : Front/Back 자유 생성
  * - Rewriting (S25 포함 feature 기기) : 템플릿 답변 말투 다듬기
+ *
+ * ML Kit GenAI APIs return Guava ListenableFuture — use .get() / Futures.addCallback,
+ * not com.google.android.gms.tasks.Tasks.await().
  */
 @CapacitorPlugin(name = "OmajuSystemLlm")
 public class OmajuSystemLlmPlugin extends Plugin {
@@ -41,6 +46,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
 
     private GenerativeModelFutures promptModel;
     private Rewriter rewriter;
+    private final ExecutorService bgExecutor = Executors.newCachedThreadPool();
 
     private GenerativeModelFutures promptModel() {
         if (promptModel == null) {
@@ -147,11 +153,11 @@ public class OmajuSystemLlmPlugin extends Plugin {
             maybeFinish.run();
         }
 
-        // Rewriting (S25+) — Task API
-        bridge.getThreadPool().execute(() -> {
+        // Rewriting (S25+) — ListenableFuture.get() on background thread
+        bgExecutor.execute(() -> {
             try {
                 Rewriter r = rewriter();
-                Integer status = Tasks.await(r.checkFeatureStatus());
+                Integer status = r.checkFeatureStatus().get();
                 int s = status == null ? FeatureStatus.UNAVAILABLE : status;
                 rewriteStatus[0] = statusName(s);
                 Log.i(TAG, "rewriting status=" + rewriteStatus[0]);
@@ -285,10 +291,10 @@ public class OmajuSystemLlmPlugin extends Plugin {
         if (cleaned.length() > 500) cleaned = cleaned.substring(0, 500);
         final String input = cleaned;
 
-        bridge.getThreadPool().execute(() -> {
+        bgExecutor.execute(() -> {
             try {
                 Rewriter r = rewriter();
-                Integer statusObj = Tasks.await(r.checkFeatureStatus());
+                Integer statusObj = r.checkFeatureStatus().get();
                 int status = statusObj == null ? FeatureStatus.UNAVAILABLE : statusObj;
                 if (status == FeatureStatus.DOWNLOADABLE) {
                     startRewriteDownload(r);
@@ -301,22 +307,18 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 }
 
                 RewritingRequest req = RewritingRequest.builder(input).build();
-                Object inference = Tasks.await(r.runInference(req));
+                RewritingResult result = r.runInference(req).get();
                 String out = input;
                 try {
-                    // result.getResults().get(0).getText()
-                    java.lang.reflect.Method getResults = inference.getClass().getMethod("getResults");
-                    List<?> results = (List<?>) getResults.invoke(inference);
+                    List<RewritingSuggestion> results = result != null ? result.getResults() : null;
                     if (results != null && !results.isEmpty()) {
-                        Object first = results.get(0);
-                        java.lang.reflect.Method getText = first.getClass().getMethod("getText");
-                        Object s = getText.invoke(first);
-                        if (s != null && !String.valueOf(s).trim().isEmpty()) {
-                            out = String.valueOf(s).trim();
+                        String suggestion = results.get(0).getText();
+                        if (suggestion != null && !suggestion.trim().isEmpty()) {
+                            out = suggestion.trim();
                         }
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "parse rewrite via reflection", e);
+                    Log.w(TAG, "parse rewrite result", e);
                 }
                 JSObject ret = new JSObject();
                 ret.put("text", out);
@@ -335,6 +337,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
             try { rewriter.close(); } catch (Exception ignored) {}
             rewriter = null;
         }
+        bgExecutor.shutdownNow();
         super.handleOnDestroy();
     }
 }
