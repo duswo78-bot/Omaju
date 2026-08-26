@@ -110,6 +110,14 @@ export default function AIChatPopup({ onClose }) {
   const [llmMode, setLlmMode] = useState(aiState.mode);
   const [probeReason, setProbeReason] = useState(aiState.probeReason || 'init');
   const [speechHint, setSpeechHint] = useState('');
+  const speechHintTimerRef = useRef(null);
+
+  const flashSpeechHint = (msg, ms = 2200) => {
+    if (speechHintTimerRef.current) clearTimeout(speechHintTimerRef.current);
+    setSpeechHint(msg || '');
+    if (!msg) return;
+    speechHintTimerRef.current = setTimeout(() => setSpeechHint(''), ms);
+  };
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -195,6 +203,7 @@ export default function AIChatPopup({ onClose }) {
     return () => {
       cancelled = true;
       if (pollTimer) clearInterval(pollTimer);
+      if (speechHintTimerRef.current) clearTimeout(speechHintTimerRef.current);
       downloadHandle?.remove?.();
       unsubscribe();
       window.speechSynthesis?.cancel();
@@ -209,10 +218,13 @@ export default function AIChatPopup({ onClose }) {
       const last = await stopListening();
       if (last) setInput((prev) => (prev?.trim() ? prev : last));
       setIsListening(false);
+      flashSpeechHint('');
       return;
     }
 
     setIsListening(true);
+    // await 전에 잠깐 표시 → 인식 종료 시 즉시 제거 (이전엔 await 뒤에 세팅돼 계속 남았음)
+    flashSpeechHint('시스템 음성 인식 창에서 말씀해 주세요', 4000);
     try {
       await startListening({
         language: 'ko-KR',
@@ -224,18 +236,23 @@ export default function AIChatPopup({ onClose }) {
         },
         onError: (message) => {
           console.warn('STT error:', message);
-          setSpeechHint(typeof message === 'string' ? message : '음성 인식에 실패했습니다.');
           setIsListening(false);
+          flashSpeechHint(
+            typeof message === 'string' ? message : '음성 인식에 실패했습니다.',
+            2500
+          );
         },
         onEnd: () => {
           setIsListening(false);
+          flashSpeechHint('');
         },
       });
-      setSpeechHint('시스템 음성 인식 창에서 말씀해 주세요');
+      setIsListening(false);
+      flashSpeechHint('');
     } catch (err) {
       console.warn(err);
-      setSpeechHint(err?.message || '마이크를 사용할 수 없습니다. 앱 권한을 확인해 주세요.');
       setIsListening(false);
+      flashSpeechHint(err?.message || '마이크를 사용할 수 없습니다. 앱 권한을 확인해 주세요.', 2500);
     }
   };
 
@@ -412,9 +429,9 @@ export default function AIChatPopup({ onClose }) {
         </div>
       )}
 
-      {(isListening || speechHint) && (
+      {speechHint && (
         <div style={{ padding: '0.45rem 0.75rem', background: isListening ? 'rgba(239, 68, 68, 0.18)' : 'rgba(251, 191, 36, 0.15)', color: isListening ? '#fecaca' : '#fde68a', fontSize: '0.78rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, zIndex: 20 }}>
-          {isListening ? (speechHint || '듣고 있어요… 다시 누르면 종료') : speechHint}
+          {speechHint}
         </div>
       )}
 

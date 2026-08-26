@@ -102,8 +102,13 @@ VITE_NLG_API_BASE=/api
 
 선택 secrets: `VITE_NLG_API_BASE`, `VITE_KAKAO_*` (없으면 Pages 배포와 동일 기본 키)
 
-`OmajuSystemLlm`은 ML Kit GenAI Prompt(AICore/Gemini Nano)를 사용합니다.  
-지원 기기에서만 FULL(LLM Front/Back), 그 외는 LITE(NLU). 챗 로고 왼쪽 아래 녹색 LED가 FULL 활성 표시입니다.
+`OmajuSystemLlm`은 ML Kit **Prompt API**(AICore/Gemini Nano)를 사용합니다.  
+챗 로고 LED: 녹색=FULL, 주황=다운로드 중, 소등=NLU.
+
+**중요 (공식 기기 목록, 2026-08 기준)**  
+- Prompt API(우리 FULL 경로): Samsung **S26/S26+/S26 Ultra**, Z Fold7, Z TriFold 등  
+- **Galaxy S25 계열은 Prompt API 목록에 없음** (요약/교정 등 feature API만 S25 지원)  
+→ S25에서는 AICore가 있어도 Prompt LLM Front/Back은 불가하고 NLU(LITE)로 동작하는 것이 정상입니다.
 
 ## Stack
 
