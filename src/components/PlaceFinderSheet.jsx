@@ -111,12 +111,20 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
       if (!results.length) setError('근처 결과가 없습니다. 지도에서 찾아보세요.');
     } catch (e) {
       setPlaces([]);
-      const corsLikely = String(e?.message || '').includes('Failed to fetch') || e?.name === 'TypeError';
+      const msg = String(e?.message || e?.code || '');
+      const corsLikely = msg.includes('Failed to fetch') || e?.name === 'TypeError';
+      const noKey = e?.code === 'NO_KAKAO_KEY' || msg.includes('NO_KAKAO');
+      const http = e?.code === 'KAKAO_HTTP';
       setError(
-        corsLikely
-          ? '검색 서버 연결 실패(CORS). 로컬은 npm run dev 로 실행하세요.'
-          : '검색 실패. 잠시 후 다시 시도하세요.'
+        noKey
+          ? '카카오 API 키가 없습니다. 앱을 다시 설치해 주세요.'
+          : corsLikely
+            ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
+            : http
+              ? `카카오 검색 오류(${e.status || '?'}). 잠시 후 다시 시도하세요.`
+              : '맛집 검색 실패. 잠시 후 다시 시도하세요.'
       );
+      console.warn('[PlaceFinder] search failed', e);
     } finally {
       setLoading(false);
     }

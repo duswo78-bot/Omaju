@@ -1,5 +1,10 @@
 {
   "appId": "com.omaju.app",
   "appName": "오마주",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }

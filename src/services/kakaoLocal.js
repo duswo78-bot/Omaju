@@ -1,13 +1,51 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { DEFAULT_RADIUS_M } from '../data/venueTaxonomy';
 import { haversineMeters } from './geoService';
 
 /**
  * 카카오 로컬 검색
  * - 개발/프리뷰: Vite 프록시 `/api/kakao` (CORS 회피)
- * - 배포: VITE_KAKAO_API_BASE 가 있으면 그 프록시 사용, 없으면 dapi 직접(브라우저 CORS에 막힐 수 있음)
+ * - Android/iOS: CapacitorHttp(네이티브)로 dapi 호출 — WebView CORS 우회
+ * - 웹 배포: VITE_KAKAO_API_BASE 프록시 권장 (없으면 dapi 직접 → 브라우저 CORS 가능)
  * - JS SDK는 보조 (JS키+도메인 등록 필요)
  */
+
+async function kakaoGetJson(pathAndQuery, restKey) {
+  const base = apiBase();
+  const url = `${base}${pathAndQuery.startsWith('/') ? '' : '/'}${pathAndQuery}`;
+  const headers = { Authorization: `KakaoAK ${restKey}` };
+
+  // Native WebView fetch → dapi 는 CORS로 실패하는 경우가 많아 CapacitorHttp 사용
+  if (Capacitor.isNativePlatform()) {
+    const res = await CapacitorHttp.get({ url, headers, connectTimeout: 12000, readTimeout: 15000 });
+    const status = res.status ?? 0;
+    if (status < 200 || status >= 300) {
+      const text = typeof res.data === 'string' ? res.data : JSON.stringify(res.data || {});
+      throw Object.assign(new Error(`Kakao HTTP ${status}: ${text}`), {
+        code: 'KAKAO_HTTP',
+        status,
+      });
+    }
+    if (typeof res.data === 'string') {
+      try {
+        return JSON.parse(res.data);
+      } catch {
+        return {};
+      }
+    }
+    return res.data || {};
+  }
+
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    const text = await res.text();
+    throw Object.assign(new Error(`Kakao HTTP ${res.status}: ${text}`), {
+      code: 'KAKAO_HTTP',
+      status: res.status,
+    });
+  }
+  return res.json();
+}
 
 export function getKakaoRestKey() {
   return import.meta.env.VITE_KAKAO_REST_KEY || import.meta.env.VITE_KAKAO_JS_KEY || '';
@@ -118,20 +156,7 @@ async function searchViaRest({ query, lat, lng, radius, size }) {
     sort: 'distance',
   });
 
-  const url = `${apiBase()}/v2/local/search/keyword.json?${params}`;
-  const res = await fetch(url, {
-    headers: { Authorization: `KakaoAK ${key}` },
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw Object.assign(new Error(`Kakao HTTP ${res.status}: ${text}`), {
-      code: 'KAKAO_HTTP',
-      status: res.status,
-    });
-  }
-
-  const data = await res.json();
+  const data = await kakaoGetJson(`/v2/local/search/keyword.json?${params}`, key);
   return (data.documents || []).map((doc) => normalizePlace(doc, { lat, lng }));
 }
 
@@ -197,34 +222,26 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
         keywordParams.append('y', String(userLat));
         keywordParams.append('x', String(userLng));
       }
-      const keywordUrl = `${apiBase()}/v2/local/search/keyword.json?${keywordParams}`;
-      const keywordRes = await fetch(keywordUrl, { headers: { Authorization: `KakaoAK ${key}` } });
-      if (keywordRes.ok) {
-        const data = await keywordRes.json();
-        if (data.documents?.length > 0) {
-          return {
-            lat: Number(data.documents[0].y),
-            lng: Number(data.documents[0].x),
-            label: query,
-            source: 'custom',
-          };
-        }
+      const keywordData = await kakaoGetJson(`/v2/local/search/keyword.json?${keywordParams}`, key);
+      if (keywordData.documents?.length > 0) {
+        return {
+          lat: Number(keywordData.documents[0].y),
+          lng: Number(keywordData.documents[0].x),
+          label: query,
+          source: 'custom',
+        };
       }
-      
+
       // Fallback to Address Search if Keyword Search finds nothing
       const addressParams = new URLSearchParams({ query, size: '1' });
-      const addressUrl = `${apiBase()}/v2/local/search/address.json?${addressParams}`;
-      const addressRes = await fetch(addressUrl, { headers: { Authorization: `KakaoAK ${key}` } });
-      if (addressRes.ok) {
-        const data = await addressRes.json();
-        if (data.documents?.length > 0) {
-          return {
-            lat: Number(data.documents[0].y),
-            lng: Number(data.documents[0].x),
-            label: query,
-            source: 'custom',
-          };
-        }
+      const addressData = await kakaoGetJson(`/v2/local/search/address.json?${addressParams}`, key);
+      if (addressData.documents?.length > 0) {
+        return {
+          lat: Number(addressData.documents[0].y),
+          lng: Number(addressData.documents[0].x),
+          label: query,
+          source: 'custom',
+        };
       }
     } catch (e) {
       errors.push(e);
