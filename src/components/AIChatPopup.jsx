@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { aiState, subscribeToAI, runTurn } from '../services/aiService';
+import { startListening, stopListening } from '../services/speechService';
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
 
@@ -75,6 +76,7 @@ export default function AIChatPopup({ onClose }) {
   const [modelStatus, setModelStatus] = useState(aiState.statusMessage);
   const [isReady, setIsReady] = useState(aiState.isReady);
   const [llmMode, setLlmMode] = useState(aiState.mode);
+  const [speechHint, setSpeechHint] = useState('');
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -107,35 +109,46 @@ export default function AIChatPopup({ onClose }) {
     return () => {
       unsubscribe();
       window.speechSynthesis?.cancel();
+      stopListening().catch(() => {});
     };
   }, []);
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'ko-KR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    recognition.onresult = (e) => {
-      const transcript = e.results[0][0].transcript;
-      setInput(transcript);
-      setIsListening(false);
-    };
-
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+  const toggleMic = async () => {
+    if (isThinking || turnInFlightRef.current) return;
 
     if (isListening) {
-      try { recognition.start(); } catch { /* already started */ }
-    } else {
-      recognition.stop();
+      const last = await stopListening();
+      if (last) setInput((prev) => (prev?.trim() ? prev : last));
+      setIsListening(false);
+      return;
     }
 
-    return () => recognition.stop();
-  }, [isListening]);
+    setIsListening(true);
+    try {
+      await startListening({
+        language: 'ko-KR',
+        onPartial: (text) => {
+          if (text) setInput(text);
+        },
+        onFinal: (text) => {
+          if (text) setInput(text);
+        },
+        onError: (message) => {
+          console.warn('STT error:', message);
+          setSpeechHint(typeof message === 'string' ? message : '음성 인식에 실패했습니다.');
+          setIsListening(false);
+        },
+        onEnd: () => {
+          setIsListening(false);
+        },
+      });
+      setSpeechHint('듣고 있어요…');
+    } catch (err) {
+      console.warn(err);
+      setSpeechHint(err?.message || '마이크를 사용할 수 없습니다. 앱 권한을 확인해 주세요.');
+      setIsListening(false);
+    }
+  };
 
   const speak = async (text) => {
     await TextToSpeech.stop();
@@ -281,6 +294,12 @@ export default function AIChatPopup({ onClose }) {
         </div>
       )}
 
+      {(isListening || speechHint) && (
+        <div style={{ padding: '0.45rem 0.75rem', background: isListening ? 'rgba(239, 68, 68, 0.18)' : 'rgba(251, 191, 36, 0.15)', color: isListening ? '#fecaca' : '#fde68a', fontSize: '0.78rem', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, zIndex: 20 }}>
+          {isListening ? (speechHint || '듣고 있어요… 다시 누르면 종료') : speechHint}
+        </div>
+      )}
+
       {pendingContext && (
         <div className="chat-context-banner">
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -340,8 +359,11 @@ export default function AIChatPopup({ onClose }) {
 
       <div className="chat-input-area">
         <button
+          type="button"
           className={`mic-button ${isListening ? 'listening' : ''}`}
-          onClick={() => setIsListening(!isListening)}
+          onClick={toggleMic}
+          disabled={isThinking}
+          aria-label={isListening ? '음성 입력 중지' : '음성 입력 시작'}
           style={{
             width: '44px', height: '44px',
             borderRadius: '50%',
@@ -349,7 +371,8 @@ export default function AIChatPopup({ onClose }) {
             background: isListening ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255,255,255,0.1)',
             color: '#fff',
             display: 'flex', justifyContent: 'center', alignItems: 'center',
-            cursor: 'pointer',
+            cursor: isThinking ? 'not-allowed' : 'pointer',
+            opacity: isThinking ? 0.5 : 1,
             transition: 'all 0.3s'
           }}
         >

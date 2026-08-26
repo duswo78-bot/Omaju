@@ -97,7 +97,7 @@ VITE_NLG_API_BASE=/api
 
 - 워크플로: `.github/workflows/android-build.yml`
 - 트리거: `main` 푸시 또는 Actions → **Android Build** → Run workflow
-- JDK **17** (Temurin) + Android SDK
+- JDK **21** (Temurin; Capacitor 8 compileOptions) + Android SDK platform 36
 - 산출물: Artifacts → `omaju-android-debug` (`app-debug.apk`)
 
 선택 secrets: `VITE_NLG_API_BASE`, `VITE_KAKAO_*` (없으면 Pages 배포와 동일 기본 키)
