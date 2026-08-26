@@ -5,6 +5,8 @@ import { handleReroll } from './reroll.js';
 import { handleSmallTalk } from './smalltalk.js';
 import { handleQuestion } from './question.js';
 import { handleUnknown } from './unknown.js';
+import { handleGuide } from './guide.js';
+import { handleOfftopic } from './offtopic.js';
 import { isState, STATES } from '../engines/stateMachine.js';
 import { setPendingContextText } from '../engines/memoryEngine.js';
 
@@ -17,28 +19,41 @@ export async function routeChat(text, cleanText, context) {
   const frame = context.frame;
 
   if (isState(STATES.AWAITING_REC_CONFIRM)) {
-    if (frame?.intent === 'REROLL') {
+    if (frame?.intent === 'REROLL' || frame?.intent === 'DENY') {
       return await handleReroll(text, context);
+    }
+    if (frame?.intent === 'AFFIRM') {
+      return await handleRecommendation(text, cleanText, context);
     }
     setPendingContextText('');
   }
 
   if (isState(STATES.FOLLOWUP)) {
-    const intent = frame?.intent || 'RECOMMEND';
-    if (intent === 'REROLL') return await handleReroll(text, context);
+    const intent = frame?.intent || 'GUIDE';
+    if (intent === 'REROLL' || intent === 'DENY') return await handleReroll(text, context);
     if (intent === 'GREETING') return handleGreeting(text, context);
     if (intent === 'THANKS') return handleThanks(text, context);
-    return await handleRecommendation(text, cleanText, context);
+    if (intent === 'OFFTOPIC') return handleOfftopic(text, context);
+    if (intent === 'GUIDE') return handleGuide(text, context);
+    if (intent === 'AFFIRM' || intent === 'RECOMMEND') {
+      return await handleRecommendation(text, cleanText, context);
+    }
+    return handleGuide(text, context);
   }
 
   if (isState(STATES.ASKING)) {
-    const positives = ['응', '좋아', 'ㅇㅇ', '네', '그래', '고고', 'ㅇ', '부탁', '해줘', '골라'];
-    if (positives.some((p) => cleanText.includes(p)) && cleanText.length <= 6) {
+    if (frame?.intent === 'AFFIRM' || frame?.intent === 'RECOMMEND') {
       return await handleRecommendation(text, cleanText, context);
     }
+    if (frame?.intent === 'DENY') {
+      return handleGuide(text, { ...context, frame: { ...frame, guideHint: 'general' } });
+    }
+    if (frame?.intent === 'OFFTOPIC') return handleOfftopic(text, context);
+    // ASKING 중 새 힌트가 오면 추천/가이드로
+    if (frame?.intent === 'GUIDE') return handleGuide(text, context);
   }
 
-  const intent = frame?.intent || 'RECOMMEND';
+  const intent = frame?.intent || 'GUIDE';
 
   switch (intent) {
     case 'GREETING':
@@ -51,11 +66,20 @@ export async function routeChat(text, cleanText, context) {
       return handleSmallTalk(text, context);
     case 'QUESTION':
       return handleQuestion(text, context);
+    case 'GUIDE':
+      return handleGuide(text, context);
+    case 'OFFTOPIC':
+      return handleOfftopic(text, context);
+    case 'AFFIRM':
+      return await handleRecommendation(text, cleanText, context);
+    case 'DENY':
+      return handleGuide(text, { ...context, frame: { ...frame, guideHint: 'general' } });
     case 'CLARIFY':
     case 'UNKNOWN':
       return handleUnknown(text, context);
     case 'RECOMMEND':
-    default:
       return await handleRecommendation(text, cleanText, context);
+    default:
+      return handleGuide(text, context);
   }
 }

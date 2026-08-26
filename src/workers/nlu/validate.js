@@ -101,11 +101,16 @@ export function parseFrontDraft(draft) {
         onlyAlcohol: Boolean(slots.constraints?.onlyAlcohol),
         onlySnack: Boolean(slots.constraints?.onlySnack),
         nonAlcoholic: Boolean(slots.constraints?.nonAlcoholic),
+        spicy: Boolean(slots.constraints?.spicy),
+        light: Boolean(slots.constraints?.light),
+        cheap: Boolean(slots.constraints?.cheap),
+        hangover: Boolean(slots.constraints?.hangover),
         exclude: uniq(slots.constraints?.exclude),
       },
     },
     confidence: typeof obj.confidence === 'number' ? obj.confidence : 0.6,
     needsClarification: obj.needsClarification || undefined,
+    guideHint: obj.guideHint || undefined,
     source: 'llm_front',
   };
 }
@@ -140,6 +145,10 @@ export function buildNluFrame(rawText, cleanText, frontDraft) {
       onlyAlcohol: draft.slots.constraints?.onlyAlcohol || rule.slots.constraints?.onlyAlcohol,
       onlySnack: draft.slots.constraints?.onlySnack || rule.slots.constraints?.onlySnack,
       nonAlcoholic: draft.slots.constraints?.nonAlcoholic || rule.slots.constraints?.nonAlcoholic,
+      spicy: draft.slots.constraints?.spicy || rule.slots.constraints?.spicy,
+      light: draft.slots.constraints?.light || rule.slots.constraints?.light,
+      cheap: draft.slots.constraints?.cheap || rule.slots.constraints?.cheap,
+      hangover: draft.slots.constraints?.hangover || rule.slots.constraints?.hangover,
       exclude: uniq([
         ...(draft.slots.constraints?.exclude || []),
         ...(rule.slots.constraints?.exclude || []),
@@ -147,11 +156,24 @@ export function buildNluFrame(rawText, cleanText, frontDraft) {
     },
   };
 
+  // 규칙이 OFFTOPIC/GUIDE로 강하게 판단하면 draft RECOMMEND보다 규칙 우선
+  let mergedIntent = intent;
+  if (
+    (rule.intent === 'OFFTOPIC' || rule.intent === 'GUIDE') &&
+    rule.confidence >= 0.7 &&
+    draft.intent === 'RECOMMEND' &&
+    !(slots.alcoholHints?.length || slots.snackHints?.length)
+  ) {
+    mergedIntent = rule.intent;
+  }
+
   const frame = emptyFrame({
-    intent,
+    intent: mergedIntent,
     slots,
     confidence: Math.max(draft.confidence || 0, rule.confidence || 0),
+    domainScore: rule.domainScore,
     needsClarification: draft.needsClarification || rule.needsClarification,
+    guideHint: rule.guideHint || draft.guideHint,
     source: 'merged',
     rawText,
     matchedOpening: rule.matchedOpening,

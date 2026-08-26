@@ -9,6 +9,8 @@ import smalltalkTemplates from '../templates/smalltalk.json';
 import unknownTemplates from '../templates/unknown.json';
 import questionTemplates from '../templates/question.json';
 import gameTemplates from '../templates/game.json';
+import offtopicTemplates from '../templates/offtopic.json';
+import guideTemplates from '../templates/guide.json';
 
 // Helper to replace template variables
 function formatTemplate(template, bestAlc, bestSnack, bestGame) {
@@ -93,6 +95,12 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
       break;
     case 'UNKNOWN':
       explanation = pickRandom(unknownTemplates);
+      break;
+    case 'OFFTOPIC':
+      explanation = pickRandom(offtopicTemplates);
+      break;
+    case 'GUIDE':
+      explanation = pickRandom(guideTemplates.general);
       break;
     case 'RECOMMEND':
     default:
