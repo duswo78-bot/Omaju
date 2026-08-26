@@ -12,6 +12,12 @@ export function handleGuide(text, context) {
     answer = `${context.profile.name}님, ${answer}`;
   }
 
+  const trait = context.profile?.mbtiTrait;
+  if (trait?.tip && Math.random() > 0.55) {
+    const code = trait.code || context.profile?.mbti || '';
+    answer += `\n\n(${code}${trait.label ? ` · ${trait.label}` : ''}: ${trait.tip})`;
+  }
+
   return {
     answer,
     bestAlc: null,

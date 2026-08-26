@@ -17,7 +17,7 @@ import { composeGuideAnswer } from '../utils/composeGuide.js';
 function formatTemplate(template, bestAlc, bestSnack, bestGame) {
   let text = template;
   if (bestAlc) {
-    const alcTags = [...bestAlc.tags].sort(() => 0.5 - Math.random()).slice(0, 2);
+    const alcTags = [...(bestAlc.tags || [])].sort(() => 0.5 - Math.random()).slice(0, 2);
     const abvInfo = bestAlc.abv > 0 ? `(도수 ${bestAlc.abv}%)` : '(논알콜)';
     const priceEmoji = bestAlc.priceLevel <= 1 ? '💰' : bestAlc.priceLevel <= 2 ? '💰💰' : '💰💰💰';
     
@@ -29,7 +29,7 @@ function formatTemplate(template, bestAlc, bestSnack, bestGame) {
   }
   
   if (bestSnack) {
-    const snkTags = [...bestSnack.tags].sort(() => 0.5 - Math.random()).slice(0, 2);
+    const snkTags = [...(bestSnack.tags || [])].sort(() => 0.5 - Math.random()).slice(0, 2);
     // priceLevel field is missing from snacks, just use default
     const priceEmoji = '💰💰';
 
@@ -68,11 +68,18 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
     } else if (!empathy) {
       empathy = `${profile.name}님!`;
     }
-    
-    if (profile.mbti && intent === 'RECOMMEND') {
-      const mbtiMsg = `\n(오마주 AI: ${profile.name}님은 ${profile.mbti.toUpperCase()}니까, 이 조합이 딱 맞을 것 같아요! 😉)\n`;
-      empathy += mbtiMsg;
-    }
+  }
+
+  // MBTI 타입별 특징 힌트 (단정 금지, 경향 표현)
+  if (profile?.mbtiTrait && (intent === 'RECOMMEND' || intent === 'REROLL') && Math.random() > 0.35) {
+    const t = profile.mbtiTrait;
+    const code = t.code || profile.mbti?.toUpperCase();
+    const label = t.label || '';
+    const tip = t.tip || '';
+    const mbtiMsg = tip
+      ? `\n(${code}${label ? ` · ${label}` : ''}: ${tip})`
+      : `\n(${code} 경향을 살짝 반영해 골랐어요.)`;
+    empathy = empathy ? `${empathy}${mbtiMsg}` : mbtiMsg.trim();
   }
 
   // 2. 추천 이유 및 페어링 설명 (Reason & Explanation)

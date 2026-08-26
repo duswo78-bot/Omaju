@@ -4,6 +4,12 @@ import { embedQuery, getAlcoholEmbeddings, getSnackEmbeddings, getGameEmbeddings
 import { getProfile } from './profileEngine.js';
 import { getRejectedItems, getRecentRecommendedIds, rememberRecommendedIds } from './memoryEngine.js';
 import { pickRandom, pickFromScoreBand } from '../utils/random.js';
+import {
+  resolveExcludes,
+  isExcludedItem,
+  toDrinkFamily,
+  pickFallbackFamilies,
+} from '../../data/drinkFamilies.js';
 import alcoholsData from '../../data/alcohols.json';
 import snacksData from '../../data/snacks.json';
 import relationsData from '../../data/relations.json';
@@ -39,8 +45,24 @@ function pickRelationCandidate(scoredList, minScore = 70) {
 
 const SINGLE_CHAR_ALLOW = ['비', '눈', '회', '파', '단', '짠', '맵', '쓴', '빵', '밥', '면', '탕', '전', '편', '떡', '술'];
 
+/** Pull exclude tokens from NLU constraints + inline “X 말고/싫어” patterns. */
+function collectExcludeTokens(cleanText, constraints) {
+  const tokens = [...(constraints?.exclude || [])];
+  const re = /([가-힣A-Za-z0-9]{1,12})\s*(말고|제외|빼고|싫|별로|먹었)/g;
+  let m;
+  while ((m = re.exec(cleanText || '')) !== null) {
+    if (m[1] && !['그거', '이거', '저거', '다른', '오늘', '그냥'].includes(m[1])) {
+      tokens.push(m[1]);
+    }
+  }
+  return [...new Set(tokens)];
+}
+
 export async function recommend(cleanText, userTokens, contextTokens, contextSignals, frame = null) {
   let bestAlc = null, bestSnack = null, bestGame = null;
+  cleanText = typeof cleanText === 'string' ? cleanText : '';
+  userTokens = Array.isArray(userTokens) ? userTokens : [];
+  contextTokens = Array.isArray(contextTokens) ? contextTokens : [];
   const constraints = frame?.slots?.constraints || {};
   let wantNonAlc =
     Boolean(constraints.nonAlcoholic) ||
@@ -69,23 +91,95 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   const rejectedItems = getRejectedItems();
   const recentIds = getRecentRecommendedIds();
 
+  const excludeResolved = resolveExcludes(collectExcludeTokens(cleanText, constraints));
+
+  // Positive drink families mentioned this turn (not in exclude list)
+  const explicitFamilies = [];
+  for (const t of [...(userTokens || []), ...(frame?.slots?.alcoholHints || [])]) {
+    const fam = toDrinkFamily(t);
+    if (fam && fam !== 'other' && !excludeResolved.families.includes(fam) && !explicitFamilies.includes(fam)) {
+      explicitFamilies.push(fam);
+    }
+  }
+  const favFam = toDrinkFamily(userProfile.favoriteDrink);
+  if (favFam && !excludeResolved.families.includes(favFam) && !explicitFamilies.includes(favFam)) {
+    // MY is strong but not always "this turn explicit" — still pass for whiskey/highball tuning
+    explicitFamilies.push(favFam);
+  }
+
+  const hasNegation =
+    cleanText.includes('먹었') ||
+    cleanText.includes('말고') ||
+    cleanText.includes('싫어') ||
+    cleanText.includes('별로') ||
+    excludeResolved.families.length > 0 ||
+    excludeResolved.needles.length > 0;
+
+  // 부정만 있고 대안 family가 없으면 치환 테이블로 L1 폴백
+  const positiveAlts = explicitFamilies.filter((f) => !excludeResolved.families.includes(f));
+  const negationOnly = hasNegation && excludeResolved.families.length > 0 && positiveAlts.length === 0;
+  const fallbackFamilies = negationOnly
+    ? pickFallbackFamilies(excludeResolved.families, {
+        favoriteDrink: userProfile.favoriteDrink,
+        mbtiDrinkBias: userProfile.mbtiTrait?.drinkBias || [],
+      })
+    : [];
+
+  // 텍스트/제약이 논알콜을 요구할 때만 풀을 논알콜로 제한.
+  // MY 선호 논알콜은 후보에 포함 + 점수 가산으로 처리 (다른 주종 요청을 막지 않음).
+
+  const scoreOpts = {
+    excludedFamilies: excludeResolved.families,
+    excludedNeedles: excludeResolved.needles,
+    excludedIds: [...(userProfile.dislikedAlcohols || []), ...rejectedItems],
+    hasStrongSignal:
+      resolvedAlcIds.size > 0 ||
+      Boolean(userProfile.favoriteDrink) ||
+      (userTokens && userTokens.length > 0) ||
+      fallbackFamilies.length > 0,
+    explicitFamilies,
+    fallbackFamilies,
+  };
+
   // Real RAG Logic (MiniLM) + Keyword Boosting
   const queryVec = await embedQuery(cleanText);
-  const hasNegativeContext = cleanText.includes('먹었') || cleanText.includes('말고') || cleanText.includes('싫어') || cleanText.includes('별로');
+  const hasNegativeContext = hasNegation;
 
   const alcoholEmbeddings = getAlcoholEmbeddings();
   const snackEmbeddings = getSnackEmbeddings();
   const gameEmbeddings = getGameEmbeddings();
 
+  const allowNonAlcInPool =
+    wantNonAlc ||
+    favFam === 'nonalc' ||
+    explicitFamilies.includes('nonalc') ||
+    (userTokens || []).some((t) => /논알|무알/.test(String(t)));
+
   // 1. 주류 검색
   if (!wantOnlySnack) {
     let alcCandidates = [];
     for (const { item, vector } of alcoholEmbeddings) {
-      if (wantNonAlc && item.category !== '논알콜/음료') continue;
-      if (!wantNonAlc && item.category === '논알콜/음료' && !userTokens.some(t => item.name_ko.includes(t))) continue;
+      if (wantNonAlc && item.category !== '논알콜/음료' && item.abv !== 0) continue;
+      if (!allowNonAlcInPool && item.category === '논알콜/음료') continue;
+      if (isExcludedItem(item, {
+        families: scoreOpts.excludedFamilies,
+        needles: scoreOpts.excludedNeedles,
+        ids: scoreOpts.excludedIds,
+      })) continue;
 
       let baseSim = cosineSimilarity(queryVec, vector);
-      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, frameSignals, userProfile, hasNegativeContext, false, SINGLE_CHAR_ALLOW);
+      const { score, isMatched } = calculateScore(
+        baseSim,
+        item,
+        userTokens,
+        contextTokens,
+        frameSignals,
+        userProfile,
+        hasNegativeContext,
+        false,
+        SINGLE_CHAR_ALLOW,
+        scoreOpts
+      );
       
       let finalScore = score;
       if (resolvedAlcIds.has(item.id)) {
@@ -113,7 +207,18 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     let snkCandidates = [];
     for (const { item, vector } of snackEmbeddings) {
       let baseSim = cosineSimilarity(queryVec, vector);
-      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, frameSignals, userProfile, hasNegativeContext, true, SINGLE_CHAR_ALLOW);
+      const { score, isMatched } = calculateScore(
+        baseSim,
+        item,
+        userTokens,
+        contextTokens,
+        frameSignals,
+        userProfile,
+        hasNegativeContext,
+        true,
+        SINGLE_CHAR_ALLOW,
+        scoreOpts
+      );
       
       let finalScore = score;
       if (resolvedSnkIds.has(item.id)) {
@@ -135,12 +240,22 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }
   }
 
+  const alcHardExcluded = (alc) =>
+    isExcludedItem(alc, {
+      families: scoreOpts.excludedFamilies,
+      needles: scoreOpts.excludedNeedles,
+      ids: scoreOpts.excludedIds,
+    }) ||
+    (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0);
+
   // 3. 짝꿍 매칭 (Relations) — 최고점 1개 고정을 피하고 상위 밴드에서 랜덤
   if (isSnackMatched && !isAlcMatched && bestSnack) {
-    const scored = alcoholsData.map((alc) => ({
-      item: alc,
-      score: getRelationScore(alc.id, bestSnack.id) - diversityPenalty(alc.id, recentIds) * 40,
-    }));
+    const scored = alcoholsData
+      .filter((alc) => !alcHardExcluded(alc))
+      .map((alc) => ({
+        item: alc,
+        score: getRelationScore(alc.id, bestSnack.id) - diversityPenalty(alc.id, recentIds) * 40,
+      }));
     const picked = pickRelationCandidate(scored, 70);
     if (picked) {
       bestAlc = picked;
@@ -179,7 +294,10 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   }
 
   // 4. Fallback
-  if (!bestAlc && alcoholsData.length > 0 && !wantOnlySnack) bestAlc = pickRandom(alcoholsData);
+  if (!bestAlc && alcoholsData.length > 0 && !wantOnlySnack) {
+    const pool = alcoholsData.filter((a) => !alcHardExcluded(a));
+    bestAlc = pickRandom(pool.length ? pool : alcoholsData);
+  }
   if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) bestSnack = pickRandom(snacksData);
 
   // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤

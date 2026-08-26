@@ -1434,5 +1434,227 @@
       "snk_daechang",
       "snk_sausage"
     ]
+  },
+  {
+    "id": "alc_nonalc_grape",
+    "name_ko": "논알콜 포도주스 스파클링",
+    "name_en": "Non-alc Grape Sparkling",
+    "category": "논알콜/음료",
+    "subCategory": "논알콜 스파클링",
+    "abv": 0,
+    "sweetness": 4,
+    "body": 2,
+    "carbonation": 4,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "romantic",
+      "happy",
+      "refresh",
+      "date",
+      "friends"
+    ],
+    "weather": [
+      "hot",
+      "any",
+      "spring"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "스파클링",
+      "달달",
+      "운전"
+    ],
+    "pairings": [
+      "snk_peach",
+      "snk_bingsu",
+      "snk_cheese",
+      "snk_fruit"
+    ]
+  },
+  {
+    "id": "alc_nonalc_beer",
+    "name_ko": "논알콜 맥주",
+    "name_en": "Non-alcoholic Beer",
+    "category": "논알콜/음료",
+    "subCategory": "논알콜 맥주",
+    "abv": 0,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 4,
+    "country": "글로벌",
+    "priceLevel": 2,
+    "moods": [
+      "friends",
+      "refresh",
+      "sports",
+      "happy",
+      "honsul"
+    ],
+    "weather": [
+      "hot",
+      "any"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "맥주",
+      "시원",
+      "운전"
+    ],
+    "pairings": [
+      "snk_chicken",
+      "snk_fries",
+      "snk_sausage",
+      "snk_pizza"
+    ]
+  },
+  {
+    "id": "alc_nonalc_highball",
+    "name_ko": "논알콜 하이볼",
+    "name_en": "Non-alc Highball",
+    "category": "논알콜/음료",
+    "subCategory": "논알콜 하이볼",
+    "abv": 0,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 3,
+    "country": "한국",
+    "priceLevel": 2,
+    "moods": [
+      "refresh",
+      "happy",
+      "friends",
+      "honsul",
+      "date"
+    ],
+    "weather": [
+      "hot",
+      "any"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "하이볼",
+      "상큼",
+      "운전"
+    ],
+    "pairings": [
+      "snk_nacho",
+      "snk_takoyaki",
+      "snk_fruit",
+      "snk_gimmari"
+    ]
+  },
+  {
+    "id": "alc_nonalc_makgeolli",
+    "name_ko": "논알콜 막걸리맛 음료",
+    "name_en": "Non-alc Makgeolli Drink",
+    "category": "논알콜/음료",
+    "subCategory": "전통 논알콜",
+    "abv": 0,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 1,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "comfort",
+      "friends",
+      "honsul",
+      "rainy"
+    ],
+    "weather": [
+      "rain",
+      "cold",
+      "any"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "막걸리",
+      "전통",
+      "운전"
+    ],
+    "pairings": [
+      "snk_jeon",
+      "snk_pajeon",
+      "snk_kimchi",
+      "snk_tofu"
+    ]
+  },
+  {
+    "id": "alc_nonalc_tea",
+    "name_ko": "허브티 / 무알콜 칵테일",
+    "name_en": "Herbal Mocktail",
+    "category": "논알콜/음료",
+    "subCategory": "모크테일",
+    "abv": 0,
+    "sweetness": 3,
+    "body": 1,
+    "carbonation": 2,
+    "country": "글로벌",
+    "priceLevel": 2,
+    "moods": [
+      "romantic",
+      "comfort",
+      "special",
+      "date",
+      "honsul"
+    ],
+    "weather": [
+      "any",
+      "hot"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "모크테일",
+      "티",
+      "운전"
+    ],
+    "pairings": [
+      "snk_cheese",
+      "snk_fruit",
+      "snk_dessert",
+      "snk_salad"
+    ]
+  },
+  {
+    "id": "alc_nonalc_cola",
+    "name_ko": "제로 콜라 / 토닉",
+    "name_en": "Zero Cola / Tonic",
+    "category": "논알콜/음료",
+    "subCategory": "소프트드링크",
+    "abv": 0,
+    "sweetness": 2,
+    "body": 1,
+    "carbonation": 5,
+    "country": "글로벌",
+    "priceLevel": 1,
+    "moods": [
+      "friends",
+      "refresh",
+      "celebrate",
+      "happy"
+    ],
+    "weather": [
+      "hot",
+      "any"
+    ],
+    "tags": [
+      "논알콜",
+      "무알콜",
+      "탄산",
+      "라이트",
+      "운전"
+    ],
+    "pairings": [
+      "snk_fried",
+      "snk_chicken",
+      "snk_pizza",
+      "snk_nacho"
+    ]
   }
 ]

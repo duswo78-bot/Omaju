@@ -1,8 +1,10 @@
 export function cosineSimilarity(vecA, vecB) {
+  if (!vecA?.length || !vecB?.length) return 0;
+  const n = Math.min(vecA.length, vecB.length);
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
-  for (let i = 0; i < vecA.length; i++) {
+  for (let i = 0; i < n; i++) {
     dotProduct += vecA[i] * vecB[i];
     normA += vecA[i] * vecA[i];
     normB += vecB[i] * vecB[i];

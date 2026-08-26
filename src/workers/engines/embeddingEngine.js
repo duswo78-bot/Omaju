@@ -69,7 +69,7 @@ export async function initEmbeddings(postMessage) {
     alcoholCount: alcoholsData.length,
     snackCount: snacksData.length,
     gameCount: gamesData.length,
-    version: 2,
+    version: 3,
   };
   const cachedAlcohols = await getCache(db, 'alcoholEmbeddings');
   const cachedSnacks = await getCache(db, 'snackEmbeddings');
@@ -81,6 +81,14 @@ export async function initEmbeddings(postMessage) {
     cacheMeta.snackCount === expectedMeta.snackCount &&
     cacheMeta.gameCount === expectedMeta.gameCount;
 
+  const snacksGamesOk =
+    cacheMeta &&
+    cacheMeta.version === expectedMeta.version &&
+    cacheMeta.snackCount === expectedMeta.snackCount &&
+    cacheMeta.gameCount === expectedMeta.gameCount &&
+    cachedSnacks &&
+    cachedGames;
+
   if (metaMatches && cachedAlcohols && cachedSnacks && cachedGames) {
     alcoholEmbeddings = cachedAlcohols;
     snackEmbeddings = cachedSnacks;
@@ -91,28 +99,63 @@ export async function initEmbeddings(postMessage) {
     return;
   }
 
+  // 주류만 늘었을 때: 안주/게임 캐시 재사용 + 주류 증분 임베딩 (전체 재계산으로 인한 실패/지연 방지)
+  if (snacksGamesOk && cachedAlcohols?.length) {
+    const extractor = await AIPipeline.getInstance((x) => {
+      postMessage({ type: 'progress', data: x });
+    });
+    const byId = new Map(
+      (cachedAlcohols || [])
+        .filter((row) => row?.item?.id && row?.vector)
+        .map((row) => [row.item.id, row.vector])
+    );
+    alcoholEmbeddings = [];
+    for (const alc of alcoholsData) {
+      const cachedVec = byId.get(alc.id);
+      if (cachedVec) {
+        alcoholEmbeddings.push({ item: alc, vector: cachedVec });
+        continue;
+      }
+      const textToEmbed = `${alc.name_ko} ${alc.category} ${(alc.tags || []).join(' ')} ${(alc.moods || []).join(' ')}`;
+      const output = await extractor(textToEmbed, { pooling: 'mean', normalize: true });
+      alcoholEmbeddings.push({ item: alc, vector: Array.from(output.data) });
+    }
+    snackEmbeddings = cachedSnacks;
+    gameEmbeddings = cachedGames;
+    await setCache(db, 'alcoholEmbeddings', alcoholEmbeddings);
+    await setCache(db, 'snackEmbeddings', snackEmbeddings);
+    await setCache(db, 'gameEmbeddings', gameEmbeddings);
+    await setCache(db, 'embeddingMeta', expectedMeta);
+    postMessage({ type: 'progress', data: { status: 'downloading', progress: 100 } });
+    return;
+  }
+
   // 캐시가 없으면 모델을 로드하여 계산 (최초 1회만 실행됨)
   const extractor = await AIPipeline.getInstance(x => {
     postMessage({ type: 'progress', data: x });
   });
 
+  alcoholEmbeddings = [];
+  snackEmbeddings = [];
+  gameEmbeddings = [];
+
   // 주류 임베딩
   for (const alc of alcoholsData) {
-    const textToEmbed = `${alc.name_ko} ${alc.category} ${alc.tags.join(' ')} ${alc.moods.join(' ')}`;
+    const textToEmbed = `${alc.name_ko} ${alc.category} ${(alc.tags || []).join(' ')} ${(alc.moods || []).join(' ')}`;
     const output = await extractor(textToEmbed, { pooling: 'mean', normalize: true });
     alcoholEmbeddings.push({ item: alc, vector: Array.from(output.data) });
   }
 
   // 안주 임베딩
   for (const snk of snacksData) {
-    const textToEmbed = `${snk.name_ko} ${snk.category} ${snk.tags.join(' ')} ${snk.moods?.join(' ') || ''}`;
+    const textToEmbed = `${snk.name_ko} ${snk.category} ${(snk.tags || []).join(' ')} ${snk.moods?.join(' ') || ''}`;
     const output = await extractor(textToEmbed, { pooling: 'mean', normalize: true });
     snackEmbeddings.push({ item: snk, vector: Array.from(output.data) });
   }
 
   // 게임 임베딩
   for (const g of gamesData) {
-    const textToEmbed = `${g.name} ${g.tags.join(' ')}`;
+    const textToEmbed = `${g.name} ${(g.tags || []).join(' ')}`;
     const output = await extractor(textToEmbed, { pooling: 'mean', normalize: true });
     gameEmbeddings.push({ item: g, vector: Array.from(output.data) });
   }

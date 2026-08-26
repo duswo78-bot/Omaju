@@ -32,11 +32,22 @@ export function buildBackPrompt(facts, profile) {
     : null;
   const snk = facts?.snack?.name_ko || null;
   const game = facts?.game?.name || null;
+  const trait = profile?.mbtiTrait;
+  const mbtiLine = trait
+    ? `MBTI: ${trait.code || profile.mbti} (${trait.label || ''}) · vibe ${trait.vibe || '-'} · tip: ${trait.tip || ''}`
+    : profile?.mbti
+      ? `MBTI: ${String(profile.mbti).toUpperCase()}`
+      : 'MBTI: (없음)';
 
   return `당신은 오마주 AI입니다. 아래 확정된 추천 사실만 사용해 한국어로 1~3문장 답하세요.
 이름을 바꾸거나 새로운 술/안주를 추가하지 마세요. 과한 주량·건강 조언 금지.
+MBTI는 단정하지 말고 "경향"으로만 가볍게 언급하세요.
 
 사용자 호칭: ${name}
+${mbtiLine}
+선호 주종: ${profile?.favoriteDrink || '(없음)'}
+선호 안주: ${profile?.favoriteSnack || '(없음)'}
+주량: ${profile?.tolerance || '(없음)'}
 intent: ${facts?.intent || 'RECOMMEND'}
 술: ${alc || '(없음)'}
 안주: ${snk || '(없음)'}

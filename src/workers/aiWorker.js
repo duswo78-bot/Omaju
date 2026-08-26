@@ -4,6 +4,7 @@ import { setState } from './engines/stateMachine.js';
 import { pushHistory } from './engines/memoryEngine.js';
 import { simpleTokenize, cleanTextString } from './utils/tokenizer.js';
 import { buildNluFrame } from './nlu/validate.js';
+import { syncMyProfile } from './engines/profileEngine.js';
 
 function buildRecommendation(result) {
   if (!(result.bestAlc || result.bestSnack || result.bestGame)) return null;
@@ -68,6 +69,9 @@ function buildFacts(result, frame) {
 }
 
 async function handleTurn(text, payload = {}) {
+  // MY 프로필 → Worker 추천 프로필 동기화 (MBTI/주종/주량 포함)
+  const synced = syncMyProfile(payload?.profile || null);
+
   const currentText = (text || '').trim();
   const uiContext = (payload?.opening || '').trim();
   const skipPrompt = Boolean(payload?.skipPrompt && uiContext);
@@ -76,7 +80,21 @@ async function handleTurn(text, payload = {}) {
   const tokens = simpleTokenize(enrichedText);
 
   const frame = buildNluFrame(enrichedText, cleanText, payload?.frontDraft);
-  // signals는 Frame 슬롯으로 대체하되, 엔진 호환을 위해 유지
+
+  // MBTI mood 시드: 빈칸 prior만. MY 주종·이미 mood가 있으면 개입하지 않음
+  if (
+    synced?.mbtiTrait?.moods?.length &&
+    (!frame.slots.moods || frame.slots.moods.length === 0) &&
+    !synced?.favoriteDrink &&
+    (frame.intent === 'GUIDE' || frame.intent === 'RECOMMEND')
+  ) {
+    frame.slots.moods = [...synced.mbtiTrait.moods];
+  }
+  // GUIDE인데 힌트가 general이면 MBTI 기본 가이드 힌트 사용
+  if (frame.intent === 'GUIDE' && (!frame.guideHint || frame.guideHint === 'general') && synced?.mbtiTrait?.guideHint) {
+    frame.guideHint = synced.mbtiTrait.guideHint;
+  }
+
   const signals = {
     moods: frame.slots.moods || [],
     weather: frame.slots.weather || [],
@@ -92,7 +110,7 @@ async function handleTurn(text, payload = {}) {
     isLowConfidence: payload?.isLowConfidence || false,
     skipPrompt,
     matchedOpening: frame.matchedOpening || null,
-    profile: payload?.profile || null,
+    profile: { ...(payload?.profile || {}), ...synced, mbtiTrait: synced?.mbtiTrait },
     uiContext,
   };
 
@@ -125,6 +143,9 @@ self.addEventListener('message', async (event) => {
 
   try {
     if (type === 'init') {
+      if (payload?.userProfile || event.data?.userProfile) {
+        syncMyProfile(payload?.userProfile || event.data.userProfile);
+      }
       await initEmbeddings(postMessage);
       postMessage({ type: 'ready' });
       return;
@@ -152,6 +173,7 @@ self.addEventListener('message', async (event) => {
       type: 'error',
       requestId: requestId || null,
       message: 'AI 모델 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      detail: String(error?.message || error || ''),
     });
   }
 });
