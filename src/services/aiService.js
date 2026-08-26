@@ -98,8 +98,24 @@ aiWorker.onerror = (error) => {
  * - Front: Prompt 가능 시만 LLM draft, 아니면 규칙 NLU
  * - Brain: 항상 Worker (로컬)
  * - Back: Prompt → Rewriting → 템플릿 → (최후) 클라우드
+ *
+ * @param {string} text
+ * @param {object} [payload]
+ * @param {(stage: string, label: string) => void} [payload.onProgress] UI 단계 표시
+ * @param {(partial: { answer: string, recommendation?: object|null, nlgSource: string }) => void} [payload.onPartial]
+ *        워커 템플릿이 나온 직후 먼저 보여 주고, BACK 완료 후 최종으로 교체
  */
 export async function runTurn(text, payload = {}) {
+  const { onProgress, onPartial, ...turnPayload } = payload;
+  const notify = (stage, label) => {
+    try {
+      onProgress?.(stage, label);
+    } catch {
+      /* ignore UI errors */
+    }
+  };
+
+  notify('probe', '기기 AI 확인 중…');
   const probe = await probeSystemLlm({
     force: !aiState.mode || aiState.mode === LLM_MODES.LITE,
   });
@@ -118,6 +134,7 @@ export async function runTurn(text, payload = {}) {
   let onDevicePath = 'none';
 
   if (promptOk && provider.generateFront) {
+    notify('front', '의도 파악 중… (온디바이스)');
     try {
       frontDraft = await provider.generateFront({ text });
       if (frontDraft) onDevicePath = 'prompt';
@@ -127,20 +144,36 @@ export async function runTurn(text, payload = {}) {
     }
   }
 
+  notify('worker', '술·안주 고르는 중…');
   const workerResult = await postToWorker({
     type: 'turn',
     text,
-    payload: { ...payload, frontDraft },
+    payload: { ...turnPayload, frontDraft },
   });
 
   let answer = workerResult.templateAnswer || workerResult.answer;
   let nlgSource = 'template';
 
+  // 템플릿을 먼저 보여 체감 대기 시간을 줄임 (BACK은 이어서 교체)
+  if (typeof onPartial === 'function' && answer) {
+    try {
+      onPartial({
+        answer,
+        recommendation: workerResult.recommendation || null,
+        nlgSource: 'template',
+        pendingPolish: Boolean(promptOk || rewriteOk),
+      });
+    } catch {
+      /* ignore */
+    }
+  }
+
   if (promptOk && provider.generateBack) {
+    notify('back', '문장 다듬는 중… (온디바이스)');
     try {
       const back = await provider.generateBack({
         facts: workerResult.facts,
-        profile: payload.profile,
+        profile: turnPayload.profile,
       });
       if (back) {
         answer = back;
@@ -153,6 +186,7 @@ export async function runTurn(text, payload = {}) {
   }
 
   if (nlgSource === 'template' && rewriteOk && provider.rewriteAnswer) {
+    notify('rewrite', '말투 다듬는 중…');
     try {
       const prepared = prepareTemplateForRewrite(answer);
       const rewritten = await provider.rewriteAnswer(prepared);
@@ -168,15 +202,18 @@ export async function runTurn(text, payload = {}) {
 
   // 온디바이스가 전혀 없을 때만 클라우드 NLG
   if (nlgSource === 'template' && onDevicePath === 'none') {
+    notify('cloud', '응답 다듬는 중…');
     const cloud = await cloudNlg({
       facts: workerResult.facts,
-      profile: payload.profile,
+      profile: turnPayload.profile,
     });
     if (cloud) {
       answer = cloud;
       nlgSource = 'cloud';
     }
   }
+
+  notify('done', '');
 
   return {
     ...workerResult,

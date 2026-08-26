@@ -105,6 +105,9 @@ export default function AIChatPopup({ onClose }) {
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const [thinkingLabel, setThinkingLabel] = useState('생각 중…');
+  const [hasPartialAnswer, setHasPartialAnswer] = useState(false);
+  const pendingAiMsgIdRef = useRef(null);
   const [pendingContext, setPendingContext] = useState(() => localStorage.getItem('omaju_pending_context') || '');
   const messagesEndRef = useRef(null);
   const turnInFlightRef = useRef(false);
@@ -311,6 +314,9 @@ export default function AIChatPopup({ onClose }) {
     setMessages((prev) => [...prev, newMsg]);
     setInput('');
     setIsThinking(true);
+    setThinkingLabel('생각 중…');
+    setHasPartialAnswer(false);
+    pendingAiMsgIdRef.current = null;
 
     const opening = pendingContext || localStorage.getItem('omaju_pending_context') || '';
     const skipPrompt = Boolean(opening);
@@ -326,20 +332,58 @@ export default function AIChatPopup({ onClose }) {
     if (opening) clearPendingContext();
 
     try {
-      const result = await runTurn(userMessage, { opening, skipPrompt, profile });
+      const result = await runTurn(userMessage, {
+        opening,
+        skipPrompt,
+        profile,
+        onProgress: (_stage, label) => {
+          if (label) setThinkingLabel(label);
+        },
+        onPartial: ({ answer, recommendation, nlgSource, pendingPolish }) => {
+          const id = pendingAiMsgIdRef.current || Date.now();
+          pendingAiMsgIdRef.current = id;
+          setHasPartialAnswer(true);
+          setMessages((prev) => {
+            const idx = prev.findIndex((m) => m.id === id);
+            const msg = {
+              id,
+              text: answer,
+              isAi: true,
+              recommendation: recommendation || null,
+              nlgSource,
+              polishing: Boolean(pendingPolish),
+            };
+            if (idx >= 0) {
+              const next = [...prev];
+              next[idx] = { ...next[idx], ...msg };
+              return next;
+            }
+            return [...prev, msg];
+          });
+        },
+      });
       setLlmMode(result.mode || aiState.mode);
       if (result.probeReason) setProbeReason(result.probeReason);
       if (result.capabilities) setCapabilities(result.capabilities);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
+
+      const finalId = pendingAiMsgIdRef.current || Date.now();
+      setMessages((prev) => {
+        const idx = prev.findIndex((m) => m.id === finalId);
+        const msg = {
+          id: finalId,
           text: result.answer,
           isAi: true,
           recommendation: result.recommendation || null,
           nlgSource: result.nlgSource,
-        },
-      ]);
+          polishing: false,
+        };
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = { ...next[idx], ...msg };
+          return next;
+        }
+        return [...prev, msg];
+      });
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
@@ -353,6 +397,9 @@ export default function AIChatPopup({ onClose }) {
     } finally {
       turnInFlightRef.current = false;
       setIsThinking(false);
+      setThinkingLabel('생각 중…');
+      setHasPartialAnswer(false);
+      pendingAiMsgIdRef.current = null;
     }
   };
 
@@ -481,13 +528,19 @@ export default function AIChatPopup({ onClose }) {
                   <Volume2 size={16} color="rgba(255,255,255,0.7)" />
                 </button>
               )}
+              {msg.isAi && msg.polishing && (
+                <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: '#9ca3af', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Loader2 size={12} className="spin" />
+                  온디바이스로 문장 다듬는 중…
+                </div>
+              )}
               {msg.isAi && msg.recommendation && (
                 <RecommendationCards recommendation={msg.recommendation} onOpenSnack={openSnackRecipe} />
               )}
             </motion.div>
           ))}
 
-          {isThinking && (
+          {isThinking && !hasPartialAnswer && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -496,7 +549,7 @@ export default function AIChatPopup({ onClose }) {
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9ca3af' }}
             >
               <Loader2 size={16} className="spin" />
-              생각 중...
+              {thinkingLabel || '생각 중…'}
             </motion.div>
           )}
         </AnimatePresence>
