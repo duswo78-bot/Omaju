@@ -1,0 +1,166 @@
+import alcoholsData from '../../data/alcohols.json';
+import snacksData from '../../data/snacks.json';
+import { INTENTS, emptyFrame } from './schema.js';
+import { ruleNlu } from './ruleNlu.js';
+
+function uniq(arr) {
+  return [...new Set((arr || []).filter(Boolean))];
+}
+
+const MAX_RESOLVED_ALC = 12;
+const MAX_RESOLVED_SNK = 24;
+
+/**
+ * 힌트 → 카탈로그 ID. 짧은 힌트는 과매칭을 막기 위해 이름 일치 위주.
+ * 카테고리 힌트(소주/맥주…)는 카테고리 정확 일치만 허용하고 상한을 둔다.
+ */
+function resolveAlcoholIds(hints = []) {
+  const exact = [];
+  const category = [];
+  for (const hint of hints) {
+    const h = String(hint).trim();
+    if (!h) continue;
+    for (const alc of alcoholsData) {
+      if (alc.id === h || alc.name_ko === h) {
+        exact.push(alc.id);
+        continue;
+      }
+      if (h.length >= 2 && alc.name_ko?.includes(h)) {
+        exact.push(alc.id);
+        continue;
+      }
+      if (alc.category === h) {
+        category.push(alc.id);
+      }
+    }
+  }
+  const merged = uniq([...exact, ...category]);
+  return merged.slice(0, MAX_RESOLVED_ALC);
+}
+
+function resolveSnackIds(hints = []) {
+  const ids = [];
+  for (const hint of hints) {
+    const h = String(hint).trim();
+    if (!h) continue;
+    for (const snk of snacksData) {
+      if (snk.id === h || snk.name_ko === h) {
+        ids.push(snk.id);
+        continue;
+      }
+      // 1글자 힌트(회/전 등): 이름 선두·정확 포함만, 태그 매칭 금지
+      if (h.length === 1) {
+        if (snk.name_ko?.includes(h)) ids.push(snk.id);
+        continue;
+      }
+      if (snk.name_ko?.includes(h)) {
+        ids.push(snk.id);
+        continue;
+      }
+      // 태그는 힌트 길이 2+ 이고 태그 전체가 힌트를 포함할 때만
+      if ((snk.tags || []).some((t) => String(t) === h || String(t).includes(h))) {
+        ids.push(snk.id);
+      }
+    }
+  }
+  return uniq(ids).slice(0, MAX_RESOLVED_SNK);
+}
+
+/**
+ * LLM Front draft를 느슨하게 파싱. 실패 시 null.
+ * @param {unknown} draft
+ * @returns {Partial<import('./schema.js').NluFrame>|null}
+ */
+export function parseFrontDraft(draft) {
+  if (!draft) return null;
+  let obj = draft;
+  if (typeof draft === 'string') {
+    try {
+      const trimmed = draft.trim();
+      const start = trimmed.indexOf('{');
+      const end = trimmed.lastIndexOf('}');
+      if (start < 0 || end < 0) return null;
+      obj = JSON.parse(trimmed.slice(start, end + 1));
+    } catch {
+      return null;
+    }
+  }
+  if (!obj || typeof obj !== 'object') return null;
+
+  const intent = INTENTS.includes(obj.intent) ? obj.intent : undefined;
+  const slots = obj.slots && typeof obj.slots === 'object' ? obj.slots : {};
+  return {
+    intent,
+    slots: {
+      alcoholHints: uniq(slots.alcoholHints),
+      snackHints: uniq(slots.snackHints),
+      wantGame: Boolean(slots.wantGame),
+      moods: uniq(slots.moods),
+      weather: uniq(slots.weather),
+      constraints: {
+        onlyAlcohol: Boolean(slots.constraints?.onlyAlcohol),
+        onlySnack: Boolean(slots.constraints?.onlySnack),
+        nonAlcoholic: Boolean(slots.constraints?.nonAlcoholic),
+        exclude: uniq(slots.constraints?.exclude),
+      },
+    },
+    confidence: typeof obj.confidence === 'number' ? obj.confidence : 0.6,
+    needsClarification: obj.needsClarification || undefined,
+    source: 'llm_front',
+  };
+}
+
+/**
+ * 규칙 Frame과 LLM draft를 병합·검증해 최종 Frame을 만든다.
+ * @param {string} rawText
+ * @param {string} cleanText
+ * @param {unknown} [frontDraft]
+ * @returns {import('./schema.js').NluFrame}
+ */
+export function buildNluFrame(rawText, cleanText, frontDraft) {
+  const rule = ruleNlu(rawText, cleanText);
+  const draft = parseFrontDraft(frontDraft);
+
+  if (!draft) {
+    const resolved = {
+      alcoholIds: resolveAlcoholIds(rule.slots.alcoholHints),
+      snackIds: resolveSnackIds(rule.slots.snackHints),
+    };
+    return { ...rule, resolved };
+  }
+
+  const intent = draft.intent || rule.intent;
+  const slots = {
+    alcoholHints: uniq([...(draft.slots.alcoholHints || []), ...(rule.slots.alcoholHints || [])]),
+    snackHints: uniq([...(draft.slots.snackHints || []), ...(rule.slots.snackHints || [])]),
+    wantGame: draft.slots.wantGame || rule.slots.wantGame,
+    moods: uniq([...(draft.slots.moods || []), ...(rule.slots.moods || [])]),
+    weather: uniq([...(draft.slots.weather || []), ...(rule.slots.weather || [])]),
+    constraints: {
+      onlyAlcohol: draft.slots.constraints?.onlyAlcohol || rule.slots.constraints?.onlyAlcohol,
+      onlySnack: draft.slots.constraints?.onlySnack || rule.slots.constraints?.onlySnack,
+      nonAlcoholic: draft.slots.constraints?.nonAlcoholic || rule.slots.constraints?.nonAlcoholic,
+      exclude: uniq([
+        ...(draft.slots.constraints?.exclude || []),
+        ...(rule.slots.constraints?.exclude || []),
+      ]),
+    },
+  };
+
+  const frame = emptyFrame({
+    intent,
+    slots,
+    confidence: Math.max(draft.confidence || 0, rule.confidence || 0),
+    needsClarification: draft.needsClarification || rule.needsClarification,
+    source: 'merged',
+    rawText,
+    matchedOpening: rule.matchedOpening,
+  });
+
+  frame.resolved = {
+    alcoholIds: resolveAlcoholIds(slots.alcoholHints),
+    snackIds: resolveSnackIds(slots.snackHints),
+  };
+
+  return frame;
+}

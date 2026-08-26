@@ -2,53 +2,72 @@ name: Android Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   workflow_dispatch:
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '21'
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Setup Environment Variables
-      run: |
-        echo "VITE_KAKAO_JS_KEY=167bb3713d47a624020a8820a96b95b3" >> .env
-        echo "VITE_KAKAO_REST_KEY=167bb3713d47a624020a8820a96b95b3" >> .env
+      - name: Install npm deps
+        run: npm ci
 
-    - name: Build Web App
-      run: npm run build
+      - name: Write env
+        env:
+          VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
+          VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY }}
+          VITE_NLG_API_BASE: ${{ secrets.VITE_NLG_API_BASE }}
+        run: |
+          # secrets 미설정 시 deploy.yml과 동일한 기본 키 사용 (공개 레포 Pages용)
+          echo "VITE_KAKAO_JS_KEY=${VITE_KAKAO_JS_KEY:-167bb3713d47a624020a8820a96b95b3}" >> .env
+          echo "VITE_KAKAO_REST_KEY=${VITE_KAKAO_REST_KEY:-167bb3713d47a624020a8820a96b95b3}" >> .env
+          echo "VITE_NLG_API_BASE=${VITE_NLG_API_BASE:-}" >> .env
 
-    - name: Add Android
-      run: npx cap add android || true
+      - name: Build web (Capacitor assets)
+        run: npm run build
 
-    - name: Sync Capacitor
-      run: npx cap sync android
+      - name: Sync Capacitor Android
+        run: npx cap sync android
 
-    - name: Build APK
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew assembleDebug
+      - name: Ensure no machine-local Gradle JDK path
+        # Windows 개발 PC용 org.gradle.java.home 이 커밋돼 있어도 CI(Linux)에서는 제거
+        run: sed -i '/^org\.gradle\.java\.home=/d' android/gradle.properties
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: omaju-app-debug
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Assemble debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: omaju-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

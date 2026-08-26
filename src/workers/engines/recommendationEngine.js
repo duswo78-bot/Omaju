@@ -39,11 +39,27 @@ function pickRelationCandidate(scoredList, minScore = 70) {
 
 const SINGLE_CHAR_ALLOW = ['비', '눈', '회', '파', '단', '짠', '맵', '쓴', '빵', '밥', '면', '탕', '전', '편', '떡', '술'];
 
-export async function recommend(cleanText, userTokens, contextTokens, contextSignals) {
+export async function recommend(cleanText, userTokens, contextTokens, contextSignals, frame = null) {
   let bestAlc = null, bestSnack = null, bestGame = null;
-  let wantNonAlc = cleanText.includes('논알콜') || cleanText.includes('무알콜') || cleanText.includes('술빼고');
-  let wantOnlySnack = cleanText.includes('안주만') || cleanText.includes('밥만') || cleanText.includes('식사만');
-  let wantOnlyAlc = cleanText.includes('술만');
+  const constraints = frame?.slots?.constraints || {};
+  let wantNonAlc =
+    Boolean(constraints.nonAlcoholic) ||
+    cleanText.includes('논알콜') ||
+    cleanText.includes('무알콜') ||
+    cleanText.includes('술빼고');
+  let wantOnlySnack =
+    Boolean(constraints.onlySnack) ||
+    cleanText.includes('안주만') ||
+    cleanText.includes('밥만') ||
+    cleanText.includes('식사만');
+  let wantOnlyAlc = Boolean(constraints.onlyAlcohol) || cleanText.includes('술만');
+
+  const resolvedAlcIds = new Set(frame?.resolved?.alcoholIds || []);
+  const resolvedSnkIds = new Set(frame?.resolved?.snackIds || []);
+  const frameSignals = {
+    moods: [...(contextSignals?.moods || []), ...(frame?.slots?.moods || [])],
+    weather: [...(contextSignals?.weather || []), ...(frame?.slots?.weather || [])],
+  };
 
   let isAlcMatched = false;
   let isSnackMatched = false;
@@ -69,9 +85,13 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       if (!wantNonAlc && item.category === '논알콜/음료' && !userTokens.some(t => item.name_ko.includes(t))) continue;
 
       let baseSim = cosineSimilarity(queryVec, vector);
-      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, contextSignals, userProfile, hasNegativeContext, false, SINGLE_CHAR_ALLOW);
+      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, frameSignals, userProfile, hasNegativeContext, false, SINGLE_CHAR_ALLOW);
       
       let finalScore = score;
+      if (resolvedAlcIds.has(item.id)) {
+        finalScore += 0.35;
+        isAlcMatched = true;
+      }
       if (rejectedItems.includes(item.id)) finalScore -= 100.0;
       finalScore -= diversityPenalty(item.id, recentIds);
       
@@ -93,9 +113,13 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     let snkCandidates = [];
     for (const { item, vector } of snackEmbeddings) {
       let baseSim = cosineSimilarity(queryVec, vector);
-      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, contextSignals, userProfile, hasNegativeContext, true, SINGLE_CHAR_ALLOW);
+      const { score, isMatched } = calculateScore(baseSim, item, userTokens, contextTokens, frameSignals, userProfile, hasNegativeContext, true, SINGLE_CHAR_ALLOW);
       
       let finalScore = score;
+      if (resolvedSnkIds.has(item.id)) {
+        finalScore += 0.35;
+        isSnackMatched = true;
+      }
       if (rejectedItems.includes(item.id)) finalScore -= 100.0;
       finalScore -= diversityPenalty(item.id, recentIds);
 
@@ -159,12 +183,17 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) bestSnack = pickRandom(snacksData);
 
   // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤
+  // wantGame이 명시되지 않아도 유사도 후보는 유지하되, 명시 요청 시 가산
   if (gameEmbeddings.length > 0) {
+    const gameBoost = frame?.slots?.wantGame ? 0.2 : 0;
     const gameCandidates = gameEmbeddings.map(({ item, vector }) => ({
       item,
-      score: cosineSimilarity(queryVec, vector) - diversityPenalty(item.id, recentIds),
+      score: cosineSimilarity(queryVec, vector) + gameBoost - diversityPenalty(item.id, recentIds),
     }));
     bestGame = pickFromScoreBand(gameCandidates, 'score', 0.08, 4)?.item || gameCandidates[0]?.item || null;
+    if (!frame?.slots?.wantGame && !cleanText.includes('게임') && !cleanText.includes('놀')) {
+      // 비명시 요청에서는 게임 카드를 항상 붙이지 않도록 null 가능 — 핸들러에서 필터
+    }
   }
 
   rememberRecommendedIds([bestAlc?.id, bestSnack?.id, bestGame?.id]);

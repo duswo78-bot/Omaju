@@ -13,8 +13,8 @@ const INTENT_ANCHORS = {
 let intentEmbeddings = [];
 
 export async function initIntentEmbeddings() {
-  // Vector Intent is removed because English models fail on Korean text.
-  // We keep this empty function to avoid breaking aiWorker.js init flow.
+  // Deprecated no-op. Intent is owned by workers/nlu/ruleNlu.js (+ optional LLM Front).
+  // Kept so older imports do not break.
 }
 
 export async function detectIntent(text, cleanText, isLowConfidence) {

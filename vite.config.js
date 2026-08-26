@@ -13,15 +13,26 @@ const kakaoProxy = {
   },
 }
 
+// 로컬에서 NLG Worker를 띄운 경우 (wrangler dev --port 8788 등)
+const nlgTarget = process.env.NLG_PROXY_TARGET || 'http://127.0.0.1:8788'
+const nlgProxy = {
+  '/api/nlg': {
+    target: nlgTarget,
+    changeOrigin: true,
+    secure: false,
+    rewrite: (path) => path.replace(/^\/api\/nlg/, '/nlg'),
+  },
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   base: isGithubPages ? '/Omaju/' : '/',
   server: {
     allowedHosts: true,
-    proxy: kakaoProxy,
+    proxy: { ...kakaoProxy, ...nlgProxy },
   },
   preview: {
-    proxy: kakaoProxy,
+    proxy: { ...kakaoProxy, ...nlgProxy },
   },
 })

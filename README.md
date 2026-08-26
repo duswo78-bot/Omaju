@@ -59,10 +59,56 @@ npx wrangler secret put KAKAO_REST_KEY   # REST 키 입력
 # VITE_KAKAO_REST_KEY=...
 ```
 
+## AI 챗 (FULL / LITE)
+
+대화는 **NLU Frame → 추천 Brain → NLG** 순으로 처리합니다.
+
+| 모드 | 조건 | Front | Back(문장) |
+|------|------|-------|------------|
+| FULL | Android/iOS 시스템 온디바이스 LLM 가용 | 시스템 LLM → intent JSON | 시스템 LLM |
+| LITE | 웹·미지원 기기·플러그인 없음 | 규칙 NLU | SpaceXAI NLG 프록시 → 실패 시 템플릿 |
+
+클라우드 NLG (LITE Back):
+
+```bash
+npx wrangler deploy workers/omaju-nlg-proxy.js --name omaju-nlg-proxy
+npx wrangler secret put XAI_API_KEY
+```
+
+`.env`:
+
+```bash
+VITE_NLG_API_BASE=https://omaju-nlg-proxy.<your-subdomain>.workers.dev
+```
+
+로컬은 Vite 프록시 `/api/nlg` 를 쓰려면:
+
+```bash
+npx wrangler dev workers/omaju-nlg-proxy.js --port 8788
+# .env
+VITE_NLG_API_BASE=/api
+```
+
+`VITE_NLG_API_BASE`가 없으면 템플릿 응답만 사용합니다(불필요한 `/api` 호출 없음).
+
+### Android APK (GitHub Actions)
+
+로컬 SDK 없이 **Actions**에서 debug APK를 만듭니다.
+
+- 워크플로: `.github/workflows/android-build.yml`
+- 트리거: `main` 푸시 또는 Actions → **Android Build** → Run workflow
+- JDK **17** (Temurin) + Android SDK
+- 산출물: Artifacts → `omaju-android-debug` (`app-debug.apk`)
+
+선택 secrets: `VITE_NLG_API_BASE`, `VITE_KAKAO_*` (없으면 Pages 배포와 동일 기본 키)
+
+시스템 LLM 플러그인(`OmajuSystemLlm` / ML Kit GenAI Prompt)은 APK에 포함되며, 미지원 기기는 런타임에 LITE로 폴백합니다.
+
 ## Stack
 
 - React 19 + Vite 8
 - react-router-dom
 - Capacitor (네이티브 래핑 준비)
-- `@xenova/transformers` (온디바이스 AI)
+- `@xenova/transformers` (온디바이스 임베딩)
 - Kakao Local API (주변 주점 목록, 선택)
+- SpaceXAI / xAI (LITE NLG, 서버 프록시)

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { aiWorker, aiState, subscribeToAI } from '../services/aiService';
+import { aiState, subscribeToAI, runTurn } from '../services/aiService';
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
 
@@ -70,9 +70,11 @@ export default function AIChatPopup({ onClose }) {
   const [isThinking, setIsThinking] = useState(false);
   const [pendingContext, setPendingContext] = useState(() => localStorage.getItem('omaju_pending_context') || '');
   const messagesEndRef = useRef(null);
+  const turnInFlightRef = useRef(false);
 
   const [modelStatus, setModelStatus] = useState(aiState.statusMessage);
   const [isReady, setIsReady] = useState(aiState.isReady);
+  const [llmMode, setLlmMode] = useState(aiState.mode);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -84,33 +86,19 @@ export default function AIChatPopup({ onClose }) {
   useEffect(() => {
     if (aiState.isReady) {
       setIsReady(true);
-      setModelStatus("");
+      setModelStatus('');
     }
+    setLlmMode(aiState.mode);
 
     const unsubscribe = subscribeToAI((data) => {
-      const { type, answer } = data;
+      const { type } = data;
       if (type === 'progress') {
         setModelStatus(aiState.statusMessage);
       } else if (type === 'ready') {
         setIsReady(true);
-        setModelStatus("");
-      } else if (type === 'response') {
-        setIsThinking(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: answer,
-            isAi: true,
-            recommendation: data.recommendation || null,
-          },
-        ]);
-
-        if (data.userProfile) {
-          localStorage.setItem('omaju_user_profile', JSON.stringify(data.userProfile));
-        }
+        setModelStatus('');
       } else if (type === 'error') {
-        setModelStatus("AI 로드 실패. 기본 모드로 전환합니다.");
+        setModelStatus('AI 로드 실패. 기본 모드로 전환합니다.');
         setIsReady(true);
         setIsThinking(false);
       }
@@ -173,13 +161,14 @@ export default function AIChatPopup({ onClose }) {
     setPendingContext('');
   };
 
-  const handleSend = (presetText) => {
+  const handleSend = async (presetText) => {
     const userMessage = (presetText ?? input).trim();
-    if (!userMessage) return;
+    if (!userMessage || turnInFlightRef.current) return;
+    turnInFlightRef.current = true;
 
     const newMsg = { id: Date.now(), text: userMessage, isAi: false };
     setMessages((prev) => [...prev, newMsg]);
-    setInput("");
+    setInput('');
     setIsThinking(true);
 
     const opening = pendingContext || localStorage.getItem('omaju_pending_context') || '';
@@ -189,15 +178,39 @@ export default function AIChatPopup({ onClose }) {
     try {
       const p = localStorage.getItem('omaju_user_profile');
       if (p) profile = JSON.parse(p);
-    } catch(e) {}
-
-    aiWorker.postMessage({
-      type: 'chat',
-      text: userMessage,
-      payload: { opening, skipPrompt, profile },
-    });
+    } catch {
+      /* ignore */
+    }
 
     if (opening) clearPendingContext();
+
+    try {
+      const result = await runTurn(userMessage, { opening, skipPrompt, profile });
+      setLlmMode(result.mode || aiState.mode);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: result.answer,
+          isAi: true,
+          recommendation: result.recommendation || null,
+          nlgSource: result.nlgSource,
+        },
+      ]);
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: '잠시 문제가 생겼어요. 다시 한번 말씀해 주시겠어요?',
+          isAi: true,
+        },
+      ]);
+    } finally {
+      turnInFlightRef.current = false;
+      setIsThinking(false);
+    }
   };
 
   const openSnackRecipe = (snack) => {
@@ -246,7 +259,12 @@ export default function AIChatPopup({ onClose }) {
               </div>
             </div>
           </div>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
+          <div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
+            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+              {llmMode === 'FULL' ? '온디바이스 LLM' : '스마트 추천 · 클라우드 문장'}
+            </div>
+          </div>
         </div>
         <button
           onClick={onClose}
