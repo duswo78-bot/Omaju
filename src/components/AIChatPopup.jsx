@@ -10,11 +10,13 @@ import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
 
 function ledStyle(mode, reason) {
-  if (mode === LLM_MODES.FULL) {
+  if (mode === LLM_MODES.FULL || String(reason).startsWith('ok:')) {
     return {
       background: '#22c55e',
       boxShadow: '0 0 6px 2px rgba(34, 197, 94, 0.85)',
-      title: '온디바이스 LLM Front/Back 활성',
+      title: reason === 'ok:rewriting'
+        ? '온디바이스 Rewriting 활성 (S25+)'
+        : '온디바이스 GenAI 활성',
     };
   }
   if (reason === 'downloadable' || reason === 'downloading' || String(reason).startsWith('download')) {
@@ -27,15 +29,17 @@ function ledStyle(mode, reason) {
   return {
     background: 'rgba(255,255,255,0.18)',
     boxShadow: 'none',
-    title: `NLU 파이프라인 (${reason || 'lite'})`,
+    title: `NLU+템플릿 (${reason || 'lite'})`,
   };
 }
 
-function modeLabel(mode, reason) {
-  if (mode === LLM_MODES.FULL) return '온디바이스 LLM';
+function modeLabel(mode, reason, caps = {}) {
   if (!Capacitor.isNativePlatform()) return '웹 · NLU만 (앱 설치 필요)';
+  if (caps.prompt === 'available') return '온디바이스 · Prompt';
+  if (caps.rewriting === 'available' || reason === 'ok:rewriting') return '온디바이스 · Rewriting';
+  if (mode === LLM_MODES.FULL) return '온디바이스 GenAI';
   if (reason === 'downloadable' || reason === 'downloading') return 'AICore 다운로드 중…';
-  return `NLU 파이프라인 · ${reason || 'unavailable'}`;
+  return `NLU · 템플릿 · ${reason || 'unavailable'}`;
 }
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
@@ -109,6 +113,7 @@ export default function AIChatPopup({ onClose }) {
   const [isReady, setIsReady] = useState(aiState.isReady);
   const [llmMode, setLlmMode] = useState(aiState.mode);
   const [probeReason, setProbeReason] = useState(aiState.probeReason || 'init');
+  const [capabilities, setCapabilities] = useState(aiState.capabilities || {});
   const [speechHint, setSpeechHint] = useState('');
   const speechHintTimerRef = useRef(null);
 
@@ -140,13 +145,18 @@ export default function AIChatPopup({ onClose }) {
 
     const applyProbe = (p) => {
       if (cancelled || !p) return;
-      const mode = p.available ? LLM_MODES.FULL : LLM_MODES.LITE;
-      const reason = p.reason || (p.available ? 'ok' : 'unavailable');
+      const caps = p.capabilities || {};
+      const on =
+        p.available || caps.prompt === 'available' || caps.rewriting === 'available';
+      const mode = on ? LLM_MODES.FULL : LLM_MODES.LITE;
+      const reason = p.reason || (on ? 'ok' : 'unavailable');
       aiState.mode = mode;
       aiState.lastProvider = p.provider || 'stub';
       aiState.probeReason = reason;
+      aiState.capabilities = caps;
       setLlmMode(mode);
       setProbeReason(reason);
+      setCapabilities(caps);
       return reason;
     };
 
@@ -319,6 +329,7 @@ export default function AIChatPopup({ onClose }) {
       const result = await runTurn(userMessage, { opening, skipPrompt, profile });
       setLlmMode(result.mode || aiState.mode);
       if (result.probeReason) setProbeReason(result.probeReason);
+      if (result.capabilities) setCapabilities(result.capabilities);
       setMessages((prev) => [
         ...prev,
         {
@@ -410,7 +421,7 @@ export default function AIChatPopup({ onClose }) {
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
-              {modeLabel(llmMode, probeReason)}
+              {modeLabel(llmMode, probeReason, capabilities)}
             </div>
           </div>
         </div>

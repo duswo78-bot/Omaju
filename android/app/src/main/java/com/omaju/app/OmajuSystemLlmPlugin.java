@@ -21,112 +21,56 @@ import com.google.mlkit.genai.prompt.GenerateContentResponse;
 import com.google.mlkit.genai.prompt.Generation;
 import com.google.mlkit.genai.prompt.TextPart;
 import com.google.mlkit.genai.prompt.java.GenerativeModelFutures;
+import com.google.android.gms.tasks.Tasks;
+import com.google.mlkit.genai.rewriting.Rewriter;
+import com.google.mlkit.genai.rewriting.RewriterOptions;
+import com.google.mlkit.genai.rewriting.Rewriting;
+import com.google.mlkit.genai.rewriting.RewritingRequest;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * AICore / Gemini Nano via ML Kit GenAI Prompt.
- * genai-prompt beta3+ 일부 기기에서 FEATURE_NOT_FOUND(648) → beta2 권장.
+ * 온디바이스 GenAI 멀티 capability:
+ * - Prompt (S26 등) : Front/Back 자유 생성
+ * - Rewriting (S25 포함 feature 기기) : 템플릿 답변 말투 다듬기
  */
 @CapacitorPlugin(name = "OmajuSystemLlm")
 public class OmajuSystemLlmPlugin extends Plugin {
     private static final String TAG = "OmajuSystemLlm";
 
-    private GenerativeModelFutures cachedModel;
+    private GenerativeModelFutures promptModel;
+    private Rewriter rewriter;
 
-    private GenerativeModelFutures model() {
-        if (cachedModel == null) {
-            cachedModel = GenerativeModelFutures.from(Generation.INSTANCE.getClient());
+    private GenerativeModelFutures promptModel() {
+        if (promptModel == null) {
+            promptModel = GenerativeModelFutures.from(Generation.INSTANCE.getClient());
         }
-        return cachedModel;
+        return promptModel;
     }
 
-    private JSObject statusPayload(boolean available, String reason) {
-        JSObject ret = new JSObject();
-        ret.put("available", available);
-        ret.put("reason", reason);
-        ret.put("provider", "android");
-        return ret;
-    }
-
-    @PluginMethod
-    public void probe(PluginCall call) {
-        GenerativeModelFutures generativeModel;
-        try {
-            generativeModel = model();
-        } catch (Throwable t) {
-            Log.w(TAG, "model init failed", t);
-            call.resolve(statusPayload(false, "init_failed:" + safeMsg(t)));
-            return;
+    private Rewriter rewriter() {
+        if (rewriter == null) {
+            RewriterOptions options =
+                RewriterOptions.builder(getContext())
+                    .setOutputType(RewriterOptions.OutputType.FRIENDLY)
+                    .setLanguage(RewriterOptions.Language.KOREAN)
+                    .build();
+            rewriter = Rewriting.getClient(options);
         }
-
-        Futures.addCallback(
-            generativeModel.checkStatus(),
-            new FutureCallback<Integer>() {
-                @Override
-                public void onSuccess(Integer featureStatus) {
-                    int status = featureStatus == null ? FeatureStatus.UNAVAILABLE : featureStatus;
-                    Log.i(TAG, "checkStatus=" + status);
-
-                    if (status == FeatureStatus.AVAILABLE) {
-                        call.resolve(statusPayload(true, "ok"));
-                        return;
-                    }
-                    if (status == FeatureStatus.DOWNLOADABLE) {
-                        call.resolve(statusPayload(false, "downloadable"));
-                        startDownload(generativeModel);
-                        return;
-                    }
-                    if (status == FeatureStatus.DOWNLOADING) {
-                        call.resolve(statusPayload(false, "downloading"));
-                        return;
-                    }
-                    call.resolve(statusPayload(false, "unavailable:" + status));
-                }
-
-                @Override
-                public void onFailure(@NonNull Throwable t) {
-                    Log.w(TAG, "probe failed", t);
-                    call.resolve(statusPayload(false, "probe_failed:" + safeMsg(t)));
-                }
-            },
-            ContextCompat.getMainExecutor(getContext())
-        );
+        return rewriter;
     }
 
-    private void startDownload(GenerativeModelFutures generativeModel) {
-        try {
-            generativeModel.download(new DownloadCallback() {
-                @Override
-                public void onDownloadStarted(long bytes) {
-                    Log.d(TAG, "Gemini Nano download started");
-                    notifyDownload("started", 0);
-                }
-
-                @Override
-                public void onDownloadProgress(long bytesDownloaded) {
-                    Log.d(TAG, "Gemini Nano downloaded bytes=" + bytesDownloaded);
-                    notifyDownload("progress", bytesDownloaded);
-                }
-
-                @Override
-                public void onDownloadCompleted() {
-                    Log.d(TAG, "Gemini Nano download complete");
-                    notifyDownload("completed", -1);
-                }
-
-                @Override
-                public void onDownloadFailed(@NonNull GenAiException e) {
-                    Log.e(TAG, "Gemini Nano download failed: " + e.getMessage());
-                    notifyDownload("failed:" + safeMsg(e), -1);
-                }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "download kickoff failed", e);
-            notifyDownload("failed:" + safeMsg(e), -1);
-        }
+    private static String statusName(int status) {
+        if (status == FeatureStatus.AVAILABLE) return "available";
+        if (status == FeatureStatus.DOWNLOADABLE) return "downloadable";
+        if (status == FeatureStatus.DOWNLOADING) return "downloading";
+        return "unavailable";
     }
 
-    private void notifyDownload(String state, long bytes) {
+    private void notifyDownload(String kind, String state, long bytes) {
         JSObject data = new JSObject();
+        data.put("kind", kind);
         data.put("state", state);
         data.put("bytes", bytes);
         notifyListeners("aicoreDownload", data);
@@ -139,35 +83,146 @@ public class OmajuSystemLlmPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void probe(PluginCall call) {
+        JSObject caps = new JSObject();
+        AtomicInteger pending = new AtomicInteger(2);
+
+        final String[] promptStatus = {"unavailable"};
+        final String[] rewriteStatus = {"unavailable"};
+
+        Runnable finish = () -> {
+            boolean promptOk = "available".equals(promptStatus[0]);
+            boolean rewriteOk = "available".equals(rewriteStatus[0]);
+            boolean downloading =
+                "downloadable".equals(promptStatus[0])
+                    || "downloading".equals(promptStatus[0])
+                    || "downloadable".equals(rewriteStatus[0])
+                    || "downloading".equals(rewriteStatus[0]);
+
+            JSObject ret = new JSObject();
+            ret.put("available", promptOk || rewriteOk);
+            ret.put("provider", "android");
+            if (promptOk) ret.put("reason", "ok:prompt");
+            else if (rewriteOk) ret.put("reason", "ok:rewriting");
+            else if (downloading) ret.put("reason", "downloading");
+            else ret.put("reason", "unavailable");
+            caps.put("prompt", promptStatus[0]);
+            caps.put("rewriting", rewriteStatus[0]);
+            ret.put("capabilities", caps);
+            call.resolve(ret);
+        };
+
+        Runnable maybeFinish = () -> {
+            if (pending.decrementAndGet() == 0) finish.run();
+        };
+
+        // Prompt
+        try {
+            Futures.addCallback(
+                promptModel().checkStatus(),
+                new FutureCallback<Integer>() {
+                    @Override
+                    public void onSuccess(Integer status) {
+                        int s = status == null ? FeatureStatus.UNAVAILABLE : status;
+                        promptStatus[0] = statusName(s);
+                        Log.i(TAG, "prompt status=" + promptStatus[0]);
+                        if (s == FeatureStatus.DOWNLOADABLE) {
+                            startPromptDownload(promptModel());
+                        }
+                        maybeFinish.run();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Throwable t) {
+                        Log.w(TAG, "prompt probe failed", t);
+                        promptStatus[0] = "unavailable";
+                        maybeFinish.run();
+                    }
+                },
+                ContextCompat.getMainExecutor(getContext())
+            );
+        } catch (Throwable t) {
+            Log.w(TAG, "prompt init failed", t);
+            promptStatus[0] = "unavailable";
+            maybeFinish.run();
+        }
+
+        // Rewriting (S25+) — Task API
+        bridge.getThreadPool().execute(() -> {
+            try {
+                Rewriter r = rewriter();
+                Integer status = Tasks.await(r.checkFeatureStatus());
+                int s = status == null ? FeatureStatus.UNAVAILABLE : status;
+                rewriteStatus[0] = statusName(s);
+                Log.i(TAG, "rewriting status=" + rewriteStatus[0]);
+                if (s == FeatureStatus.DOWNLOADABLE) {
+                    startRewriteDownload(r);
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "rewriting probe failed", t);
+                rewriteStatus[0] = "unavailable";
+            }
+            maybeFinish.run();
+        });
+    }
+
+    private void startPromptDownload(GenerativeModelFutures model) {
+        try {
+            model.download(new DownloadCallback() {
+                @Override public void onDownloadStarted(long bytes) { notifyDownload("prompt", "started", bytes); }
+                @Override public void onDownloadProgress(long bytes) { notifyDownload("prompt", "progress", bytes); }
+                @Override public void onDownloadCompleted() { notifyDownload("prompt", "completed", -1); }
+                @Override public void onDownloadFailed(@NonNull GenAiException e) {
+                    notifyDownload("prompt", "failed:" + safeMsg(e), -1);
+                }
+            });
+        } catch (Exception e) {
+            notifyDownload("prompt", "failed:" + safeMsg(e), -1);
+        }
+    }
+
+    private void startRewriteDownload(Rewriter r) {
+        try {
+            r.downloadFeature(new DownloadCallback() {
+                @Override public void onDownloadStarted(long bytes) { notifyDownload("rewriting", "started", bytes); }
+                @Override public void onDownloadProgress(long bytes) { notifyDownload("rewriting", "progress", bytes); }
+                @Override public void onDownloadCompleted() { notifyDownload("rewriting", "completed", -1); }
+                @Override public void onDownloadFailed(@NonNull GenAiException e) {
+                    notifyDownload("rewriting", "failed:" + safeMsg(e), -1);
+                }
+            });
+        } catch (Exception e) {
+            notifyDownload("rewriting", "failed:" + safeMsg(e), -1);
+        }
+    }
+
+    @PluginMethod
     public void generate(PluginCall call) {
         String prompt = call.getString("prompt");
         if (prompt == null || prompt.trim().isEmpty()) {
             call.reject("prompt_required");
             return;
         }
-
         String purpose = call.getString("purpose", "back");
         float temperature = "front".equals(purpose) ? 0.2f : 0.7f;
         int maxTokens = "front".equals(purpose) ? 256 : 220;
 
-        GenerativeModelFutures generativeModel;
+        GenerativeModelFutures model;
         try {
-            generativeModel = model();
+            model = promptModel();
         } catch (Throwable t) {
             call.reject("model_unavailable:" + safeMsg(t));
             return;
         }
 
         Futures.addCallback(
-            generativeModel.checkStatus(),
+            model.checkStatus(),
             new FutureCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer featureStatus) {
                     int status = featureStatus == null ? FeatureStatus.UNAVAILABLE : featureStatus;
                     if (status != FeatureStatus.AVAILABLE) {
-                        if (status == FeatureStatus.DOWNLOADABLE) {
-                            startDownload(generativeModel);
-                        }
+                        if (status == FeatureStatus.DOWNLOADABLE) startPromptDownload(model);
                         call.reject("model_unavailable:status=" + status);
                         return;
                     }
@@ -180,7 +235,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
                     requestBuilder.setMaxOutputTokens(maxTokens);
 
                     Futures.addCallback(
-                        generativeModel.generateContent(requestBuilder.build()),
+                        model.generateContent(requestBuilder.build()),
                         new FutureCallback<GenerateContentResponse>() {
                             @Override
                             public void onSuccess(GenerateContentResponse response) {
@@ -196,12 +251,12 @@ public class OmajuSystemLlmPlugin extends Plugin {
                                 }
                                 JSObject ret = new JSObject();
                                 ret.put("text", text != null ? text.trim() : "");
+                                ret.put("path", "prompt");
                                 call.resolve(ret);
                             }
 
                             @Override
                             public void onFailure(@NonNull Throwable t) {
-                                Log.e(TAG, "generate failed", t);
                                 call.reject(t.getMessage() != null ? t.getMessage() : "generate_failed");
                             }
                         },
@@ -216,5 +271,70 @@ public class OmajuSystemLlmPlugin extends Plugin {
             },
             ContextCompat.getMainExecutor(getContext())
         );
+    }
+
+    /** 템플릿 답을 온디바이스 Rewriting으로 다듬기 (S25+) */
+    @PluginMethod
+    public void rewrite(PluginCall call) {
+        String text = call.getString("text");
+        if (text == null || text.trim().isEmpty()) {
+            call.reject("text_required");
+            return;
+        }
+        String cleaned = text.replaceAll("[\\p{So}\\p{Cn}]", " ").replaceAll("\\s{2,}", " ").trim();
+        if (cleaned.length() > 500) cleaned = cleaned.substring(0, 500);
+        final String input = cleaned;
+
+        bridge.getThreadPool().execute(() -> {
+            try {
+                Rewriter r = rewriter();
+                Integer statusObj = Tasks.await(r.checkFeatureStatus());
+                int status = statusObj == null ? FeatureStatus.UNAVAILABLE : statusObj;
+                if (status == FeatureStatus.DOWNLOADABLE) {
+                    startRewriteDownload(r);
+                    call.reject("rewriter_downloadable");
+                    return;
+                }
+                if (status != FeatureStatus.AVAILABLE && status != FeatureStatus.DOWNLOADING) {
+                    call.reject("rewriter_unavailable:status=" + status);
+                    return;
+                }
+
+                RewritingRequest req = RewritingRequest.builder(input).build();
+                Object inference = Tasks.await(r.runInference(req));
+                String out = input;
+                try {
+                    // result.getResults().get(0).getText()
+                    java.lang.reflect.Method getResults = inference.getClass().getMethod("getResults");
+                    List<?> results = (List<?>) getResults.invoke(inference);
+                    if (results != null && !results.isEmpty()) {
+                        Object first = results.get(0);
+                        java.lang.reflect.Method getText = first.getClass().getMethod("getText");
+                        Object s = getText.invoke(first);
+                        if (s != null && !String.valueOf(s).trim().isEmpty()) {
+                            out = String.valueOf(s).trim();
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "parse rewrite via reflection", e);
+                }
+                JSObject ret = new JSObject();
+                ret.put("text", out);
+                ret.put("path", "rewriting");
+                call.resolve(ret);
+            } catch (Throwable t) {
+                Log.e(TAG, "rewrite failed", t);
+                call.reject(t.getMessage() != null ? t.getMessage() : "rewrite_failed");
+            }
+        });
+    }
+
+    @Override
+    public void handleOnDestroy() {
+        if (rewriter != null) {
+            try { rewriter.close(); } catch (Exception ignored) {}
+            rewriter = null;
+        }
+        super.handleOnDestroy();
     }
 }

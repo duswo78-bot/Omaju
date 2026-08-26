@@ -2,12 +2,20 @@
 
 export const stubProvider = {
   async probe() {
-    return { available: false, reason: 'no_system_llm', provider: 'stub' };
+    return {
+      available: false,
+      reason: 'no_system_llm',
+      provider: 'stub',
+      capabilities: { prompt: 'unavailable', rewriting: 'unavailable' },
+    };
   },
   async generateFront() {
     return null;
   },
   async generateBack() {
+    return null;
+  },
+  async rewriteAnswer() {
     return null;
   },
 };

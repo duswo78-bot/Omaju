@@ -1,6 +1,7 @@
 import { LLM_MODES } from './llm/types.js';
 import { getSystemLlmProvider, probeSystemLlm } from './llm/getProvider.js';
 import { cloudNlg } from './llm/cloudNlg.js';
+import { prepareTemplateForRewrite, rewriteKeepsNames } from './llm/onDeviceNlg.js';
 
 export const aiWorker = new Worker(new URL('../workers/aiWorker.js', import.meta.url), {
   type: 'module',
@@ -14,6 +15,7 @@ export const aiState = {
   lastProvider: 'stub',
   /** probe reason: ok | downloadable | downloading | unavailable | web | ... */
   probeReason: 'init',
+  capabilities: { prompt: 'unavailable', rewriting: 'unavailable' },
 };
 
 const listeners = new Set();
@@ -92,24 +94,35 @@ aiWorker.onerror = (error) => {
 };
 
 /**
- * FULL/LITE 오케스트레이션.
- * Capacitor 시스템 LLM은 메인 스레드에서만 호출한다.
+ * 온디바이스 우선 오케스트레이션.
+ * - Front: Prompt 가능 시만 LLM draft, 아니면 규칙 NLU
+ * - Brain: 항상 Worker (로컬)
+ * - Back: Prompt → Rewriting → 템플릿 → (최후) 클라우드
  */
 export async function runTurn(text, payload = {}) {
-  // 미가용(다운로드 중 등)이면 매 턴 재probe
-  const probe = await probeSystemLlm({ force: !aiState.mode || aiState.mode === LLM_MODES.LITE });
+  const probe = await probeSystemLlm({
+    force: !aiState.mode || aiState.mode === LLM_MODES.LITE,
+  });
   const provider = await getSystemLlmProvider();
-  const mode = probe.available ? LLM_MODES.FULL : LLM_MODES.LITE;
+  const caps = probe.capabilities || {};
+  const promptOk = caps.prompt === 'available';
+  const rewriteOk = caps.rewriting === 'available';
+  const mode = probe.available || promptOk || rewriteOk ? LLM_MODES.FULL : LLM_MODES.LITE;
+
   aiState.mode = mode;
   aiState.lastProvider = probe.provider || 'stub';
-  aiState.probeReason = probe.reason || (probe.available ? 'ok' : 'unavailable');
+  aiState.probeReason = probe.reason || (mode === LLM_MODES.FULL ? 'ok' : 'unavailable');
+  aiState.capabilities = caps;
 
   let frontDraft = null;
-  if (mode === LLM_MODES.FULL) {
+  let onDevicePath = 'none';
+
+  if (promptOk && provider.generateFront) {
     try {
       frontDraft = await provider.generateFront({ text });
+      if (frontDraft) onDevicePath = 'prompt';
     } catch (err) {
-      console.warn('LLM Front failed, falling back to rule NLU', err);
+      console.warn('LLM Front failed, rule NLU', err);
       frontDraft = null;
     }
   }
@@ -123,7 +136,7 @@ export async function runTurn(text, payload = {}) {
   let answer = workerResult.templateAnswer || workerResult.answer;
   let nlgSource = 'template';
 
-  if (mode === LLM_MODES.FULL) {
+  if (promptOk && provider.generateBack) {
     try {
       const back = await provider.generateBack({
         facts: workerResult.facts,
@@ -131,14 +144,30 @@ export async function runTurn(text, payload = {}) {
       });
       if (back) {
         answer = back;
-        nlgSource = 'on_device';
+        nlgSource = 'on_device_prompt';
+        onDevicePath = 'prompt';
       }
     } catch (err) {
       console.warn('LLM Back failed', err);
     }
   }
 
-  if (nlgSource === 'template') {
+  if (nlgSource === 'template' && rewriteOk && provider.rewriteAnswer) {
+    try {
+      const prepared = prepareTemplateForRewrite(answer);
+      const rewritten = await provider.rewriteAnswer(prepared);
+      if (rewritten && rewriteKeepsNames(rewritten, workerResult.facts)) {
+        answer = rewritten;
+        nlgSource = 'on_device_rewriting';
+        if (onDevicePath === 'none') onDevicePath = 'rewriting';
+      }
+    } catch (err) {
+      console.warn('Rewriting Back failed', err);
+    }
+  }
+
+  // 온디바이스가 전혀 없을 때만 클라우드 NLG
+  if (nlgSource === 'template' && onDevicePath === 'none') {
     const cloud = await cloudNlg({
       facts: workerResult.facts,
       profile: payload.profile,
@@ -154,8 +183,10 @@ export async function runTurn(text, payload = {}) {
     answer,
     mode,
     nlgSource,
+    onDevicePath,
     provider: probe.provider || 'stub',
     probeReason: aiState.probeReason,
+    capabilities: caps,
   };
 }
 
@@ -165,7 +196,11 @@ const initialProfile = JSON.parse(
 );
 aiWorker.postMessage({ type: 'init', userProfile: initialProfile });
 probeSystemLlm({ force: true }).then((p) => {
-  aiState.mode = p.available ? LLM_MODES.FULL : LLM_MODES.LITE;
+  const caps = p.capabilities || {};
+  const on =
+    p.available || caps.prompt === 'available' || caps.rewriting === 'available';
+  aiState.mode = on ? LLM_MODES.FULL : LLM_MODES.LITE;
   aiState.lastProvider = p.provider || 'stub';
-  aiState.probeReason = p.reason || (p.available ? 'ok' : 'unavailable');
+  aiState.probeReason = p.reason || (on ? 'ok' : 'unavailable');
+  aiState.capabilities = caps;
 });

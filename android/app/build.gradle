@@ -42,8 +42,9 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 
     // 온디바이스 Gemini Nano (AICore)
-    // beta3+ 일부 기기에서 default feature ID 불일치(FEATURE_NOT_FOUND) → beta2 고정
+    // Prompt: S26 등 / Rewriting: S25 포함 feature 기기
     implementation "com.google.mlkit:genai-prompt:1.0.0-beta2"
+    implementation "com.google.mlkit:genai-rewriting:1.0.0-beta1"
     implementation "androidx.concurrent:concurrent-futures:1.2.0"
     implementation "com.google.guava:guava:33.3.1-android"
 }
