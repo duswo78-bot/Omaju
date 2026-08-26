@@ -2,14 +2,12 @@ import { Capacitor } from '@capacitor/core';
 import { SpeechRecognition } from '@capgo/capacitor-speech-recognition';
 
 /**
- * 네이티브(안드로이드/iOS) STT — 기기 SpeechRecognizer / SFSpeechRecognizer 사용.
- * 웹은 Web Speech API 폴백(지원 브라우저만).
+ * 네이티브 STT — Android는 시스템 음성 인식 UI(popup)로 안정 동작.
+ * (inline + on-device 옵션이 일부 기기에서 네이티브 크래시를 유발함)
  */
 
 let webRecognition = null;
-let partialHandle = null;
-let listeningHandle = null;
-let errorHandle = null;
+let nativeSessionActive = false;
 
 function isNative() {
   return Capacitor.isNativePlatform();
@@ -28,24 +26,6 @@ async function ensureNativeReady() {
       throw new Error('마이크/음성 인식 권한이 필요합니다.');
     }
   }
-}
-
-async function cleanupNativeListeners() {
-  try {
-    if (partialHandle) await partialHandle.remove();
-  } catch { /* ignore */ }
-  try {
-    if (listeningHandle) await listeningHandle.remove();
-  } catch { /* ignore */ }
-  try {
-    if (errorHandle) await errorHandle.remove();
-  } catch { /* ignore */ }
-  partialHandle = null;
-  listeningHandle = null;
-  errorHandle = null;
-  try {
-    await SpeechRecognition.removeAllListeners();
-  } catch { /* ignore */ }
 }
 
 /**
@@ -68,49 +48,37 @@ export async function startListening(options = {}) {
 
   if (isNative()) {
     await ensureNativeReady();
-    await cleanupNativeListeners();
-
-    let preferOnDevice = false;
     try {
-      const od = await SpeechRecognition.isOnDeviceRecognitionAvailable({ language });
-      preferOnDevice = Boolean(od?.available);
-    } catch {
-      preferOnDevice = false;
-    }
+      await SpeechRecognition.removeAllListeners();
+    } catch { /* ignore */ }
 
-    partialHandle = await SpeechRecognition.addListener('partialResults', (event) => {
-      const text = (event.matches && event.matches[0]) || event.accumulatedText || '';
-      if (!text) return;
-      if (event.forced || (event.matches && event.matches.length && !event.isRestarting)) {
-        // 최종에 가까운 결과도 partial로 올 수 있음 — onPartial로 흘리고 stop 시 onFinal 보정
+    nativeSessionActive = true;
+
+    try {
+      // popup:true = Android RecognizerIntent 시스템 UI (기기 STT, 크래시 적음)
+      const result = await SpeechRecognition.start({
+        language,
+        maxResults: 1,
+        popup: true,
+        partialResults: false,
+        prompt: '말씀해 주세요',
+      });
+
+      const text = (result?.matches && result.matches[0]) || '';
+      if (text) {
         onPartial?.(text);
-      } else {
-        onPartial?.(text);
+        onFinal?.(text);
       }
-    });
-
-    listeningHandle = await SpeechRecognition.addListener('listeningState', (event) => {
-      const state = event?.status || event?.state;
-      if (state === 'stopped' || state === 'error') {
-        onEnd?.();
+    } catch (err) {
+      const msg = err?.message || String(err) || '음성 인식 오류';
+      // 사용자가 시스템 UI에서 취소한 경우는 조용히 종료
+      if (!/cancel|stopped|abort/i.test(msg)) {
+        onError?.(msg);
       }
-    });
-
-    errorHandle = await SpeechRecognition.addListener('error', (event) => {
-      const msg = event?.message || event?.error || '음성 인식 오류';
-      onError?.(String(msg));
+    } finally {
+      nativeSessionActive = false;
       onEnd?.();
-    });
-
-    await SpeechRecognition.start({
-      language,
-      maxResults: 1,
-      partialResults: true,
-      popup: false,
-      prompt: '말씀해 주세요',
-      useOnDeviceRecognition: preferOnDevice,
-      allowForSilence: 1200,
-    });
+    }
     return;
   }
 
@@ -153,19 +121,15 @@ export async function startListening(options = {}) {
 
 export async function stopListening() {
   if (isNative()) {
-    let last = '';
-    try {
-      const cached = await SpeechRecognition.getLastPartialResult?.();
-      last = cached?.result || cached?.text || cached?.matches?.[0] || '';
-    } catch { /* ignore */ }
+    if (!nativeSessionActive) return '';
     try {
       await SpeechRecognition.stop();
     } catch { /* ignore */ }
     try {
-      await SpeechRecognition.forceStop?.();
+      await SpeechRecognition.forceStop({ timeout: 800 });
     } catch { /* ignore */ }
-    await cleanupNativeListeners();
-    return last;
+    nativeSessionActive = false;
+    return '';
   }
 
   if (webRecognition) {

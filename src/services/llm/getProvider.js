@@ -40,9 +40,9 @@ export async function getSystemLlmProvider() {
   return cached;
 }
 
-export async function probeSystemLlm() {
-  // 가용(true)만 고정 캐시. 미가용은 매 호출 재probe (모델 다운로드 완료 등 반영)
-  if (cachedProbe?.available) return cachedProbe;
+export async function probeSystemLlm({ force = false } = {}) {
+  // 가용(true)만 짧게 캐시. 다운로드 완료·플러그인 복구를 위해 미가용은 매번 재probe
+  if (!force && cachedProbe?.available) return cachedProbe;
   const provider = await getSystemLlmProvider();
   cachedProbe = await provider.probe();
   return cachedProbe;

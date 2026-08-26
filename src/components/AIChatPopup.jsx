@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { aiState, subscribeToAI, runTurn } from '../services/aiService';
+import { probeSystemLlm } from '../services/llm/getProvider';
+import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
@@ -92,6 +94,14 @@ export default function AIChatPopup({ onClose }) {
     }
     setLlmMode(aiState.mode);
 
+    // 챗 열릴 때 시스템 LLM(AICore) 가용 여부 재확인 → LED 반영
+    probeSystemLlm({ force: true }).then((p) => {
+      const mode = p.available ? LLM_MODES.FULL : LLM_MODES.LITE;
+      aiState.mode = mode;
+      aiState.lastProvider = p.provider || 'stub';
+      setLlmMode(mode);
+    }).catch(() => setLlmMode(LLM_MODES.LITE));
+
     const unsubscribe = subscribeToAI((data) => {
       const { type } = data;
       if (type === 'progress') {
@@ -142,7 +152,7 @@ export default function AIChatPopup({ onClose }) {
           setIsListening(false);
         },
       });
-      setSpeechHint('듣고 있어요…');
+      setSpeechHint('시스템 음성 인식 창에서 말씀해 주세요');
     } catch (err) {
       console.warn(err);
       setSpeechHint(err?.message || '마이크를 사용할 수 없습니다. 앱 권한을 확인해 주세요.');
@@ -150,10 +160,22 @@ export default function AIChatPopup({ onClose }) {
     }
   };
 
+  const stripForTts = (text) =>
+    String(text || '')
+      .replace(/\*\*/g, '')
+      // 이모지·픽토그래프는 읽지 않음 (ZWJ 시퀀스 포함)
+      .replace(/\p{Extended_Pictographic}(\uFE0F|\u200D\p{Extended_Pictographic})*/gu, '')
+      .replace(/[\uFE0F\u200D]/g, '')
+      .replace(/[^\S\n]{2,}/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
   const speak = async (text) => {
+    const clean = stripForTts(text);
+    if (!clean) return;
     await TextToSpeech.stop();
     await TextToSpeech.speak({
-      text: text.replace(/\*\*/g, ''),
+      text: clean,
       lang: 'ko-KR',
       rate: 1.0,
       volume: 1.0,
@@ -267,15 +289,29 @@ export default function AIChatPopup({ onClose }) {
                 letterSpacing: '1px',
                 marginTop: '2px'
               }}>AI</span>
-              <div style={{ position: 'absolute', bottom: '5px', left: '8px' }}>
-                <Star size={4} fill="#a855f7" color="#a855f7" />
-              </div>
+              {/* FULL=LLM front/back 활성(녹색), LITE=NLU 파이프라인(소등) */}
+              <div
+                title={llmMode === 'FULL' ? '온디바이스 LLM Front/Back 활성' : 'NLU 규칙 파이프라인'}
+                style={{
+                  position: 'absolute',
+                  bottom: '6px',
+                  left: '7px',
+                  width: 7,
+                  height: 7,
+                  borderRadius: '50%',
+                  background: llmMode === 'FULL' ? '#22c55e' : 'rgba(255,255,255,0.18)',
+                  boxShadow: llmMode === 'FULL'
+                    ? '0 0 6px 2px rgba(34, 197, 94, 0.85)'
+                    : 'none',
+                  border: '1px solid rgba(255,255,255,0.25)',
+                }}
+              />
             </div>
           </div>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
-              {llmMode === 'FULL' ? '온디바이스 LLM' : '스마트 추천 · 클라우드 문장'}
+              {llmMode === 'FULL' ? '온디바이스 LLM' : 'NLU 추천 파이프라인'}
             </div>
           </div>
         </div>
@@ -328,7 +364,7 @@ export default function AIChatPopup({ onClose }) {
               {msg.text}
               {msg.isAi && (
                 <button
-                  onClick={() => speak(msg.text.replace(/\*\*/g, ''))}
+                  onClick={() => speak(msg.text)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle', padding: 0 }}
                   title="읽어주기"
                 >
