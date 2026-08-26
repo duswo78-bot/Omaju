@@ -41,10 +41,10 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
 
-    // 온디바이스 Gemini Nano (AICore) — Galaxy S26 등 지원 기기
-    implementation "com.google.mlkit:genai-prompt:1.0.0-beta4"
-    implementation "androidx.concurrent:concurrent-futures:1.2.0"
-    implementation "com.google.guava:guava:33.3.1-android"
+    // ML Kit GenAI Prompt (AICore / Gemini Nano) — CI APK 안정화 후 재활성화
+    // implementation "com.google.mlkit:genai-prompt:1.0.0-beta4"
+    // implementation "androidx.concurrent:concurrent-futures:1.2.0"
+    // implementation "com.google.guava:guava:33.3.1-android"
 }
 
 apply from: 'capacitor.build.gradle'

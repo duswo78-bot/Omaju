@@ -102,7 +102,8 @@ VITE_NLG_API_BASE=/api
 
 선택 secrets: `VITE_NLG_API_BASE`, `VITE_KAKAO_*` (없으면 Pages 배포와 동일 기본 키)
 
-시스템 LLM 플러그인(`OmajuSystemLlm` / ML Kit GenAI Prompt)은 APK에 포함되며, 미지원 기기는 런타임에 LITE로 폴백합니다.
+`OmajuSystemLlm` Capacitor 플러그인은 APK에 **stub**으로 포함됩니다(항상 LITE).  
+AICore/ML Kit GenAI 연동은 CI APK 안정화 후 `app/build.gradle` 의존성을 다시 켜고 플러그인 구현을 복원합니다.
 
 ## Stack
 
