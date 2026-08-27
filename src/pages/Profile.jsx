@@ -40,7 +40,26 @@ export default function Profile() {
 
   const saveProfile = () => {
     playClick();
-    localStorage.setItem('omaju_user_profile', JSON.stringify(profile));
+    // AI 학습 필드(favoriteAlcohols 등)는 UI에 없으므로 기존 값 보존
+    let prev = {};
+    try {
+      prev = JSON.parse(localStorage.getItem('omaju_user_profile') || '{}');
+    } catch {
+      prev = {};
+    }
+    localStorage.setItem(
+      'omaju_user_profile',
+      JSON.stringify({
+        ...prev,
+        ...profile,
+        favoriteAlcohols: prev.favoriteAlcohols || [],
+        favoriteFoods: prev.favoriteFoods || [],
+        favoriteGames: prev.favoriteGames || [],
+        dislikedAlcohols: prev.dislikedAlcohols || [],
+        acceptCount: prev.acceptCount || 0,
+        rejectCount: prev.rejectCount || 0,
+      })
+    );
     setSaved(true);
     playSuccess();
     

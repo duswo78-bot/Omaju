@@ -2,6 +2,7 @@ import { handleGreeting } from './greeting.js';
 import { handleThanks } from './thanks.js';
 import { handleRecommendation } from './recommendation.js';
 import { handleReroll } from './reroll.js';
+import { handleAccept } from './accept.js';
 import { handleSmallTalk } from './smalltalk.js';
 import { handleQuestion } from './question.js';
 import { handleUnknown } from './unknown.js';
@@ -22,8 +23,8 @@ export async function routeChat(text, cleanText, context) {
     if (frame?.intent === 'REROLL' || frame?.intent === 'DENY') {
       return await handleReroll(text, context);
     }
-    if (frame?.intent === 'AFFIRM') {
-      return await handleRecommendation(text, cleanText, context);
+    if (frame?.intent === 'AFFIRM' || frame?.intent === 'THANKS') {
+      return handleAccept(context);
     }
     setPendingContextText('');
   }

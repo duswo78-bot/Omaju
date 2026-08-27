@@ -1,10 +1,36 @@
 import { initEmbeddings } from './engines/embeddingEngine.js';
 import { routeChat } from './chat/router.js';
 import { setState } from './engines/stateMachine.js';
-import { pushHistory } from './engines/memoryEngine.js';
+import { pushHistory, applyDialogueContextToFrame } from './engines/memoryEngine.js';
 import { simpleTokenize, cleanTextString } from './utils/tokenizer.js';
 import { buildNluFrame } from './nlu/validate.js';
-import { syncMyProfile } from './engines/profileEngine.js';
+import alcoholsData from '../data/alcohols.json';
+import snacksData from '../data/snacks.json';
+import { syncMyProfile, getLearnedProfilePatch } from './engines/profileEngine.js';
+
+function resolveIdsFromHints(frame) {
+  if (!frame?.slots) return;
+  const alcHints = frame.slots.alcoholHints || [];
+  const snkHints = frame.slots.snackHints || [];
+  const alcoholIds = [];
+  const snackIds = [];
+  for (const h of alcHints) {
+    for (const a of alcoholsData) {
+      if (a.category === h || a.name_ko?.includes(h) || (a.tags || []).some((t) => String(t).includes(h))) {
+        alcoholIds.push(a.id);
+      }
+    }
+  }
+  for (const h of snkHints) {
+    for (const s of snacksData) {
+      if (s.category === h || s.name_ko?.includes(h)) snackIds.push(s.id);
+    }
+  }
+  frame.resolved = {
+    alcoholIds: [...new Set([...(frame.resolved?.alcoholIds || []), ...alcoholIds])].slice(0, 12),
+    snackIds: [...new Set([...(frame.resolved?.snackIds || []), ...snackIds])].slice(0, 24),
+  };
+}
 
 function buildRecommendation(result) {
   if (!(result.bestAlc || result.bestSnack || result.bestGame)) return null;
@@ -80,6 +106,8 @@ async function handleTurn(text, payload = {}) {
   const tokens = simpleTokenize(enrichedText);
 
   const frame = buildNluFrame(enrichedText, cleanText, payload?.frontDraft);
+  applyDialogueContextToFrame(frame);
+  resolveIdsFromHints(frame);
 
   // MBTI mood 시드: 빈칸 prior만. MY 주종·이미 mood가 있으면 개입하지 않음
   if (
@@ -120,6 +148,8 @@ async function handleTurn(text, payload = {}) {
 
   const recommendation = buildRecommendation(result);
   const facts = buildFacts(result, frame);
+  facts.dialogueNotes = frame.dialogueNotes || [];
+  facts.exclude = frame.slots?.constraints?.exclude || frame.dialogueExclude || [];
 
   return {
     answer: result.answer,
@@ -129,6 +159,7 @@ async function handleTurn(text, payload = {}) {
     bestGame: result.bestGame,
     recommendation,
     facts,
+    profilePatch: getLearnedProfilePatch(),
     frame: {
       intent: frame.intent,
       confidence: frame.confidence,

@@ -1,12 +1,14 @@
 import { recommend } from '../engines/recommendationEngine.js';
 import { buildAnswer } from '../engines/answerBuilder.js';
 import { getPendingContextText, getLastRecommendation, addRejectedItem } from '../engines/memoryEngine.js';
+import { rejectRecommendation } from '../engines/profileEngine.js';
 
 export async function handleReroll(text, context) {
   const lastRec = getLastRecommendation();
   if (lastRec) {
     if (lastRec.bestAlc) addRejectedItem(lastRec.bestAlc.id);
     if (lastRec.bestSnack) addRejectedItem(lastRec.bestSnack.id);
+    rejectRecommendation(lastRec);
   }
 
   const pendingText = getPendingContextText();

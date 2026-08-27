@@ -2,6 +2,35 @@ import { LLM_MODES } from './llm/types.js';
 import { getSystemLlmProvider, probeSystemLlm } from './llm/getProvider.js';
 import { cloudNlg } from './llm/cloudNlg.js';
 import { prepareTemplateForRewrite, rewriteKeepsNames } from './llm/onDeviceNlg.js';
+import { shouldRunFrontLlm } from './frontGate.js';
+
+const PROFILE_KEY = 'omaju_user_profile';
+
+function mergeLearnedProfile(patch) {
+  if (!patch || typeof patch !== 'object') return;
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    const cur = raw ? JSON.parse(raw) : {};
+    const uniq = (a, b) => [...new Set([...(a || []), ...(b || [])].filter(Boolean))];
+    const next = {
+      ...cur,
+      favoriteAlcohols: uniq(cur.favoriteAlcohols, patch.favoriteAlcohols),
+      favoriteFoods: uniq(cur.favoriteFoods, patch.favoriteFoods),
+      favoriteGames: uniq(cur.favoriteGames, patch.favoriteGames),
+      dislikedAlcohols: uniq(cur.dislikedAlcohols, patch.dislikedAlcohols),
+      acceptCount: Math.max(Number(cur.acceptCount) || 0, Number(patch.acceptCount) || 0),
+      rejectCount: Math.max(Number(cur.rejectCount) || 0, Number(patch.rejectCount) || 0),
+      acceptanceRate: patch.acceptanceRate ?? cur.acceptanceRate,
+      rejectionRate: patch.rejectionRate ?? cur.rejectionRate,
+    };
+    // MY 주종/안주가 비어 있고 학습으로 채워졌으면 반영
+    if (!cur.favoriteDrink && patch.favoriteDrink) next.favoriteDrink = patch.favoriteDrink;
+    if (!cur.favoriteSnack && patch.favoriteSnack) next.favoriteSnack = patch.favoriteSnack;
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(next));
+  } catch (err) {
+    console.warn('profile merge failed', err);
+  }
+}
 
 export const aiWorker = new Worker(new URL('../workers/aiWorker.js', import.meta.url), {
   type: 'module',
@@ -132,8 +161,9 @@ export async function runTurn(text, payload = {}) {
 
   let frontDraft = null;
   let onDevicePath = 'none';
+  const frontGate = shouldRunFrontLlm(text);
 
-  if (promptOk && provider.generateFront) {
+  if (promptOk && provider.generateFront && frontGate.run) {
     notify('front', '의도 파악 중… (온디바이스)');
     try {
       frontDraft = await provider.generateFront({ text });
@@ -230,12 +260,17 @@ export async function runTurn(text, payload = {}) {
 
   notify('done', '');
 
+  if (workerResult.profilePatch) {
+    mergeLearnedProfile(workerResult.profilePatch);
+  }
+
   return {
     ...workerResult,
     answer,
     mode,
     nlgSource,
     onDevicePath,
+    frontGate,
     provider: probe.provider || 'stub',
     probeReason: aiState.probeReason,
     capabilities: caps,
@@ -243,7 +278,7 @@ export async function runTurn(text, payload = {}) {
 }
 
 const initialProfile = JSON.parse(
-  localStorage.getItem('omaju_user_profile') ||
+  localStorage.getItem(PROFILE_KEY) ||
     '{"favoriteAlcohols":[],"favoriteFoods":[],"favoriteGames":[],"dislikedAlcohols":[],"favoriteMood":[],"monthlyBudget":0}'
 );
 aiWorker.postMessage({ type: 'init', userProfile: initialProfile });
