@@ -255,51 +255,56 @@ public class OmajuSystemLlmPlugin extends Plugin {
                         return;
                     }
 
-                    GenerateContentRequest request =
-                        new GenerateContentRequest.Builder(new TextPart(prompt))
-                            .setTemperature(temperature)
-                            .setTopK(40)
-                            .setCandidateCount(1)
-                            .setMaxOutputTokens(maxTokens)
-                            .build();
+                    // Builder setters return void in this ML Kit beta — do not chain
+                    GenerateContentRequest.Builder requestBuilder =
+                        new GenerateContentRequest.Builder(new TextPart(prompt));
+                    requestBuilder.setTemperature(temperature);
+                    requestBuilder.setTopK(40);
+                    requestBuilder.setCandidateCount(1);
+                    requestBuilder.setMaxOutputTokens(maxTokens);
+                    GenerateContentRequest request = requestBuilder.build();
 
                     // Streaming: long BACK replies feel faster (ML Kit GenAI docs)
                     if (stream) {
                         final StringBuilder streamed = new StringBuilder();
-                        Futures.addCallback(
-                            model.generateContent(
-                                request,
-                                (String chunk) -> {
-                                    if (chunk == null || chunk.isEmpty()) return;
-                                    streamed.append(chunk);
-                                    JSObject data = new JSObject();
-                                    data.put("chunk", chunk);
-                                    data.put("text", streamed.toString());
-                                    data.put("purpose", purpose);
-                                    notifyListeners("promptChunk", data);
-                                }
-                            ),
-                            new FutureCallback<GenerateContentResponse>() {
-                                @Override
-                                public void onSuccess(GenerateContentResponse response) {
-                                    String text = extractText(response);
-                                    if (text.isEmpty()) text = streamed.toString().trim();
-                                    JSObject ret = new JSObject();
-                                    ret.put("text", text);
-                                    ret.put("path", "prompt");
-                                    ret.put("streamed", true);
-                                    call.resolve(ret);
-                                }
+                        try {
+                            Futures.addCallback(
+                                model.generateContent(
+                                    request,
+                                    (String chunk) -> {
+                                        if (chunk == null || chunk.isEmpty()) return;
+                                        streamed.append(chunk);
+                                        JSObject data = new JSObject();
+                                        data.put("chunk", chunk);
+                                        data.put("text", streamed.toString());
+                                        data.put("purpose", purpose);
+                                        notifyListeners("promptChunk", data);
+                                    }
+                                ),
+                                new FutureCallback<GenerateContentResponse>() {
+                                    @Override
+                                    public void onSuccess(GenerateContentResponse response) {
+                                        String text = extractText(response);
+                                        if (text.isEmpty()) text = streamed.toString().trim();
+                                        JSObject ret = new JSObject();
+                                        ret.put("text", text);
+                                        ret.put("path", "prompt");
+                                        ret.put("streamed", true);
+                                        call.resolve(ret);
+                                    }
 
-                                @Override
-                                public void onFailure(@NonNull Throwable t) {
-                                    // stream 실패 시 non-stream 한 번 재시도
-                                    Log.w(TAG, "stream generate failed, fallback", t);
-                                    runNonStreamGenerate(model, request, call);
-                                }
-                            },
-                            ContextCompat.getMainExecutor(getContext())
-                        );
+                                    @Override
+                                    public void onFailure(@NonNull Throwable t) {
+                                        Log.w(TAG, "stream generate failed, fallback", t);
+                                        runNonStreamGenerate(model, request, call);
+                                    }
+                                },
+                                ContextCompat.getMainExecutor(getContext())
+                            );
+                        } catch (Throwable t) {
+                            Log.w(TAG, "stream API unavailable, fallback", t);
+                            runNonStreamGenerate(model, request, call);
+                        }
                         return;
                     }
 
