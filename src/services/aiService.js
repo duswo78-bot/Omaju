@@ -174,6 +174,21 @@ export async function runTurn(text, payload = {}) {
       const back = await provider.generateBack({
         facts: workerResult.facts,
         profile: turnPayload.profile,
+        // Prompt 스트리밍: 조각이 오는 대로 초안 말풍선 교체
+        onChunk: (partialText) => {
+          if (!partialText || typeof onPartial !== 'function') return;
+          try {
+            onPartial({
+              answer: partialText,
+              recommendation: workerResult.recommendation || null,
+              nlgSource: 'on_device_prompt',
+              pendingPolish: false,
+              streaming: true,
+            });
+          } catch {
+            /* ignore */
+          }
+        },
       });
       if (back) {
         answer = back;

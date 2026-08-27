@@ -134,6 +134,13 @@ public class OmajuSystemLlmPlugin extends Plugin {
                         Log.i(TAG, "prompt status=" + promptStatus[0]);
                         if (s == FeatureStatus.DOWNLOADABLE) {
                             startPromptDownload(promptModel());
+                        } else if (s == FeatureStatus.AVAILABLE) {
+                            // First inference latency 개선 (문서: warmup 권장)
+                            try {
+                                promptModel().warmup();
+                            } catch (Throwable ignored) {
+                                /* optional */
+                            }
                         }
                         maybeFinish.run();
                     }
@@ -202,6 +209,20 @@ public class OmajuSystemLlmPlugin extends Plugin {
         }
     }
 
+    private static String extractText(GenerateContentResponse response) {
+        try {
+            if (response != null
+                && response.getCandidates() != null
+                && !response.getCandidates().isEmpty()) {
+                String text = response.getCandidates().get(0).getText();
+                return text != null ? text.trim() : "";
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "parse response", e);
+        }
+        return "";
+    }
+
     @PluginMethod
     public void generate(PluginCall call) {
         String prompt = call.getString("prompt");
@@ -210,6 +231,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
             return;
         }
         String purpose = call.getString("purpose", "back");
+        boolean stream = Boolean.TRUE.equals(call.getBoolean("stream", false));
         float temperature = "front".equals(purpose) ? 0.2f : 0.7f;
         int maxTokens = "front".equals(purpose) ? 256 : 220;
 
@@ -233,46 +255,86 @@ public class OmajuSystemLlmPlugin extends Plugin {
                         return;
                     }
 
-                    GenerateContentRequest.Builder requestBuilder =
-                        new GenerateContentRequest.Builder(new TextPart(prompt));
-                    requestBuilder.setTemperature(temperature);
-                    requestBuilder.setTopK(40);
-                    requestBuilder.setCandidateCount(1);
-                    requestBuilder.setMaxOutputTokens(maxTokens);
+                    GenerateContentRequest request =
+                        new GenerateContentRequest.Builder(new TextPart(prompt))
+                            .setTemperature(temperature)
+                            .setTopK(40)
+                            .setCandidateCount(1)
+                            .setMaxOutputTokens(maxTokens)
+                            .build();
 
-                    Futures.addCallback(
-                        model.generateContent(requestBuilder.build()),
-                        new FutureCallback<GenerateContentResponse>() {
-                            @Override
-                            public void onSuccess(GenerateContentResponse response) {
-                                String text = "";
-                                try {
-                                    if (response != null
-                                        && response.getCandidates() != null
-                                        && !response.getCandidates().isEmpty()) {
-                                        text = response.getCandidates().get(0).getText();
-                                    }
-                                } catch (Exception e) {
-                                    Log.w(TAG, "parse response", e);
+                    // Streaming: long BACK replies feel faster (ML Kit GenAI docs)
+                    if (stream) {
+                        final StringBuilder streamed = new StringBuilder();
+                        Futures.addCallback(
+                            model.generateContent(
+                                request,
+                                (String chunk) -> {
+                                    if (chunk == null || chunk.isEmpty()) return;
+                                    streamed.append(chunk);
+                                    JSObject data = new JSObject();
+                                    data.put("chunk", chunk);
+                                    data.put("text", streamed.toString());
+                                    data.put("purpose", purpose);
+                                    notifyListeners("promptChunk", data);
                                 }
-                                JSObject ret = new JSObject();
-                                ret.put("text", text != null ? text.trim() : "");
-                                ret.put("path", "prompt");
-                                call.resolve(ret);
-                            }
+                            ),
+                            new FutureCallback<GenerateContentResponse>() {
+                                @Override
+                                public void onSuccess(GenerateContentResponse response) {
+                                    String text = extractText(response);
+                                    if (text.isEmpty()) text = streamed.toString().trim();
+                                    JSObject ret = new JSObject();
+                                    ret.put("text", text);
+                                    ret.put("path", "prompt");
+                                    ret.put("streamed", true);
+                                    call.resolve(ret);
+                                }
 
-                            @Override
-                            public void onFailure(@NonNull Throwable t) {
-                                call.reject(t.getMessage() != null ? t.getMessage() : "generate_failed");
-                            }
-                        },
-                        ContextCompat.getMainExecutor(getContext())
-                    );
+                                @Override
+                                public void onFailure(@NonNull Throwable t) {
+                                    // stream 실패 시 non-stream 한 번 재시도
+                                    Log.w(TAG, "stream generate failed, fallback", t);
+                                    runNonStreamGenerate(model, request, call);
+                                }
+                            },
+                            ContextCompat.getMainExecutor(getContext())
+                        );
+                        return;
+                    }
+
+                    runNonStreamGenerate(model, request, call);
                 }
 
                 @Override
                 public void onFailure(@NonNull Throwable t) {
                     call.reject(t.getMessage() != null ? t.getMessage() : "status_failed");
+                }
+            },
+            ContextCompat.getMainExecutor(getContext())
+        );
+    }
+
+    private void runNonStreamGenerate(
+        GenerativeModelFutures model,
+        GenerateContentRequest request,
+        PluginCall call
+    ) {
+        Futures.addCallback(
+            model.generateContent(request),
+            new FutureCallback<GenerateContentResponse>() {
+                @Override
+                public void onSuccess(GenerateContentResponse response) {
+                    JSObject ret = new JSObject();
+                    ret.put("text", extractText(response));
+                    ret.put("path", "prompt");
+                    ret.put("streamed", false);
+                    call.resolve(ret);
+                }
+
+                @Override
+                public void onFailure(@NonNull Throwable t) {
+                    call.reject(t.getMessage() != null ? t.getMessage() : "generate_failed");
                 }
             },
             ContextCompat.getMainExecutor(getContext())
