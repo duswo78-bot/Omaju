@@ -97,6 +97,7 @@ export function parseFrontDraft(draft) {
       wantGame: Boolean(slots.wantGame),
       moods: uniq(slots.moods),
       weather: uniq(slots.weather),
+      placeQuery: slots.placeQuery ? String(slots.placeQuery).trim() : undefined,
       constraints: {
         onlyAlcohol: Boolean(slots.constraints?.onlyAlcohol),
         onlySnack: Boolean(slots.constraints?.onlySnack),
@@ -141,6 +142,7 @@ export function buildNluFrame(rawText, cleanText, frontDraft) {
     wantGame: draft.slots.wantGame || rule.slots.wantGame,
     moods: uniq([...(draft.slots.moods || []), ...(rule.slots.moods || [])]),
     weather: uniq([...(draft.slots.weather || []), ...(rule.slots.weather || [])]),
+    placeQuery: draft.slots.placeQuery || rule.slots.placeQuery,
     constraints: {
       onlyAlcohol: draft.slots.constraints?.onlyAlcohol || rule.slots.constraints?.onlyAlcohol,
       onlySnack: draft.slots.constraints?.onlySnack || rule.slots.constraints?.onlySnack,
@@ -156,10 +158,19 @@ export function buildNluFrame(rawText, cleanText, frontDraft) {
     },
   };
 
-  // 규칙이 OFFTOPIC/GUIDE로 강하게 판단하면 draft RECOMMEND보다 규칙 우선
+  // 규칙이 분명하면 draft보다 우선 (MOOD를 SMALLTALK/RECOMMEND로 덮지 않음)
   let mergedIntent = intent;
-  if (
-    (rule.intent === 'OFFTOPIC' || rule.intent === 'GUIDE') &&
+  if (rule.intent === 'PLACE' && rule.confidence >= 0.8) {
+    mergedIntent = 'PLACE';
+    if (!slots.placeQuery) slots.placeQuery = rule.slots.placeQuery;
+  } else if (rule.intent === 'MOOD' && rule.confidence >= 0.7) {
+    mergedIntent = 'MOOD';
+  } else if (rule.intent === 'GOODBYE' && rule.confidence >= 0.7) {
+    mergedIntent = 'GOODBYE';
+  } else if (rule.intent === 'COMPLAINT' && rule.confidence >= 0.7) {
+    mergedIntent = 'COMPLAINT';
+  } else if (
+    (rule.intent === 'OFFTOPIC' || rule.intent === 'GUIDE' || rule.intent === 'SMALLTALK') &&
     rule.confidence >= 0.7 &&
     draft.intent === 'RECOMMEND' &&
     !(slots.alcoholHints?.length || slots.snackHints?.length)

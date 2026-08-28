@@ -26,6 +26,14 @@ export function getHistory() {
   return chatHistory;
 }
 
+export function clearConversationMemory() {
+  chatHistory = [];
+  lastRecommendation = null;
+  pendingContextText = '';
+  rejectedItems.clear();
+  recentRecommendedIds = [];
+}
+
 export function pushHistory(role, text) {
   chatHistory.push({ role, text, ts: Date.now() });
   if (chatHistory.length > 16) {

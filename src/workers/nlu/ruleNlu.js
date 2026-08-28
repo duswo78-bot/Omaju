@@ -12,24 +12,50 @@ import {
   AFFIRM,
   DENY,
   GUIDE_TRIGGERS,
+  PLACE_VENUE,
+  PLACE_NEAR,
+  PLACE_FIND,
+  COMPLAINT_MARKERS,
+  GOODBYE_MARKERS,
 } from './domainLexicon.js';
 import { matchCorpus } from './normalizeKorean.js';
+import { extractPlaceQueryFromText } from '../../utils/snackToVenueQuery.js';
 
 const ALC_CATEGORY_HINTS = [
   '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하',
+  '진로', '참이슬', '새로', '카스', '테라', '켈리',
 ];
 const ALC_NAME_HINTS = alcoholsData.map((a) => a.name_ko).filter(Boolean);
 const SNK_NAME_HINTS = snacksData.map((s) => s.name_ko).filter(Boolean);
 const SHORT_SNACKS = ['회', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치'];
+const EXCLUDE_STOP = new Set([
+  '그거', '이거', '저거', '다른', '거', '걸로', '건', '게', '것', '센', '약한', '센거', '약한거',
+]);
+const GREETING_TOKENS = ['안녕하세요', '안녕하세여', '안녕', '반가워', '반가워요', '방가', 'ㅎㅇ', 'ㅎ2', '오랜만'];
+// '하이'는 하이볼 오탐이 많아 단독 토큰으로만 허용
 
 function uniq(arr) {
   return [...new Set((arr || []).filter(Boolean))];
 }
 
+function hasRecommendAsk(text) {
+  return /추천|골라|뭐\s*마시|뭐\s*먹|먹고싶|마시고싶|한\s*잔|없나|없을까|부탁|각(?:이|임|야)?|어울리|페어링|마실\s*거|먹기\s*좋은|마시기\s*좋은/.test(
+    text
+  );
+}
+
 function countHits(text, list) {
   let n = 0;
+  const t = String(text || '');
   for (const k of list) {
-    if (k && text.includes(k)) n += 1;
+    if (!k) continue;
+    // 1글자 도메인 키만 경계 검사 ("회의"≠"회")
+    if (k.length === 1 && /^[가-힣]$/.test(k)) {
+      const re = new RegExp(`(^|[^가-힣])${k}([^가-힣]|$)`);
+      if (re.test(t)) n += 1;
+      continue;
+    }
+    if (t.includes(k)) n += 1;
   }
   return n;
 }
@@ -44,7 +70,22 @@ function scoreDomain(text) {
   return score;
 }
 
-function detectSignals(text) {
+/**
+ * 짧은 한글 키워드가 compact 연결어에서 오탐되는 것을 방지.
+ * 예: "소주말고" ⊃ "주말"
+ */
+function hasKeyword(spacedText, compactText, keyword) {
+  const k = String(keyword || '').trim();
+  if (!k) return false;
+  if (k.length <= 2 && /^[가-힣]+$/.test(k)) {
+    // 짧은 키워드는 단어 경계 필수 ("회의"≠"회", "소주말고"≠"주말")
+    const re = new RegExp(`(^|[^가-힣])${k}([^가-힣]|$)`);
+    return re.test(String(spacedText || '')) || re.test(String(compactText || ''));
+  }
+  return String(spacedText || '').includes(k) || String(compactText || '').includes(k);
+}
+
+function detectSignals(spacedText, compactText = '') {
   const signals = {
     moods: [],
     weather: [],
@@ -52,9 +93,11 @@ function detectSignals(text) {
     detectedEmotion: null,
     detectedSituation: null,
   };
+  const spaced = String(spacedText || '');
+  const compact = String(compactText || spaced.replace(/\s+/g, ''));
 
   for (const emo of emotionsDataJson) {
-    if (emo.keywords?.some((k) => text.includes(k))) {
+    if (emo.keywords?.some((k) => hasKeyword(spaced, compact, k))) {
       signals.detectedEmotion = emo;
       if (emo.id === 'emo_stress') signals.moods.push('stressed', 'friends', 'refresh');
       if (emo.id === 'emo_sad') signals.moods.push('sad', 'comfort', 'honsul');
@@ -68,7 +111,7 @@ function detectSignals(text) {
   }
 
   for (const sit of situationsDataJson) {
-    if (sit.keywords?.some((k) => text.includes(k))) {
+    if (sit.keywords?.some((k) => hasKeyword(spaced, compact, k))) {
       signals.detectedSituation = sit;
       if (sit.id === 'sit_rain') signals.weather.push('rain', 'humid');
       if (sit.id === 'sit_snow') signals.weather.push('cold', 'winter');
@@ -109,6 +152,14 @@ function extractHints(text) {
     }
   }
 
+  // 카테고리성 안주 힌트 (구체 메뉴명 없이도 슬롯 확보) — 단독 '안주'는 onlySnack으로 처리
+  if (/안주/.test(text) && snackHints.length === 0) {
+    if (/매운|매콤/.test(text)) snackHints.push('매운');
+    else if (/마른/.test(text)) snackHints.push('마른');
+    else if (/국물|탕|찌개/.test(text)) snackHints.push('탕');
+    else if (/전|부침/.test(text)) snackHints.push('전');
+  }
+
   return {
     alcoholHints: uniq(alcoholHints),
     snackHints: uniq(snackHints),
@@ -117,29 +168,123 @@ function extractHints(text) {
 
 function extractConstraints(text) {
   const exclude = [];
-  // "A 말고", "A 제외", "A 빼고"
-  const excludeRe = /([가-힣A-Za-z0-9]{1,12})\s*(말고|제외|빼고|싫|제외해)/g;
+  // "A 말고", "A 제외", "A 빼고" — 너무 짧은 대명사/의존명사 제외
+  const excludeRe = /([가-힣A-Za-z0-9]{2,12})\s*(말고|제외|빼고|제외해)/g;
   let m;
   while ((m = excludeRe.exec(text)) !== null) {
-    if (m[1] && !['그거', '이거', '저거', '다른'].includes(m[1])) exclude.push(m[1]);
+    if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
+  }
+  // "싫다/싫어" 단독 패턴
+  const hateRe = /([가-힣A-Za-z0-9]{2,12})\s*(싫(?:어|다|음)?)/g;
+  while ((m = hateRe.exec(text)) !== null) {
+    if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
   }
 
+  const mentionsAlcohol =
+    /술|맥주|소주|와인|막걸리|하이볼|위스키|칵테일|보드카|전통주|마실|한\s*잔|도수/.test(text);
+  const onlyAlcohol =
+    (/술만|주류만|마실\s*것만|술\s*추천|도수/.test(text) && !/안주/.test(text)) ||
+    (/약한\s*도수|센\s*거|도\s*낮은/.test(text) && !/안주/.test(text));
+  const onlySnack =
+    (/안주만|밥만|식사만|안주\s*위주|음식만|안주\s*추천|안주\s*골라/.test(text) &&
+      !/술\s*추천/.test(text)) ||
+    (/안주/.test(text) && !mentionsAlcohol);
+
   return {
-    onlyAlcohol: /술만|주류만|마실\s*것만/.test(text),
-    onlySnack: /안주만|밥만|식사만|안주\s*위주|음식만/.test(text),
-    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전/.test(text),
+    onlyAlcohol,
+    onlySnack,
+    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text),
     spicy: /매운|매콤|불닭|핫/.test(text),
-    light: /담백|가벼운|라이트|시원/.test(text),
-    cheap: /싸게|저렴|가성비|싼|저가/.test(text),
+    light: /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단/.test(text),
+    cheap: /싸게|저렴|가성비|싼|저가|호불호/.test(text),
     hangover: /해장|숙취|속쓰|속이\s*안/.test(text),
     exclude: uniq(exclude),
   };
+}
+
+function enrichMoodsFromText(text, moods) {
+  const next = [...(moods || [])];
+  if (/친구|동료|회식|여러|같이\s*마시/.test(text)) next.push('friends');
+  if (/혼자|혼술|혼맥|혼소/.test(text)) next.push('honsul', 'comfort');
+  if (/데이트|소개팅|연인|남친|여친/.test(text)) next.push('romantic', 'special');
+  if (/파티|불금|주말|신나게/.test(text)) next.push('celebrate', 'friends', 'happy');
+  if (/가벼|라이트|약하게|약한\s*도수/.test(text)) next.push('refresh');
+  return uniq(next);
+}
+
+function isGreetingUtterance(hay, clean) {
+  if (clean.length > 12) return false;
+  // 하이볼/하이네켄 등 주류 오탐 방지
+  if (/하이볼|하이네켄|하이볼ㄹ/.test(hay)) return false;
+  if (GREETING_TOKENS.some((g) => hay.includes(g))) return true;
+  // '하이'는 짧은 단독 인사만
+  if (/^(하이|hi|hello)$/i.test(clean)) return true;
+  return false;
+}
+
+/** 알아듣기 어려운 입력(자모만, 의미 약한 짧은말, 도메인 신호 0) */
+function looksUnintelligible(raw, clean, hay, domainScore, hasEntity, hasConstraintSignal, recommendAsk, wantGame, signals) {
+  if (hasEntity || hasConstraintSignal || recommendAsk || wantGame) return false;
+  if (signals?.detectedEmotion || signals?.detectedSituation) return false;
+  if ((signals?.moods || []).length > 0 || (signals?.weather || []).length > 0) return false;
+  if (GUIDE_TRIGGERS.some((g) => hay.includes(g))) return false;
+  if (domainScore !== 0) return false;
+
+  const c = String(clean || '');
+  const r = String(raw || '').trim();
+  if (!c) return true;
+
+  // ㅋㅎㅠㅜ / 자모만
+  if (/^[ㅋㅎㅠㅜㄷㄱㄴㅇㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㅏ-ㅣㄱ-ㅎ]+$/i.test(c)) return true;
+  // 의미 있는 한글 어절이 거의 없음
+  if (!/[가-힣]{2,}/.test(r) && !/[a-z]{3,}/i.test(r)) return true;
+  // 너무 짧고 도메인 단서 없음
+  if (c.length <= 2) return true;
+  // 도메인 점수 0인 애매한 한 줄
+  return c.length <= 24;
 }
 
 /** 짧은 긍정/부정만 — "아니 맥주" 같은 문장은 제외 */
 function isPureShortReply(cleanText, list, maxLen = 6) {
   if (!cleanText || cleanText.length > maxLen) return false;
   return list.some((w) => cleanText === w || cleanText === `${w}${w}` || cleanText === `${w}요`);
+}
+
+/**
+ * 근처 카페/술집/맛집 등 장소 검색 의도.
+ * 술·안주 페어링 추천과 구분: "근처/찾아/어디" + 업종, 또는 "카페 추천"처럼 장소명만.
+ */
+function detectPlaceIntent(hay, hasEntity) {
+  const hasVenue = PLACE_VENUE.some((v) => hay.includes(v));
+  const hasNear = PLACE_NEAR.some((v) => hay.includes(v));
+  const hasFind = PLACE_FIND.some((v) => hay.includes(v));
+  if (!hasVenue && !(hasNear && hasFind)) return null;
+
+  // 술/안주 페어링 문맥이 분명하면 PLACE보다 RECOMMEND 우선
+  const pairing =
+    /페어링|어울리|안주|같이\s*먹|뭐\s*마시|도수는|한잔\s*추천/.test(hay) &&
+    !hasNear &&
+    !hasFind;
+  if (pairing) return null;
+
+  // "곱창집 추천"처럼 안주 엔티티가 있으면 페어링 추천 우선 (근처/찾아 없을 때)
+  if (!hasNear && !hasFind && hasEntity) return null;
+
+  // "맥주 추천"은 주종 추천, "카페/술집/맛집 추천"은 장소
+  if (
+    !hasNear &&
+    !hasFind &&
+    !/(카페|술집|주점|포차|호프|맛집|이자카야|와인바|위스키바|치킨집|곱창집|횟집|맥주집|가게|식당)/.test(
+      hay
+    )
+  ) {
+    return null;
+  }
+
+  const placeQuery =
+    extractPlaceQueryFromText(hay) ||
+    (hasVenue ? PLACE_VENUE.find((v) => hay.includes(v)) : '술집');
+  return placeQuery;
 }
 
 function pickGuideHint(hints, constraints, signals, text = '') {
@@ -179,20 +324,35 @@ export function ruleNlu(rawText, cleanText) {
   const clean = corpus.compact || cleanText || text.replace(/\s/g, '');
   const hay = corpus.haystack;
 
-  const signals = detectSignals(hay);
+  // 감정/상황은 공백 유지 문장 기준(짧은 키워드 compact 오탐 방지), 힌트는 haystack
+  const signals = detectSignals(`${text} ${rawText || ''}`, clean);
   const hints = extractHints(hay);
   const constraints = extractConstraints(hay);
   const domainScore = scoreDomain(hay);
   const hasEntity = hints.alcoholHints.length > 0 || hints.snackHints.length > 0;
+  const hasConstraintSignal = Boolean(
+    constraints.onlyAlcohol ||
+      constraints.onlySnack ||
+      constraints.nonAlcoholic ||
+      constraints.spicy ||
+      constraints.light ||
+      constraints.cheap ||
+      constraints.hangover ||
+      (constraints.exclude || []).length
+  );
+  const recommendAsk = hasRecommendAsk(hay);
   const wantGame =
     /술게임|게임\s*추천|재밌는\s*게임|놀\s*거리|랜덤\s*게임/.test(hay) ||
     (hay.includes('게임') && domainScore >= 0);
+
+  signals.moods = enrichMoodsFromText(text, signals.moods);
 
   // --- Intent 우선순위 ---
   let intent = 'GUIDE';
   let confidence = 0.55;
   let needsClarification;
   let guideHint;
+  let placeQuery;
 
   // 1) 짧은 긍정/부정 (상태머신에서 쓰임) — 순수 단답만
   if (isPureShortReply(clean, AFFIRM, 6)) {
@@ -202,12 +362,13 @@ export function ruleNlu(rawText, cleanText) {
     intent = 'DENY';
     confidence = 0.85;
   }
+  // 1.5) 근처 가게/카페/술집 장소 검색
+  else if ((placeQuery = detectPlaceIntent(hay, hasEntity))) {
+    intent = 'PLACE';
+    confidence = 0.9;
+  }
   // 2) 인사/감사
-  else if (
-    ['안녕', '하이', '반가', '방가', 'ㅎㅇ', 'ㅎ2', '안녕하세요', '안녕하세여', '오랜만'].some((g) =>
-      hay.includes(g)
-    ) && clean.length <= 10
-  ) {
+  else if (isGreetingUtterance(hay, clean)) {
     intent = 'GREETING';
     confidence = 0.92;
   } else if (
@@ -216,6 +377,22 @@ export function ruleNlu(rawText, cleanText) {
   ) {
     intent = 'THANKS';
     confidence = 0.9;
+  }
+  // 2.4) 작별/종료 (안녕하세요와 분리)
+  else if (
+    GOODBYE_MARKERS.some((g) => hay.includes(g) || clean.includes(g.replace(/\s/g, ''))) &&
+    !/안녕하세요|안녕하세|하이|ㅎㅇ/.test(hay)
+  ) {
+    intent = 'GOODBYE';
+    confidence = 0.9;
+  }
+  // 2.5) 불만/항의 → 사과 (명확한 재추천 요청은 아래 REROLL로)
+  else if (
+    COMPLAINT_MARKERS.some((c) => hay.includes(c) || clean.includes(c.replace(/\s/g, ''))) &&
+    !/다른거|바꿔|다시\s*추천|다시추천/.test(hay)
+  ) {
+    intent = 'COMPLAINT';
+    confidence = 0.86;
   }
   // 3) 앱 메타 질문
   else if (META_APP.some((k) => hay.includes(k)) && !hasEntity) {
@@ -234,33 +411,55 @@ export function ruleNlu(rawText, cleanText) {
     ((hay.includes('다른') || hay.includes('다시') || hay.includes('별로')) &&
       !/말고|제외|빼고/.test(hay))
   ) {
-    const moodOnly =
-      ['덥', '추', '비', '눈', '우울', '슬퍼', '화나', '짜증', '피곤', '힘들', '심심', '외로'].some((wm) =>
+    const emotionOnly =
+      ['우울', '슬퍼', '화나', '짜증', '피곤', '힘들', '심심', '외로', '스트레스', '기분'].some((wm) =>
         hay.includes(wm)
       ) &&
       !hay.includes('추천') &&
       !hay.includes('술') &&
       !hay.includes('안주') &&
       !hasEntity;
-    intent = moodOnly ? 'SMALLTALK' : 'REROLL';
+    const weatherOnly =
+      ['덥', '추', '비', '눈'].some((wm) => hay.includes(wm)) &&
+      !hay.includes('추천') &&
+      !hay.includes('술') &&
+      !hay.includes('안주') &&
+      !hasEntity;
+    intent = emotionOnly ? 'MOOD' : weatherOnly ? 'SMALLTALK' : 'REROLL';
     confidence = 0.8;
   }
-  // 6) 감정/스몰톡 (추천 키워드 없이)
+  // 6) 기분/감정 → MOOD 전용 (추천 요청·제약이 있으면 추천 쪽으로)
   else if (
-    signals.detectedEmotion &&
+    (signals.detectedEmotion || /기분|우울|스트레스|외로|짜증|힘들|피곤|심심|속상|설레|신나|행복/.test(hay)) &&
     !hasEntity &&
-    !/추천|골라|뭐\s*마시|뭐\s*먹|안주|술\s*추천|먹고싶|마시고싶/.test(hay)
+    !hasConstraintSignal &&
+    !wantGame &&
+    !recommendAsk &&
+    !/안주|술\s*추천|찾아|어디/.test(hay)
+  ) {
+    intent = 'MOOD';
+    confidence = 0.8;
+    guideHint = 'mood';
+  }
+  // 6.5) 날씨 잡담만 SMALLTALK (기분=MOOD, 회식·데이트 등 술자리 상황은 GUIDE로 하락)
+  else if (
+    ((signals.weather || []).length > 0 ||
+      signals.detectedSituation?.id === 'sit_rain' ||
+      signals.detectedSituation?.id === 'sit_snow') &&
+    !signals.detectedEmotion &&
+    !hasEntity &&
+    !hasConstraintSignal &&
+    !wantGame &&
+    !recommendAsk
   ) {
     intent = 'SMALLTALK';
     confidence = 0.78;
-    guideHint = 'mood';
+    guideHint = 'situation';
   }
-  // 7) 막연한 "추천해줘/뭐하지" (엔티티·구체 제약 없음) → 유도
+  // 7) 막연한 "추천해줘/뭐하지" (엔티티·구체 제약 없음) → 상황 확인
   else if (
     !hasEntity &&
-    !constraints.onlyAlcohol &&
-    !constraints.onlySnack &&
-    !constraints.nonAlcoholic &&
+    !hasConstraintSignal &&
     !wantGame &&
     GUIDE_TRIGGERS.some((g) => hay.includes(g))
   ) {
@@ -269,20 +468,19 @@ export function ruleNlu(rawText, cleanText) {
     guideHint = pickGuideHint(hints, constraints, signals, hay);
     needsClarification = '술·안주·상황 중 어떤 힌트를 줄까요?';
   }
-  // 8) 명확한 추천 신호 + 엔티티/제약/게임
+  // 8) 명확한 추천 신호 + 엔티티/제약/게임/추천 요청
   else if (
     hasEntity ||
-    constraints.onlyAlcohol ||
-    constraints.onlySnack ||
-    constraints.nonAlcoholic ||
+    hasConstraintSignal ||
     wantGame ||
-    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶/.test(hay) && domainScore >= 2)
+    recommendAsk ||
+    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔/.test(hay) && domainScore >= 1)
   ) {
     intent = 'RECOMMEND';
-    confidence = hasEntity ? 0.88 : 0.75;
+    confidence = hasEntity || hasConstraintSignal ? 0.88 : 0.75;
   }
-  // 9) 도메인만 있고 애매함 → 유도
-  else if (domainScore === 0 || (domainScore > 0 && !hasEntity)) {
+  // 9) 도메인 힌트만 있고 애매함 → 상황 확인
+  else if (domainScore > 0 && !hasEntity) {
     intent = 'GUIDE';
     confidence = 0.7;
     guideHint = pickGuideHint(hints, constraints, signals, hay);
@@ -291,14 +489,33 @@ export function ruleNlu(rawText, cleanText) {
         ? '술·안주·상황 중 어떤 힌트를 줄까요?'
         : '조금 더 구체적으로 알려주시면 딱 맞춰 드릴게요.';
   }
+  // 9.5) 정말 모르겠는 말(오타·줄임·엉뚱한 소리) → UNKNOWN
+  else if (
+    looksUnintelligible(
+      rawText || text,
+      clean,
+      hay,
+      domainScore,
+      hasEntity,
+      hasConstraintSignal,
+      recommendAsk,
+      wantGame,
+      signals
+    )
+  ) {
+    intent = 'UNKNOWN';
+    confidence = 0.62;
+    guideHint = 'general';
+    needsClarification = '오늘 술 마셔요?';
+  }
   // 10) 약한 이탈
   else if (domainScore < 0) {
     intent = 'OFFTOPIC';
     confidence = 0.72;
     guideHint = 'redirect';
   } else {
-    intent = 'GUIDE';
-    confidence = 0.6;
+    intent = 'UNKNOWN';
+    confidence = 0.55;
     guideHint = 'general';
   }
 
@@ -317,6 +534,7 @@ export function ruleNlu(rawText, cleanText) {
       moods: uniq(signals.moods),
       weather: uniq(signals.weather),
       constraints,
+      placeQuery: intent === 'PLACE' ? placeQuery : undefined,
     },
     confidence,
     domainScore,

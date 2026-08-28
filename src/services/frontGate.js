@@ -18,11 +18,14 @@ export function shouldRunFrontLlm(text) {
     const hasHints =
       (frame?.slots?.alcoholHints || []).length > 0 || (frame?.slots?.snackHints || []).length > 0;
 
-    if (['GREETING', 'THANKS', 'REROLL', 'DENY', 'AFFIRM'].includes(intent) && conf >= 0.6) {
+    if (['GREETING', 'THANKS', 'GOODBYE', 'REROLL', 'DENY', 'AFFIRM', 'COMPLAINT', 'MOOD'].includes(intent) && conf >= 0.6) {
       return { run: false, reason: 'clear_social', confidence: conf, intent };
     }
     if (intent === 'OFFTOPIC' && conf >= 0.65) {
       return { run: false, reason: 'clear_offtopic', confidence: conf, intent };
+    }
+    if (intent === 'PLACE' && conf >= 0.7) {
+      return { run: false, reason: 'clear_place', confidence: conf, intent };
     }
     if (intent === 'GUIDE' && conf >= 0.7) {
       return { run: false, reason: 'clear_guide', confidence: conf, intent };

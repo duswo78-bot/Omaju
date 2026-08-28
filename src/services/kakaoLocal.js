@@ -12,25 +12,42 @@ import { haversineMeters } from './geoService';
 
 async function kakaoGetJson(pathAndQuery, restKey) {
   const base = apiBase();
-  const url = `${base}${pathAndQuery.startsWith('/') ? '' : '/'}${pathAndQuery}`;
-  const headers = { Authorization: `KakaoAK ${restKey}` };
+  const path = pathAndQuery.startsWith('/') ? pathAndQuery : `/${pathAndQuery}`;
+  const url = `${base}${path}`;
+  const headers = {
+    Authorization: `KakaoAK ${restKey}`,
+    Accept: 'application/json',
+  };
 
   // Native WebView fetch → dapi 는 CORS로 실패하는 경우가 많아 CapacitorHttp 사용
   if (Capacitor.isNativePlatform()) {
-    const res = await CapacitorHttp.get({ url, headers, connectTimeout: 12000, readTimeout: 15000 });
-    const status = res.status ?? 0;
-    if (status < 200 || status >= 300) {
-      const text = typeof res.data === 'string' ? res.data : JSON.stringify(res.data || {});
-      throw Object.assign(new Error(`Kakao HTTP ${status}: ${text}`), {
+    let res;
+    try {
+      res = await CapacitorHttp.get({
+        url,
+        headers,
+        connectTimeout: 12000,
+        readTimeout: 15000,
+      });
+    } catch (e) {
+      throw Object.assign(new Error(`Kakao native request failed: ${e?.message || e}`), {
+        code: 'KAKAO_NATIVE',
+        cause: e,
+      });
+    }
+    const status = Number(res?.status ?? 0);
+    if (!status || status < 200 || status >= 300) {
+      const text = typeof res?.data === 'string' ? res.data : JSON.stringify(res?.data || {});
+      throw Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text.slice(0, 200)}`), {
         code: 'KAKAO_HTTP',
-        status,
+        status: status || 0,
       });
     }
     if (typeof res.data === 'string') {
       try {
         return JSON.parse(res.data);
       } catch {
-        return {};
+        throw Object.assign(new Error('Kakao response JSON parse failed'), { code: 'KAKAO_PARSE' });
       }
     }
     return res.data || {};
@@ -89,6 +106,9 @@ function normalizePlace(place, origin) {
 let mapsSdkPromise = null;
 
 function loadKakaoMapsSdk() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return Promise.reject(Object.assign(new Error('NO_DOM'), { code: 'NO_DOM' }));
+  }
   const jsKey = getKakaoJsKey();
   if (!jsKey) {
     return Promise.reject(Object.assign(new Error('NO_KAKAO_JS_KEY'), { code: 'NO_KAKAO_JS_KEY' }));
@@ -191,10 +211,18 @@ export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius
   const seen = new Set();
   const merged = [];
   let lastError = null;
+  const list = [...new Set((queries || []).map((q) => String(q || '').trim()).filter(Boolean))];
 
-  for (const query of queries) {
+  if (!list.length) {
+    throw Object.assign(new Error('EMPTY_QUERY'), { code: 'EMPTY_QUERY' });
+  }
+  if (lat == null || lng == null || Number.isNaN(Number(lat)) || Number.isNaN(Number(lng))) {
+    throw Object.assign(new Error('INVALID_GEO'), { code: 'INVALID_GEO' });
+  }
+
+  for (const query of list) {
     try {
-      const places = await searchKakaoPlaces({ query, lat, lng, radius, size: 12 });
+      const places = await searchKakaoPlaces({ query, lat: Number(lat), lng: Number(lng), radius, size: 12 });
       for (const p of places) {
         if (seen.has(p.id)) continue;
         seen.add(p.id);
@@ -204,6 +232,7 @@ export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius
       if (merged.length >= 10) break;
     } catch (e) {
       lastError = e;
+      console.warn('[kakaoLocal] query failed', query, e?.code || e?.message);
     }
   }
 

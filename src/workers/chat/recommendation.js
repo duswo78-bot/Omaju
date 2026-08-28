@@ -23,11 +23,25 @@ export async function handleRecommendation(text, cleanText, context) {
   const combinedText = `${cleanText} ${contextKeywords} ${uiContext}`.trim();
   const contextTokens = `${contextKeywords} ${uiContext}`.split(' ').filter(Boolean);
 
+  const signals = {
+    ...(context.signals || {}),
+    energy: context.semantic?.energy || context.signals?.energy || null,
+    relation: context.semantic?.relation || context.signals?.relation || null,
+    moods: [
+      ...(context.signals?.moods || []),
+      ...(context.semantic?.catalogMoods || []),
+    ],
+    weather: [
+      ...(context.signals?.weather || []),
+      ...(context.semantic?.weather || []),
+    ],
+  };
+
   const recResult = await recommend(
     combinedText,
     context.tokens,
     contextTokens,
-    context.signals,
+    signals,
     frame
   );
 

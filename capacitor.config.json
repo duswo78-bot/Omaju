@@ -2,6 +2,9 @@
   "appId": "com.omaju.app",
   "appName": "오마주",
   "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
   "plugins": {
     "CapacitorHttp": {
       "enabled": true

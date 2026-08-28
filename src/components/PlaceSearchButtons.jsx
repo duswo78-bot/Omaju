@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import PlaceFinderSheet from './PlaceFinderSheet';
 
 /**
- * 안주 → 주점/가게 찾기 진입점
+ * 안주 → 주점/가게 찾기 진입점 (venueQuery로 직접 카페/술집 검색도 가능)
  */
 export default function PlaceSearchButtons({
   snackName,
   drinkName,
   snackCategory,
+  venueQuery,
   compact = false,
   label = '근처 가게 찾기',
   inline = false,
+  autoOpen = false,
 }) {
-  const [open, setOpen] = useState(false);
-  if (!snackName && !drinkName) return null;
+  const [open, setOpen] = useState(Boolean(autoOpen));
+  useEffect(() => {
+    if (autoOpen) setOpen(true);
+  }, [autoOpen, venueQuery, snackName]);
+
+  if (!snackName && !drinkName && !venueQuery) return null;
 
   return (
     <>
@@ -50,6 +56,7 @@ export default function PlaceSearchButtons({
         snackName={snackName}
         drinkName={drinkName}
         snackCategory={snackCategory}
+        venueQuery={venueQuery}
       />
     </>
   );

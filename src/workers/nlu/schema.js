@@ -1,4 +1,10 @@
-/** @typedef {'GREETING'|'THANKS'|'REROLL'|'SMALLTALK'|'QUESTION'|'RECOMMEND'|'GUIDE'|'OFFTOPIC'|'AFFIRM'|'DENY'|'CLARIFY'|'UNKNOWN'} NluIntent */
+/**
+ * NluIntent
+ * - MOOD: 기분/감정 공감 전용 (SMALLTALK로 보내지 않음)
+ * - SMALLTALK: 날씨·일상 잡담 전용
+ * - GOODBYE: 대화 종료
+ * @typedef {'GREETING'|'THANKS'|'REROLL'|'SMALLTALK'|'QUESTION'|'RECOMMEND'|'GUIDE'|'OFFTOPIC'|'AFFIRM'|'DENY'|'CLARIFY'|'UNKNOWN'|'PLACE'|'COMPLAINT'|'MOOD'|'GOODBYE'} NluIntent
+ */
 
 /**
  * @typedef {Object} NluConstraints
@@ -20,6 +26,7 @@
  * @property {string[]} [moods]
  * @property {string[]} [weather]
  * @property {NluConstraints} [constraints]
+ * @property {string} [placeQuery] — PLACE intent 시 카카오 검색 키워드
  */
 
 /**
@@ -30,7 +37,7 @@
  * @property {number} confidence
  * @property {number} [domainScore]
  * @property {string} [needsClarification]
- * @property {string} [guideHint] — 유도 질문 힌트 키
+ * @property {string} [guideHint] — 가이드 응답 힌트 키
  * @property {'llm_front'|'rule'|'merged'} source
  * @property {string} rawText
  * @property {string} [matchedOpening]
@@ -49,6 +56,10 @@ export const INTENTS = [
   'DENY',
   'CLARIFY',
   'UNKNOWN',
+  'PLACE',
+  'COMPLAINT',
+  'MOOD',
+  'GOODBYE',
 ];
 
 /**
@@ -65,6 +76,7 @@ export function emptyFrame(partial) {
       moods: [],
       weather: [],
       constraints: {},
+      placeQuery: undefined,
       ...(partial.slots || {}),
     },
     resolved: partial.resolved || { alcoholIds: [], snackIds: [] },

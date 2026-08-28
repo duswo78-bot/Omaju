@@ -26,4 +26,8 @@ export function isState(state) {
   return currentState === state;
 }
 
+export function resetState() {
+  currentState = STATES.IDLE;
+}
+
 export { STATES };

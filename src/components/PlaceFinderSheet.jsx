@@ -21,10 +21,10 @@ const openBrowser = async (url) => { try { await Browser.open({ url }); } catch(
 
 let initialGpsFetched = false;
 
-export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, snackCategory }) {
+export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, snackCategory, venueQuery }) {
   const intent = useMemo(
-    () => buildVenueSearchIntent(snackName, drinkName, snackCategory),
-    [snackName, drinkName, snackCategory]
+    () => buildVenueSearchIntent(snackName, drinkName, snackCategory, venueQuery),
+    [snackName, drinkName, snackCategory, venueQuery]
   );
 
   const [geo, setGeo] = useState(() => loadCachedGeo() || geoFromRegion('gangnam'));
@@ -68,13 +68,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const locate = async () => {
     try {
       setLoading(true);
+      setError('');
       const pos = await getCurrentPosition({ timeout: 8000 });
       setUserGeo(pos);
       setGeo({ ...pos, _t: Date.now() });
     } catch {
-      if (!geo) setGeo({ ...geoFromRegion('gangnam'), _t: Date.now() });
+      const fallback = geo?.lat ? geo : geoFromRegion('gangnam');
+      if (!geo?.lat) setGeo({ ...fallback, _t: Date.now() });
+      else setGeo({ ...geo, _t: Date.now() }); // 재검색 트리거
       setError('위치 권한이 없어 기본 상권으로 검색합니다.');
-      setLoading(false);
     }
   };
 
@@ -93,38 +95,55 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
 
   const runSearch = async (targetGeo = geo) => {
     if (!open || !targetGeo?.lat) return;
+    const queries = (intent.queries || []).filter(Boolean);
+    if (!queries.length) {
+      setPlaces([]);
+      setError('검색어가 비어 있습니다.');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError('');
     try {
       if (!hasKakaoKey()) {
         setPlaces([]);
-        setError('API 키 없음');
+        setError('카카오 API 키가 없습니다. 앱을 다시 빌드·설치해 주세요.');
         return;
       }
       const results = await searchKakaoWithFallbackQueries({
-        queries: intent.queries,
+        queries,
         lat: targetGeo.lat,
         lng: targetGeo.lng,
         radius: Math.max(DEFAULT_RADIUS_M, 3000),
       });
       setPlaces(results.slice(0, 12));
-      if (!results.length) setError('근처 결과가 없습니다. 지도에서 찾아보세요.');
+      if (!results.length) {
+        setError(`"${intent.primaryQuery}" 근처 결과가 없습니다. 지도 앱으로 찾아보세요.`);
+      }
     } catch (e) {
       setPlaces([]);
       const msg = String(e?.message || e?.code || '');
       const corsLikely = msg.includes('Failed to fetch') || e?.name === 'TypeError';
       const noKey = e?.code === 'NO_KAKAO_KEY' || msg.includes('NO_KAKAO');
       const http = e?.code === 'KAKAO_HTTP';
+      const detail = http && e?.status ? ` (HTTP ${e.status})` : '';
       setError(
         noKey
           ? '카카오 API 키가 없습니다. 앱을 다시 설치해 주세요.'
           : corsLikely
             ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
             : http
-              ? `카카오 검색 오류(${e.status || '?'}). 잠시 후 다시 시도하세요.`
-              : '맛집 검색 실패. 잠시 후 다시 시도하세요.'
+              ? `카카오 검색 오류${detail}. 잠시 후 다시 시도하세요.`
+              : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
       );
-      console.warn('[PlaceFinder] search failed', e);
+      console.warn('[PlaceFinder] search failed', {
+        code: e?.code,
+        status: e?.status,
+        message: msg,
+        queries,
+        lat: targetGeo.lat,
+        lng: targetGeo.lng,
+      });
     } finally {
       setLoading(false);
     }
@@ -213,7 +232,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
               <div>
                 <div style={{ fontWeight: 800, fontSize: '1.05rem' }}>근처 가게</div>
                 <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
-                  {snackName} · {intent.primaryQuery}
+                  {[snackName || venueQuery, intent.primaryQuery].filter(Boolean).join(' · ')}
                 </div>
               </div>
               <button type="button" onClick={onClose} style={iconBtn}>
@@ -315,6 +334,24 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
               {error && !places.length && (
                 <div style={{ padding: '0.85rem', borderRadius: 12, background: 'rgba(244,63,94,0.12)', color: '#fecdd3', fontSize: '0.85rem', marginBottom: 8 }}>
                   {error}
+                  <button
+                    type="button"
+                    onClick={() => runSearch(geo)}
+                    style={{
+                      display: 'block',
+                      marginTop: 10,
+                      width: '100%',
+                      border: '1px solid rgba(254,205,211,0.45)',
+                      background: 'rgba(255,255,255,0.06)',
+                      color: '#fecdd3',
+                      borderRadius: 8,
+                      padding: '0.45rem 0.6rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    다시 검색
+                  </button>
                 </div>
               )}
 

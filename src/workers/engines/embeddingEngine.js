@@ -168,9 +168,22 @@ export async function initEmbeddings(postMessage) {
 }
 
 export async function embedQuery(text) {
+  // Node/시뮬: 모델 없이 키워드 점수만 쓸 때 0벡터
+  if (typeof indexedDB === 'undefined' || !alcoholEmbeddings.length) {
+    return new Array(384).fill(0);
+  }
   const extractor = await AIPipeline.getInstance();
   const queryOut = await extractor(text, { pooling: 'mean', normalize: true });
   return Array.from(queryOut.data);
+}
+
+/** Node 회귀/시뮬용: 임베딩 모델 없이 카탈로그만 시드 */
+export function seedMockEmbeddings() {
+  const dim = 384;
+  const zero = () => new Array(dim).fill(0);
+  alcoholEmbeddings = alcoholsData.map((item) => ({ item, vector: zero() }));
+  snackEmbeddings = snacksData.map((item) => ({ item, vector: zero() }));
+  gameEmbeddings = gamesData.map((item) => ({ item, vector: zero() }));
 }
 
 export function getAlcoholEmbeddings() {

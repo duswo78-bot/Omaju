@@ -11,6 +11,10 @@ import questionTemplates from '../templates/question.json';
 import gameTemplates from '../templates/game.json';
 import offtopicTemplates from '../templates/offtopic.json';
 import guideTemplates from '../templates/guide.json';
+import complaintTemplates from '../templates/complaint.json';
+import moodTemplates from '../templates/mood.json';
+import goodbyeTemplates from '../templates/goodbye.json';
+import denyTemplates from '../templates/deny.json';
 import { composeGuideAnswer } from '../utils/composeGuide.js';
 
 // Helper to replace template variables
@@ -101,11 +105,25 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
     case 'SMALLTALK':
       explanation = pickRandom(smalltalkTemplates);
       break;
+    case 'MOOD':
+      explanation = pickRandom(
+        Array.isArray(moodTemplates) ? moodTemplates : moodTemplates.ask || moodTemplates.empathy || []
+      );
+      break;
+    case 'GOODBYE':
+      explanation = pickRandom(goodbyeTemplates);
+      break;
     case 'UNKNOWN':
       explanation = pickRandom(unknownTemplates);
       break;
     case 'OFFTOPIC':
       explanation = pickRandom(offtopicTemplates);
+      break;
+    case 'COMPLAINT':
+      explanation = pickRandom(complaintTemplates);
+      break;
+    case 'DENY':
+      explanation = pickRandom(denyTemplates);
       break;
     case 'GUIDE':
       explanation = composeGuideAnswer(guideTemplates.general);

@@ -4,13 +4,14 @@ export function buildFrontPrompt(text) {
 
 스키마:
 {
-  "intent": "GREETING|THANKS|REROLL|SMALLTALK|QUESTION|RECOMMEND|CLARIFY|UNKNOWN",
+  "intent": "GREETING|THANKS|GOODBYE|REROLL|SMALLTALK|MOOD|QUESTION|RECOMMEND|PLACE|GUIDE|OFFTOPIC|COMPLAINT|CLARIFY|UNKNOWN",
   "slots": {
     "alcoholHints": string[],
     "snackHints": string[],
     "wantGame": boolean,
     "moods": string[],
     "weather": string[],
+    "placeQuery": string|null,
     "constraints": {
       "onlyAlcohol": boolean,
       "onlySnack": boolean,
@@ -21,6 +22,16 @@ export function buildFrontPrompt(text) {
   "confidence": number,
   "needsClarification": string|null
 }
+
+규칙:
+- "근처 카페/술집/맛집 찾아줘"처럼 장소를 찾으면 intent=PLACE, placeQuery에 업종(카페|술집|맛집 등)
+- 술·안주 페어링 추천이면 RECOMMEND
+- 막연한 "추천해줘"만 있으면 GUIDE
+- 기분/감정만 있으면 MOOD (공감 먼저, 아직 추천 진입 금지)
+- 날씨/일상 잡담만 있으면 SMALLTALK (공감 먼저, 아직 추천 진입 금지)
+- 작별/종료면 GOODBYE
+- 불만·항의면 COMPLAINT
+- 사용자가 술·안주·추천 의도를 명확히 표현하기 전에는 RECOMMEND로 강제 진입하지 말 것
 
 사용자: ${text}`;
 }

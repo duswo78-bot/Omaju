@@ -172,12 +172,35 @@ export function calculateScore(
     }
   }
 
-  // ── L1/L2 boundary: conversation mood / weather ─────────────
+  // ── L1/L2 boundary: conversation mood / weather / energy / relation ──
   const signalMoods = Array.isArray(contextSignals.moods) ? contextSignals.moods : [];
   const signalWeather = Array.isArray(contextSignals.weather) ? contextSignals.weather : [];
+  const energy = contextSignals.energy || null;
+  const relation = contextSignals.relation || null;
+  const itemAbv = typeof item?.abv === 'number' ? item.abv : null;
 
   if (signalMoods.length > 0 && listHasOverlap(itemMoods, signalMoods)) score += 0.5;
-  if (signalWeather.length > 0 && listHasOverlap(itemWeather, signalWeather)) score += 0.5;
+  if (signalWeather.length > 0 && listHasOverlap(itemWeather, signalWeather)) score += 0.55;
+
+  // energy: low → 낮은 도수/편안, high → 파티·리프레시
+  if (!isSnack && energy === 'low' && itemAbv != null) {
+    if (itemAbv === 0) score += 0.25;
+    else if (itemAbv > 0 && itemAbv <= 8) score += 0.35;
+    else if (itemAbv <= 16) score += 0.15;
+    else if (itemAbv >= 30) score -= 0.35;
+    if (listHasOverlap(itemMoods, ['comfort', 'honsul', 'sad', 'tired'])) score += 0.2;
+  }
+  if (!isSnack && energy === 'high') {
+    if (listHasOverlap(itemMoods, ['celebrate', 'friends', 'happy', 'party', 'refresh'])) score += 0.3;
+    if (itemAbv != null && itemAbv >= 12 && itemAbv <= 25) score += 0.1;
+  }
+
+  // relation bias
+  if (relation === 'alone' && listHasOverlap(itemMoods, ['honsul', 'comfort', 'movie'])) score += 0.35;
+  if (relation === 'friends' && listHasOverlap(itemMoods, ['friends', 'celebrate', 'party'])) score += 0.3;
+  if (relation === 'date' && listHasOverlap(itemMoods, ['date', 'romantic', 'special'])) score += 0.35;
+  if (relation === 'work' && listHasOverlap(itemMoods, ['friends', 'celebrate'])) score += 0.2;
+  if (relation === 'work' && !isSnack && itemAbv != null && itemAbv >= 30) score -= 0.15;
 
   // ── L2 Soft: learned likes ──────────────────────────────────
   if (!isSnack) {

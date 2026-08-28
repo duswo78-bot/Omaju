@@ -63,17 +63,9 @@ function ledStyle(mode, reason) {
     title: `NLU+템플릿 (${reason || 'lite'})`,
   };
 }
-
-function modeLabel(mode, reason, caps = {}) {
-  if (!Capacitor.isNativePlatform()) return '웹 · NLU만 (앱 설치 필요)';
-  if (caps.prompt === 'available') return '온디바이스 · Prompt';
-  if (caps.rewriting === 'available' || reason === 'ok:rewriting') return '온디바이스 · Rewriting';
-  if (mode === LLM_MODES.FULL) return '온디바이스 GenAI';
-  if (reason === 'downloadable' || reason === 'downloading') return 'AICore 다운로드 중…';
-  return `NLU · 템플릿 · ${reason || 'unavailable'}`;
-}
 import snacksData from '../data/snacks.json';
 import PlaceSearchButtons from './PlaceSearchButtons';
+import PlaceFinderSheet from './PlaceFinderSheet';
 
 function RecommendationCards({ recommendation, onOpenSnack }) {
   if (!recommendation) return null;
@@ -131,7 +123,11 @@ function RecommendationCards({ recommendation, onOpenSnack }) {
 export default function AIChatPopup({ onClose }) {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([
-    { id: 1, text: "안녕하세요! 오마주 AI입니다. 🍷\n오늘 기분이나 상황을 말씀해주시면 딱 맞는 안주와 술을 추천해드릴게요 ✨", isAi: true }
+    {
+      id: 1,
+      text: "안녕하세요! 오마주 AI 바텐더입니다 🍷\n\n술 추천, 안주 추천, 술게임은 물론\n그냥 가볍게 대화도 가능합니다.\n\n예시:\n• 혼술 추천\n• 비 오는 날 어울리는 술\n• 회식 안주 추천\n• 기분 좋은 날 마실 와인\n• 오늘 뭐 마시지?\n\n편하게 말씀해주세요 😊",
+      isAi: true,
+    },
   ]);
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -148,9 +144,9 @@ export default function AIChatPopup({ onClose }) {
   const [isReady, setIsReady] = useState(aiState.isReady);
   const [llmMode, setLlmMode] = useState(aiState.mode);
   const [probeReason, setProbeReason] = useState(aiState.probeReason || 'init');
-  const [capabilities, setCapabilities] = useState(aiState.capabilities || {});
   const [speechHint, setSpeechHint] = useState('');
   const speechHintTimerRef = useRef(null);
+  const [placeFinder, setPlaceFinder] = useState({ open: false, venueQuery: '', label: '' });
 
   const flashSpeechHint = (msg, ms = 2200) => {
     if (speechHintTimerRef.current) clearTimeout(speechHintTimerRef.current);
@@ -213,7 +209,6 @@ export default function AIChatPopup({ onClose }) {
       aiState.capabilities = caps;
       setLlmMode(mode);
       setProbeReason(reason);
-      setCapabilities(caps);
       return reason;
     };
 
@@ -416,7 +411,6 @@ export default function AIChatPopup({ onClose }) {
       });
       setLlmMode(result.mode || aiState.mode);
       if (result.probeReason) setProbeReason(result.probeReason);
-      if (result.capabilities) setCapabilities(result.capabilities);
 
       const finalId = pendingAiMsgIdRef.current || Date.now();
       setMessages((prev) => {
@@ -426,6 +420,7 @@ export default function AIChatPopup({ onClose }) {
           text: result.answer,
           isAi: true,
           recommendation: result.recommendation || null,
+          placeSearch: result.placeSearch || null,
           nlgSource: result.nlgSource,
           polishing: false,
         };
@@ -436,6 +431,14 @@ export default function AIChatPopup({ onClose }) {
         }
         return [...prev, msg];
       });
+
+      if (result.placeSearch?.venueQuery) {
+        setPlaceFinder({
+          open: true,
+          venueQuery: result.placeSearch.venueQuery,
+          label: result.placeSearch.label || `근처 ${result.placeSearch.venueQuery}`,
+        });
+      }
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
@@ -495,32 +498,31 @@ export default function AIChatPopup({ onClose }) {
                 letterSpacing: '1px',
                 marginTop: '2px'
               }}>AI</span>
-              {(() => {
-                const led = ledStyle(llmMode, probeReason);
-                return (
-                  <div
-                    title={led.title}
-                    style={{
-                      position: 'absolute',
-                      bottom: '6px',
-                      left: '7px',
-                      width: 7,
-                      height: 7,
-                      borderRadius: '50%',
-                      background: led.background,
-                      boxShadow: led.boxShadow,
-                      border: '1px solid rgba(255,255,255,0.25)',
-                    }}
-                  />
-                );
-              })()}
             </div>
+            {(() => {
+              const led = ledStyle(llmMode, probeReason);
+              return (
+                <div
+                  title={led.title}
+                  aria-label={led.title}
+                  style={{
+                    position: 'absolute',
+                    bottom: -1,
+                    left: -1,
+                    width: 9,
+                    height: 9,
+                    borderRadius: '50%',
+                    background: led.background,
+                    boxShadow: led.boxShadow,
+                    border: '1.5px solid rgba(17,17,17,0.95)',
+                    zIndex: 3,
+                  }}
+                />
+              );
+            })()}
           </div>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0, color: '#fff' }}>오마주 AI</h2>
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
-              {modeLabel(llmMode, probeReason, capabilities)}
-            </div>
           </div>
         </div>
         <button
@@ -587,6 +589,13 @@ export default function AIChatPopup({ onClose }) {
               )}
               {msg.isAi && msg.recommendation && (
                 <RecommendationCards recommendation={msg.recommendation} onOpenSnack={openSnackRecipe} />
+              )}
+              {msg.isAi && msg.placeSearch?.venueQuery && (
+                <PlaceSearchButtons
+                  compact
+                  venueQuery={msg.placeSearch.venueQuery}
+                  label={msg.placeSearch.label || `근처 ${msg.placeSearch.venueQuery} 찾기`}
+                />
               )}
             </motion.div>
           ))}
@@ -667,6 +676,12 @@ export default function AIChatPopup({ onClose }) {
           <Send size={18} style={{ marginLeft: '2px' }} />
         </button>
       </div>
+
+      <PlaceFinderSheet
+        open={placeFinder.open}
+        onClose={() => setPlaceFinder((p) => ({ ...p, open: false }))}
+        venueQuery={placeFinder.venueQuery}
+      />
     </motion.div>
   );
 }

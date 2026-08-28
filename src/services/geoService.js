@@ -23,7 +23,7 @@ export function saveCachedGeo(geo) {
  * @returns {Promise<{ lat: number, lng: number, label: string, source: 'gps'|'region'|'cache' }>}
  */
 export async function getCurrentPosition(options = {}) {
-  const { enableHighAccuracy = false } = options;
+  const { enableHighAccuracy = false, timeout = 8000 } = options;
   try {
     const perm = await Geolocation.checkPermissions();
     if (perm.location !== 'granted') {
@@ -32,7 +32,11 @@ export async function getCurrentPosition(options = {}) {
         throw new Error('Permission denied');
       }
     }
-    const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy });
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy,
+      timeout,
+      maximumAge: 60_000,
+    });
     const geo = {
       lat: pos.coords.latitude,
       lng: pos.coords.longitude,

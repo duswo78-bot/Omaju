@@ -8,20 +8,30 @@ import { handleQuestion } from './question.js';
 import { handleUnknown } from './unknown.js';
 import { handleGuide } from './guide.js';
 import { handleOfftopic } from './offtopic.js';
+import { handlePlace } from './place.js';
+import { handleComplaint } from './complaint.js';
+import { handleMood } from './mood.js';
+import { handleGoodbye } from './goodbye.js';
+import { handleDenyAsk } from './deny.js';
 import { isState, STATES } from '../engines/stateMachine.js';
 import { setPendingContextText } from '../engines/memoryEngine.js';
+import { decideResponsePolicy } from '../semantic/policy.js';
+import { getDialogueState, setLastBotAsk, pushRecommendHistory } from '../semantic/dialogueState.js';
 
 /**
  * @param {string} text
  * @param {string} cleanText
- * @param {object} context — must include context.frame (NluFrame)
+ * @param {object} context — must include context.frame (NluFrame), optional context.semantic
  */
 export async function routeChat(text, cleanText, context) {
   const frame = context.frame;
+  const semantic = context.semantic;
+  const dialogue = getDialogueState();
+  const policy = decideResponsePolicy(semantic || { intent: frame?.intent }, dialogue);
 
   if (isState(STATES.AWAITING_REC_CONFIRM)) {
     if (frame?.intent === 'REROLL' || frame?.intent === 'DENY') {
-      return await handleReroll(text, context);
+      return await finishRecommend(await handleReroll(text, context));
     }
     if (frame?.intent === 'AFFIRM' || frame?.intent === 'THANKS') {
       return handleAccept(context);
@@ -29,58 +39,106 @@ export async function routeChat(text, cleanText, context) {
     setPendingContextText('');
   }
 
+  // FOLLOWUP: soft ask 이후 긍정 → 추천 / 거절 → 추천하지 않음
   if (isState(STATES.FOLLOWUP)) {
-    const intent = frame?.intent || 'GUIDE';
-    if (intent === 'REROLL' || intent === 'DENY') return await handleReroll(text, context);
-    if (intent === 'GREETING') return handleGreeting(text, context);
-    if (intent === 'THANKS') return handleThanks(text, context);
-    if (intent === 'OFFTOPIC') return handleOfftopic(text, context);
-    if (intent === 'GUIDE') return handleGuide(text, context);
-    if (intent === 'AFFIRM' || intent === 'RECOMMEND') {
-      return await handleRecommendation(text, cleanText, context);
+    if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
+      return handleDenyAsk(text, context);
     }
-    return handleGuide(text, context);
+    if (frame?.intent === 'REROLL') {
+      return await finishRecommend(await handleReroll(text, context));
+    }
+    if (policy.action === 'recommend' || frame?.intent === 'RECOMMEND') {
+      return await finishRecommend(await handleRecommendation(text, cleanText, context));
+    }
+    if (frame?.intent === 'AFFIRM' && (policy.reason === 'affirm_after_ask' || dialogue.lastBotAsk === 'recommend')) {
+      return await finishRecommend(await handleRecommendation(text, cleanText, context));
+    }
+    if (frame?.intent === 'GREETING') return handleGreeting(text, context);
+    if (frame?.intent === 'THANKS') return handleThanks(text, context);
+    if (frame?.intent === 'GOODBYE') return handleGoodbye(text, context);
+    if (frame?.intent === 'OFFTOPIC') return handleOfftopic(text, context);
+    if (frame?.intent === 'PLACE' || policy.action === 'place') return handlePlace(text, context);
+    if (frame?.intent === 'COMPLAINT' || policy.action === 'apology') {
+      setLastBotAsk(policy.askType || 'clarify');
+      return frame?.intent === 'COMPLAINT' ? handleComplaint(text, context) : handleUnknown(text, context);
+    }
+    if (frame?.intent === 'MOOD' || policy.action === 'ask' || policy.action === 'empathy') {
+      return handleMood(text, context, policy);
+    }
+    if (frame?.intent === 'SMALLTALK') return handleSmallTalk(text, context, policy);
+    if (frame?.intent === 'GUIDE' || policy.action === 'guide') return handleGuide(text, context);
+    if ((frame?.slots?.moods || []).length > 0 || frame?.guideHint === 'mood') {
+      return handleMood(text, context, policy);
+    }
+    return handleSmallTalk(text, context);
   }
 
   if (isState(STATES.ASKING)) {
-    if (frame?.intent === 'AFFIRM' || frame?.intent === 'RECOMMEND') {
-      return await handleRecommendation(text, cleanText, context);
+    if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
+      return handleDenyAsk(text, context);
     }
-    if (frame?.intent === 'DENY') {
-      return handleGuide(text, { ...context, frame: { ...frame, guideHint: 'general' } });
+    if (frame?.intent === 'AFFIRM' || frame?.intent === 'RECOMMEND' || policy.action === 'recommend') {
+      return await finishRecommend(await handleRecommendation(text, cleanText, context));
     }
     if (frame?.intent === 'OFFTOPIC') return handleOfftopic(text, context);
-    // ASKING 중 새 힌트가 오면 추천/가이드로
+    if (frame?.intent === 'PLACE') return handlePlace(text, context);
+    if (frame?.intent === 'COMPLAINT') return handleComplaint(text, context);
+    if (frame?.intent === 'MOOD') return handleMood(text, context, policy);
+    if (frame?.intent === 'GOODBYE') return handleGoodbye(text, context);
+    if (frame?.intent === 'SMALLTALK') return handleSmallTalk(text, context, policy);
+    if (frame?.intent === 'UNKNOWN' || frame?.intent === 'CLARIFY' || policy.action === 'apology') {
+      setLastBotAsk('clarify');
+      return handleUnknown(text, context);
+    }
     if (frame?.intent === 'GUIDE') return handleGuide(text, context);
   }
 
-  const intent = frame?.intent || 'GUIDE';
+  return await dispatchByPolicy(text, cleanText, context, policy);
+}
 
-  switch (intent) {
-    case 'GREETING':
-      return handleGreeting(text, context);
-    case 'THANKS':
-      return handleThanks(text, context);
-    case 'REROLL':
-      return await handleReroll(text, context);
-    case 'SMALLTALK':
-      return handleSmallTalk(text, context);
-    case 'QUESTION':
-      return handleQuestion(text, context);
-    case 'GUIDE':
-      return handleGuide(text, context);
-    case 'OFFTOPIC':
-      return handleOfftopic(text, context);
-    case 'AFFIRM':
-      return await handleRecommendation(text, cleanText, context);
-    case 'DENY':
-      return handleGuide(text, { ...context, frame: { ...frame, guideHint: 'general' } });
-    case 'CLARIFY':
-    case 'UNKNOWN':
+async function dispatchByPolicy(text, cleanText, context, policy) {
+  const intent = context.frame?.intent || 'GUIDE';
+
+  switch (policy.action) {
+    case 'ack_deny':
+      return handleDenyAsk(text, context);
+    case 'recommend':
+      return await finishRecommend(
+        intent === 'REROLL'
+          ? await handleReroll(text, context)
+          : await handleRecommendation(text, cleanText, context)
+      );
+    case 'place':
+      return handlePlace(text, context);
+    case 'ask':
+    case 'empathy':
+      return handleMood(text, context, policy);
+    case 'apology':
+      setLastBotAsk(policy.askType || 'clarify');
+      if (intent === 'COMPLAINT') return handleComplaint(text, context);
+      if (intent === 'OFFTOPIC') return handleOfftopic(text, context);
       return handleUnknown(text, context);
-    case 'RECOMMEND':
-      return await handleRecommendation(text, cleanText, context);
+    case 'social':
+      if (intent === 'GREETING') return handleGreeting(text, context);
+      if (intent === 'THANKS') return handleThanks(text, context);
+      if (intent === 'GOODBYE') return handleGoodbye(text, context);
+      if (intent === 'QUESTION') return handleQuestion(text, context);
+      return handleGuide(text, context);
+    case 'guide':
     default:
+      if (intent === 'SMALLTALK') return handleSmallTalk(text, context, policy);
+      setLastBotAsk(policy.askType || 'clarify');
       return handleGuide(text, context);
   }
+}
+
+async function finishRecommend(result) {
+  setLastBotAsk(null);
+  if (result?.bestAlc || result?.bestSnack) {
+    pushRecommendHistory({
+      alcohol: result.bestAlc?.name_ko,
+      snack: result.bestSnack?.name_ko,
+    });
+  }
+  return result;
 }

@@ -81,6 +81,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   const frameSignals = {
     moods: [...(contextSignals?.moods || []), ...(frame?.slots?.moods || [])],
     weather: [...(contextSignals?.weather || []), ...(frame?.slots?.weather || [])],
+    energy: contextSignals?.energy || null,
+    relation: contextSignals?.relation || null,
   };
 
   let isAlcMatched = false;
@@ -248,8 +250,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }) ||
     (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0);
 
-  // 3. 짝꿍 매칭 (Relations) — 최고점 1개 고정을 피하고 상위 밴드에서 랜덤
-  if (isSnackMatched && !isAlcMatched && bestSnack) {
+  // 3. 짝꿍 매칭 — onlySnack/onlyAlc일 때는 상대편을 억지로 채우지 않음
+  if (!wantOnlySnack && isSnackMatched && !isAlcMatched && bestSnack) {
     const scored = alcoholsData
       .filter((alc) => !alcHardExcluded(alc))
       .map((alc) => ({
@@ -264,7 +266,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       bestAlc = alcoholsData.find(a => a.id === drinkId) || bestAlc;
     }
     isLowConfidence = false;
-  } else if (isAlcMatched && !isSnackMatched && bestAlc) {
+  } else if (!wantOnlyAlc && isAlcMatched && !isSnackMatched && bestAlc) {
     const scored = snacksData
       .filter((snk) => !rejectedItems.includes(snk.id))
       .map((snk) => ({
@@ -279,7 +281,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       if (matchingSnacks.length > 0) bestSnack = pickRandom(matchingSnacks);
     }
     isLowConfidence = false;
-  } else if (bestAlc && bestSnack) {
+  } else if (!wantOnlySnack && !wantOnlyAlc && bestAlc && bestSnack) {
     const currentRelScore = getRelationScore(bestAlc.id, bestSnack.id);
     if (currentRelScore < 75) {
       const scored = snacksData
@@ -299,6 +301,10 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     bestAlc = pickRandom(pool.length ? pool : alcoholsData);
   }
   if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) bestSnack = pickRandom(snacksData);
+
+  // only* 요청이면 반대편을 강제로 비움
+  if (wantOnlySnack) bestAlc = null;
+  if (wantOnlyAlc) bestSnack = null;
 
   // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤
   // wantGame이 명시되지 않아도 유사도 후보는 유지하되, 명시 요청 시 가산
