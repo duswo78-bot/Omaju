@@ -158,11 +158,16 @@ export function buildNluFrame(rawText, cleanText, frontDraft) {
     },
   };
 
-  // 규칙이 분명하면 draft보다 우선 (MOOD를 SMALLTALK/RECOMMEND로 덮지 않음)
+  // 규칙이 분명하면 draft보다 우선
   let mergedIntent = intent;
+  const ruleHasEntity =
+    (rule.slots?.alcoholHints || []).length > 0 || (rule.slots?.snackHints || []).length > 0;
   if (rule.intent === 'PLACE' && rule.confidence >= 0.8) {
     mergedIntent = 'PLACE';
     if (!slots.placeQuery) slots.placeQuery = rule.slots.placeQuery;
+  } else if (rule.intent === 'RECOMMEND' && rule.confidence >= 0.7 && ruleHasEntity) {
+    // "맥주 추천해줘"를 FRONT가 MOOD/GUIDE/날씨 질문으로 덮지 못하게
+    mergedIntent = 'RECOMMEND';
   } else if (rule.intent === 'MOOD' && rule.confidence >= 0.7) {
     mergedIntent = 'MOOD';
   } else if (rule.intent === 'GOODBYE' && rule.confidence >= 0.7) {

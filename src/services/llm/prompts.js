@@ -56,10 +56,16 @@ export function buildBackPrompt(facts, profile) {
   const exclude =
     Array.isArray(facts?.exclude) && facts.exclude.length ? facts.exclude.join(', ') : '-';
 
+  const hasRec = Boolean(alc || snk);
   return `당신은 오마주 AI입니다. 아래 확정된 추천 사실만 사용해 한국어로 1~3문장 답하세요.
 이름을 바꾸거나 새로운 술/안주를 추가하지 마세요. 과한 주량·건강 조언 금지.
 MBTI는 단정하지 말고 "경향"으로만 가볍게 언급하세요.
 최근 대화에서 싫다고 한 주종(제외)은 칭찬하거나 다시 권하지 마세요.
+${
+  hasRec
+    ? `중요: 술/안주가 이미 확정됐습니다. 따뜻한지·시원한지·추천할까요? 같은 추가 질문을 하지 마세요. 확정된 이름을 반드시 넣고 바로 권하세요.`
+    : `아직 확정 추천이 없으면 짧게 공감하거나 한 가지만 물으세요. 날씨 질문을 억지로 끼워 넣지 마세요.`
+}
 
 사용자 호칭: ${name}
 ${mbtiLine}

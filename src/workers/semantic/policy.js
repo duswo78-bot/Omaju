@@ -20,6 +20,12 @@ export function decideResponsePolicy(frame, dialogue = {}) {
       frame?.constraints?.nonAlcoholic ||
       frame?.constraints?.hangover
   );
+  // "맥주 추천해줘"처럼 주종/안주가 이미 있으면 추가 질문 없이 바로 추천
+  const readyToRecommend =
+    intent === 'RECOMMEND' ||
+    open === 'hard' ||
+    hardConstraint ||
+    (hasEntity && (intent === 'GUIDE' || intent === 'AFFIRM' || open === 'soft'));
 
   if (intent === 'GREETING' || intent === 'THANKS' || intent === 'GOODBYE' || intent === 'QUESTION') {
     return { action: 'social', askType: intent === 'GREETING' ? 'clarify' : null, reason: 'social_intent' };
@@ -48,8 +54,9 @@ export function decideResponsePolicy(frame, dialogue = {}) {
     }
   }
 
-  if (intent === 'RECOMMEND' || (hasEntity && open === 'hard') || hardConstraint) {
-    return { action: 'recommend', askType: null, reason: 'explicit_recommend' };
+  // 명시 추천·주종 힌트가 있으면 날씨/감정 soft-ask로 가로채지 않음
+  if (readyToRecommend) {
+    return { action: 'recommend', askType: null, reason: hasEntity ? 'entity_recommend' : 'explicit_recommend' };
   }
 
   // "오늘 한 잔?" soft ask에 대한 거절 — 추천/리롤로 보내지 않음
@@ -64,9 +71,10 @@ export function decideResponsePolicy(frame, dialogue = {}) {
     return { action: 'ack_deny', askType: 'clarify', reason: 'deny_general' };
   }
 
-  // 감정/날씨: 공감 + soft ask (공감→대화→추천)
-  if ((intent === 'MOOD' || intent === 'SMALLTALK' || hasSignal) && open !== 'hard') {
-    if (open === 'soft' || hasSignal) {
+  // 감정/날씨만 있고 추천 의사가 약할 때: 공감 (+ 선택적 soft ask)
+  // hasSignal만으로 묻지 않음 — 날씨 상속 때문에 "맥주 추천"이 질문으로 새는 것 방지
+  if (intent === 'MOOD' || intent === 'SMALLTALK') {
+    if (open === 'soft') {
       return { action: 'ask', askType: 'recommend', reason: 'empathy_then_ask' };
     }
     return { action: 'empathy', askType: null, reason: 'empathy_only' };

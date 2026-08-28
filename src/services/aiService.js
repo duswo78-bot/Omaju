@@ -1,7 +1,11 @@
 import { LLM_MODES } from './llm/types.js';
 import { getSystemLlmProvider, probeSystemLlm } from './llm/getProvider.js';
 import { cloudNlg } from './llm/cloudNlg.js';
-import { prepareTemplateForRewrite, rewriteKeepsNames } from './llm/onDeviceNlg.js';
+import {
+  prepareTemplateForRewrite,
+  rewriteKeepsNames,
+  backAnswerLooksLikeSoftAsk,
+} from './llm/onDeviceNlg.js';
 import { shouldRunFrontLlm } from './frontGate.js';
 
 const PROFILE_KEY = 'omaju_user_profile';
@@ -220,10 +224,16 @@ export async function runTurn(text, payload = {}) {
           }
         },
       });
-      if (back) {
+      if (
+        back &&
+        rewriteKeepsNames(back, workerResult.facts) &&
+        !backAnswerLooksLikeSoftAsk(back, workerResult.facts)
+      ) {
         answer = back;
         nlgSource = 'on_device_prompt';
         onDevicePath = 'prompt';
+      } else if (back) {
+        console.warn('LLM Back discarded (name/soft-ask guard)');
       }
     } catch (err) {
       console.warn('LLM Back failed', err);
@@ -235,7 +245,11 @@ export async function runTurn(text, payload = {}) {
     try {
       const prepared = prepareTemplateForRewrite(answer);
       const rewritten = await provider.rewriteAnswer(prepared);
-      if (rewritten && rewriteKeepsNames(rewritten, workerResult.facts)) {
+      if (
+        rewritten &&
+        rewriteKeepsNames(rewritten, workerResult.facts) &&
+        !backAnswerLooksLikeSoftAsk(rewritten, workerResult.facts)
+      ) {
         answer = rewritten;
         nlgSource = 'on_device_rewriting';
         if (onDevicePath === 'none') onDevicePath = 'rewriting';
@@ -252,7 +266,11 @@ export async function runTurn(text, payload = {}) {
       facts: workerResult.facts,
       profile: turnPayload.profile,
     });
-    if (cloud) {
+    if (
+      cloud &&
+      rewriteKeepsNames(cloud, workerResult.facts) &&
+      !backAnswerLooksLikeSoftAsk(cloud, workerResult.facts)
+    ) {
       answer = cloud;
       nlgSource = 'cloud';
     }
