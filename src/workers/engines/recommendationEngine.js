@@ -1,6 +1,12 @@
 import { cosineSimilarity } from '../utils/math.js';
 import { calculateScore } from './scoreEngine.js';
-import { embedQuery, getAlcoholEmbeddings, getSnackEmbeddings, getGameEmbeddings } from './embeddingEngine.js';
+import {
+  embedQuery,
+  getAlcoholEmbeddings,
+  getSnackEmbeddings,
+  getGameEmbeddings,
+  seedMockEmbeddings,
+} from './embeddingEngine.js';
 import { getProfile } from './profileEngine.js';
 import { getRejectedItems, getRecentRecommendedIds, rememberRecommendedIds } from './memoryEngine.js';
 import { pickRandom, pickFromScoreBand } from '../utils/random.js';
@@ -45,6 +51,42 @@ function pickRelationCandidate(scoredList, minScore = 70) {
 
 const SINGLE_CHAR_ALLOW = ['비', '눈', '회', '파', '단', '짠', '맵', '쓴', '빵', '밥', '면', '탕', '전', '편', '떡', '술'];
 
+/** 명시 힌트(치킨 등)와 아이템이 실제로 맞는지 */
+function itemMatchesHint(item, hints = []) {
+  const name = String(item?.name_ko || '');
+  const category = String(item?.category || '');
+  const tags = (item?.tags || []).map(String);
+  for (const raw of hints) {
+    const h = String(raw || '').trim();
+    if (!h) continue;
+    if (name.includes(h) || h.includes(name)) return true;
+    if (category.includes(h)) return true;
+    if (tags.some((t) => t.includes(h) || h.includes(t))) return true;
+  }
+  return false;
+}
+
+/**
+ * 상위 점수 밴드에서 고르되, 점수 격차가 큰 비매칭 후보로 풀을 넓히지 않음.
+ * (치킨 5.35점인데 minPool 때문에 0점 라면이 섞이던 문제 방지)
+ */
+function pickStrongCandidate(candidates, { band = 0.18, minPool = 5, preferMatched = false } = {}) {
+  if (!candidates?.length) return null;
+  const sorted = [...candidates].sort((a, b) => b.score - a.score);
+  const max = sorted[0].score ?? 0;
+  let pool = sorted.filter((c) => max - (c.score ?? 0) <= band);
+  if (preferMatched) {
+    const matched = pool.filter((c) => c.matched);
+    if (matched.length) pool = matched;
+  }
+  // 최고점과 1.0 이상 벌어지면 억지로 minPool을 채우지 않음
+  if (pool.length < minPool) {
+    const widened = sorted.filter((c) => max - (c.score ?? 0) <= Math.max(band, 1.0));
+    pool = widened.length ? widened : sorted.slice(0, Math.min(minPool, sorted.length));
+  }
+  return pickRandom(pool)?.item || sorted[0].item;
+}
+
 /** Pull exclude tokens from NLU constraints + inline “X 말고/싫어” patterns. */
 function collectExcludeTokens(cleanText, constraints) {
   const tokens = [...(constraints?.exclude || [])];
@@ -69,6 +111,13 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     cleanText.includes('논알콜') ||
     cleanText.includes('무알콜') ||
     cleanText.includes('술빼고');
+  const snackHints = [...(frame?.slots?.snackHints || [])].filter(Boolean);
+  const alcoholHints = [...(frame?.slots?.alcoholHints || [])].filter(Boolean);
+  // "치킨 먹고 싶어"처럼 안주만 명시하고 술은 없으면 → 안주 잠금 (술은 페어링으로만)
+  const foodDesire =
+    /먹고싶|먹고\s*싶|먹을래|먹자|시켜|배달/.test(cleanText) ||
+    /먹고싶|먹을래|먹자/.test(String(frame?.rawText || ''));
+
   let wantOnlySnack =
     Boolean(constraints.onlySnack) ||
     cleanText.includes('안주만') ||
@@ -78,6 +127,12 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
 
   const resolvedAlcIds = new Set(frame?.resolved?.alcoholIds || []);
   const resolvedSnkIds = new Set(frame?.resolved?.snackIds || []);
+  const hasExplicitSnack = resolvedSnkIds.size > 0 || snackHints.length > 0;
+  const hasExplicitAlc = resolvedAlcIds.size > 0 || alcoholHints.length > 0;
+  // 명시 안주·"치킨 먹고 싶어"류는 페어링이 안주를 덮어쓰지 못함
+  let snackLocked = hasExplicitSnack || (foodDesire && snackHints.length > 0);
+  let alcLocked = hasExplicitAlc;
+
   const frameSignals = {
     moods: [...(contextSignals?.moods || []), ...(frame?.slots?.moods || [])],
     weather: [...(contextSignals?.weather || []), ...(frame?.slots?.weather || [])],
@@ -144,6 +199,10 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   };
 
   // Real RAG Logic (MiniLM) + Keyword Boosting
+  // Node/vite-node 시뮬에서 모듈 인스턴스가 갈리면 임베딩이 비어 랜덤 폴백됨 → 시드
+  if (!getSnackEmbeddings().length || !getAlcoholEmbeddings().length) {
+    seedMockEmbeddings();
+  }
   const queryVec = await embedQuery(cleanText);
   const hasNegativeContext = hasNegation;
 
@@ -168,6 +227,12 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
         needles: scoreOpts.excludedNeedles,
         ids: scoreOpts.excludedIds,
       })) continue;
+      // 명시 주종 힌트가 있으면 그 풀 안에서만 고름
+      if (hasExplicitAlc) {
+        const inResolved = resolvedAlcIds.has(item.id);
+        const inHint = itemMatchesHint(item, alcoholHints);
+        if (!inResolved && !inHint) continue;
+      }
 
       let baseSim = cosineSimilarity(queryVec, vector);
       const { score, isMatched } = calculateScore(
@@ -184,23 +249,26 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       );
       
       let finalScore = score;
-      if (resolvedAlcIds.has(item.id)) {
+      let matched = isMatched;
+      if (resolvedAlcIds.has(item.id) || itemMatchesHint(item, alcoholHints)) {
         finalScore += 0.35;
+        matched = true;
         isAlcMatched = true;
       }
       if (rejectedItems.includes(item.id)) finalScore -= 100.0;
       finalScore -= diversityPenalty(item.id, recentIds);
       
-      if (isMatched) isAlcMatched = true;
-      alcCandidates.push({ item, score: finalScore });
+      if (matched) isAlcMatched = true;
+      alcCandidates.push({ item, score: finalScore, matched });
     }
     
     if (alcCandidates.length > 0) {
       alcCandidates.sort((a, b) => b.score - a.score);
       const maxScore = alcCandidates[0].score;
       if (maxScore < 0.2 && !isAlcMatched) isLowConfidence = true;
-      // 기존 0.05 밴드가 너무 좁아 항상 같은 1등이 뽑힘 → 확대
-      bestAlc = pickFromScoreBand(alcCandidates, 'score', 0.18, 8)?.item || alcCandidates[0].item;
+      bestAlc =
+        pickStrongCandidate(alcCandidates, { band: 0.18, minPool: 5, preferMatched: hasExplicitAlc }) ||
+        alcCandidates[0].item;
     }
   }
 
@@ -208,6 +276,13 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   if (!wantOnlyAlc) {
     let snkCandidates = [];
     for (const { item, vector } of snackEmbeddings) {
+      // 명시 안주 힌트(치킨 등)가 있으면 그 풀 안에서만 고름 — 라면으로 새지 않게
+      if (hasExplicitSnack) {
+        const inResolved = resolvedSnkIds.has(item.id);
+        const inHint = itemMatchesHint(item, snackHints);
+        if (!inResolved && !inHint) continue;
+      }
+
       let baseSim = cosineSimilarity(queryVec, vector);
       const { score, isMatched } = calculateScore(
         baseSim,
@@ -223,22 +298,30 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       );
       
       let finalScore = score;
-      if (resolvedSnkIds.has(item.id)) {
+      let matched = isMatched;
+      if (resolvedSnkIds.has(item.id) || itemMatchesHint(item, snackHints)) {
         finalScore += 0.35;
+        matched = true;
         isSnackMatched = true;
       }
       if (rejectedItems.includes(item.id)) finalScore -= 100.0;
       finalScore -= diversityPenalty(item.id, recentIds);
 
-      if (isMatched) isSnackMatched = true;
-      snkCandidates.push({ item, score: finalScore });
+      if (matched) isSnackMatched = true;
+      snkCandidates.push({ item, score: finalScore, matched });
     }
 
     if (snkCandidates.length > 0) {
       snkCandidates.sort((a, b) => b.score - a.score);
       const maxScore = snkCandidates[0].score;
       if (maxScore < 0.2 && !isSnackMatched) isLowConfidence = true;
-      bestSnack = pickFromScoreBand(snkCandidates, 'score', 0.18, 10)?.item || snkCandidates[0].item;
+      bestSnack =
+        pickStrongCandidate(snkCandidates, { band: 0.18, minPool: 5, preferMatched: hasExplicitSnack }) ||
+        snkCandidates[0].item;
+      if (hasExplicitSnack && bestSnack) {
+        isSnackMatched = true;
+        snackLocked = true;
+      }
     }
   }
 
@@ -250,8 +333,9 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }) ||
     (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0);
 
-  // 3. 짝꿍 매칭 — onlySnack/onlyAlc일 때는 상대편을 억지로 채우지 않음
-  if (!wantOnlySnack && isSnackMatched && !isAlcMatched && bestSnack) {
+  // 3. 짝꿍 매칭 — 명시 힌트는 덮어쓰지 않음
+  // 안주만 맞음 → 술은 페어링으로 채움 (치킨은 유지)
+  if (!wantOnlySnack && isSnackMatched && !alcLocked && bestSnack) {
     const scored = alcoholsData
       .filter((alc) => !alcHardExcluded(alc))
       .map((alc) => ({
@@ -266,7 +350,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       bestAlc = alcoholsData.find(a => a.id === drinkId) || bestAlc;
     }
     isLowConfidence = false;
-  } else if (!wantOnlyAlc && isAlcMatched && !isSnackMatched && bestAlc) {
+  } else if (!wantOnlyAlc && isAlcMatched && !snackLocked && !isSnackMatched && bestAlc) {
+    // 술만 맞음 → 안주는 페어링 (단, 사용자가 안주를 명시한 경우 절대 덮지 않음)
     const scored = snacksData
       .filter((snk) => !rejectedItems.includes(snk.id))
       .map((snk) => ({
@@ -281,7 +366,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       if (matchingSnacks.length > 0) bestSnack = pickRandom(matchingSnacks);
     }
     isLowConfidence = false;
-  } else if (!wantOnlySnack && !wantOnlyAlc && bestAlc && bestSnack) {
+  } else if (!wantOnlySnack && !wantOnlyAlc && bestAlc && bestSnack && !snackLocked) {
+    // 둘 다 있지만 페어링이 약함 → 안주만 교체 가능 (명시 안주 잠금 시 스킵)
     const currentRelScore = getRelationScore(bestAlc.id, bestSnack.id);
     if (currentRelScore < 75) {
       const scored = snacksData
@@ -295,12 +381,48 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }
   }
 
-  // 4. Fallback
+  // 4. Fallback — 명시 힌트 풀을 우선
+  const explicitSnackPool = snacksData.filter(
+    (s) =>
+      !rejectedItems.includes(s.id) &&
+      (resolvedSnkIds.has(s.id) || itemMatchesHint(s, snackHints))
+  );
+  const explicitAlcPool = alcoholsData.filter(
+    (a) =>
+      !alcHardExcluded(a) &&
+      (resolvedAlcIds.has(a.id) || itemMatchesHint(a, alcoholHints))
+  );
+
   if (!bestAlc && alcoholsData.length > 0 && !wantOnlySnack) {
-    const pool = alcoholsData.filter((a) => !alcHardExcluded(a));
-    bestAlc = pickRandom(pool.length ? pool : alcoholsData);
+    if (hasExplicitAlc && explicitAlcPool.length) bestAlc = pickRandom(explicitAlcPool);
+    else {
+      const pool = alcoholsData.filter((a) => !alcHardExcluded(a));
+      bestAlc = pickRandom(pool.length ? pool : alcoholsData);
+    }
   }
-  if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) bestSnack = pickRandom(snacksData);
+  if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) {
+    if (hasExplicitSnack && explicitSnackPool.length) {
+      bestSnack = pickRandom(explicitSnackPool);
+      isSnackMatched = true;
+      snackLocked = true;
+    } else {
+      bestSnack = pickRandom(snacksData);
+    }
+  }
+
+  // 명시 안주가 페어링/폴백으로 바뀌었으면 무조건 복구
+  if ((snackLocked || hasExplicitSnack) && explicitSnackPool.length) {
+    if (!bestSnack || !(resolvedSnkIds.has(bestSnack.id) || itemMatchesHint(bestSnack, snackHints))) {
+      bestSnack = pickRandom(explicitSnackPool);
+      isSnackMatched = true;
+    }
+  }
+  if ((alcLocked || hasExplicitAlc) && explicitAlcPool.length) {
+    if (!bestAlc || !(resolvedAlcIds.has(bestAlc.id) || itemMatchesHint(bestAlc, alcoholHints))) {
+      bestAlc = pickRandom(explicitAlcPool);
+      isAlcMatched = true;
+    }
+  }
 
   // only* 요청이면 반대편을 강제로 비움
   if (wantOnlySnack) bestAlc = null;
