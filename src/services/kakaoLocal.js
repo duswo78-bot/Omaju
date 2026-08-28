@@ -1,14 +1,19 @@
-import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { Capacitor, CapacitorHttp, registerPlugin } from '@capacitor/core';
 import { DEFAULT_RADIUS_M } from '../data/venueTaxonomy';
 import { haversineMeters } from './geoService';
 
 /**
  * 카카오 로컬 검색
  * - 개발/프리뷰: Vite 프록시 `/api/kakao` (CORS 회피)
- * - Android/iOS: CapacitorHttp(네이티브)로 dapi 직접 호출 — WebView CORS 우회
+ * - Android: OmajuKakao 네이티브 플러그인 (Authorization 보장) → CapacitorHttp 폴백
  * - 웹 배포: VITE_KAKAO_API_BASE 프록시 권장
  * - JS SDK는 웹 전용 보조 (네이티브 WebView는 도메인 미등록으로 거의 항상 실패)
+ *
+ * Android에서 CapacitorHttp만 쓰면 Authorization이 빠져 HTTP 401이 나는 경우가 있음.
+ * localhost(Vite)는 브라우저 fetch가 헤더를 정상 전달해서 문제 없음.
  */
+
+const OmajuKakao = registerPlugin('OmajuKakao');
 
 function isNative() {
   try {
@@ -43,14 +48,53 @@ function parseJsonBody(data) {
   return data;
 }
 
-async function nativeKakaoGet(url, restKey, params) {
+async function nativeKakaoGetViaPlugin(pathOnly, restKey, params) {
+  const res = await OmajuKakao.localGet({
+    path: pathOnly,
+    restKey,
+    params: params
+      ? Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+      : {},
+  });
+  const status = Number(res?.status ?? 0);
+  if (!status || status < 200 || status >= 300) {
+    const text = summarizeBody(res?.body || res?.data);
+    throw Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text}`), {
+      code: 'KAKAO_HTTP',
+      status: status || 0,
+      body: text,
+    });
+  }
+  if (res?.data && typeof res.data === 'object') return res.data;
+  return parseJsonBody(res?.body);
+}
+
+async function nativeKakaoGet(url, restKey, params, pathOnly) {
+  const errors = [];
+
+  // 0) Android 전용 플러그인 — Authorization을 Java에서 직접 세팅 (401 방지)
+  if (Capacitor.getPlatform() === 'android' && pathOnly) {
+    try {
+      return await nativeKakaoGetViaPlugin(pathOnly, restKey, params);
+    } catch (e) {
+      // 플러그인 미등록(구 APK)이면 CapacitorHttp로 폴백
+      if (e?.code === 'UNIMPLEMENTED' || /not implemented|plugin/i.test(String(e?.message || ''))) {
+        console.warn('[kakaoLocal] OmajuKakao plugin missing, fallback CapacitorHttp');
+      } else {
+        errors.push(e);
+        // 401이면 헤더 문제 가능성이 커 CapacitorHttp 재시도는 의미 없음 — 바로 throw
+        if (e?.status === 401 || e?.code === 'NO_KAKAO_KEY') throw e;
+      }
+    }
+  }
+
   const headers = {
     Authorization: `KakaoAK ${restKey}`,
     Accept: 'application/json',
   };
 
   const attempts = [
-    // 1) params 분리 + responseType json (권장)
+    // 1) params 분리 + responseType json
     {
       method: 'GET',
       url,
@@ -59,8 +103,9 @@ async function nativeKakaoGet(url, restKey, params) {
       connectTimeout: 15000,
       readTimeout: 20000,
       responseType: 'json',
+      disableRedirects: true,
     },
-    // 2) 쿼리 포함 URL만 (일부 WebView/브리지 이슈 대비)
+    // 2) 쿼리 포함 URL만
     {
       method: 'GET',
       url: params
@@ -73,10 +118,9 @@ async function nativeKakaoGet(url, restKey, params) {
       headers,
       connectTimeout: 15000,
       readTimeout: 20000,
+      disableRedirects: true,
     },
   ];
-
-  const errors = [];
 
   for (const options of attempts) {
     let res;
@@ -123,7 +167,9 @@ async function kakaoGetJson(pathAndQuery, restKey, params) {
   const url = `${base}${params ? pathOnly : path}`;
 
   if (isNative()) {
-    return nativeKakaoGet(url, restKey, params);
+    // 네이티브는 항상 dapi 직접(또는 플러그인). 프록시 base여도 path만 넘김.
+    const directUrl = `https://dapi.kakao.com${pathOnly}`;
+    return nativeKakaoGet(directUrl, restKey, params, pathOnly);
   }
 
   const fullUrl = params

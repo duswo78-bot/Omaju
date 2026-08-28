@@ -138,13 +138,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
           ? '카카오 API 키가 없습니다. 앱을 다시 설치해 주세요.'
           : corsLikely
             ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
-            : http
-              ? `카카오 검색 오류${detail}. 키/네트워크를 확인한 뒤 다시 시도하세요.`
-              : nativeFail
-                ? `기기 네트워크 요청 실패: ${(msg || 'unknown').slice(0, 60)}. 인터넷 연결 후 다시 시도하세요.`
-                : sdkFail
-                  ? '카카오 검색 연결 실패. 최신 APK로 다시 설치해 주세요.'
-                  : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
+            : http && e?.status === 401
+              ? '카카오 인증 실패(401). 최신 APK로 다시 설치해 주세요. (로컬 웹은 Vite 프록시라 정상일 수 있음)'
+              : http
+                ? `카카오 검색 오류${detail}. 키/네트워크를 확인한 뒤 다시 시도하세요.`
+                : nativeFail
+                  ? `기기 네트워크 요청 실패: ${(msg || 'unknown').slice(0, 60)}. 인터넷 연결 후 다시 시도하세요.`
+                  : sdkFail
+                    ? '카카오 검색 연결 실패. 최신 APK로 다시 설치해 주세요.'
+                    : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
       );
       console.warn('[PlaceFinder] search failed', {
         code,
