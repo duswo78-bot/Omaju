@@ -123,9 +123,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     } catch (e) {
       setPlaces([]);
       const msg = String(e?.message || e?.code || '');
+      const code = e?.code || '';
       const corsLikely = msg.includes('Failed to fetch') || e?.name === 'TypeError';
-      const noKey = e?.code === 'NO_KAKAO_KEY' || msg.includes('NO_KAKAO');
-      const http = e?.code === 'KAKAO_HTTP';
+      const noKey = code === 'NO_KAKAO_KEY' || msg.includes('NO_KAKAO');
+      const http = code === 'KAKAO_HTTP';
+      const nativeFail = code === 'KAKAO_NATIVE';
+      const sdkFail =
+        code === 'KAKAO_SDK_LOAD_FAIL' ||
+        code === 'KAKAO_SDK_SKIPPED_ON_NATIVE' ||
+        msg.includes('KAKAO_SDK_LOAD_FAIL');
       const detail = http && e?.status ? ` (HTTP ${e.status})` : '';
       setError(
         noKey
@@ -133,11 +139,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
           : corsLikely
             ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
             : http
-              ? `카카오 검색 오류${detail}. 잠시 후 다시 시도하세요.`
-              : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
+              ? `카카오 검색 오류${detail}. 키/네트워크를 확인한 뒤 다시 시도하세요.`
+              : nativeFail
+                ? `기기 네트워크 요청 실패: ${(msg || 'unknown').slice(0, 60)}. 인터넷 연결 후 다시 시도하세요.`
+                : sdkFail
+                  ? '카카오 검색 연결 실패. 최신 APK로 다시 설치해 주세요.'
+                  : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
       );
       console.warn('[PlaceFinder] search failed', {
-        code: e?.code,
+        code,
         status: e?.status,
         message: msg,
         queries,

@@ -5,55 +5,139 @@ import { haversineMeters } from './geoService';
 /**
  * 카카오 로컬 검색
  * - 개발/프리뷰: Vite 프록시 `/api/kakao` (CORS 회피)
- * - Android/iOS: CapacitorHttp(네이티브)로 dapi 호출 — WebView CORS 우회
- * - 웹 배포: VITE_KAKAO_API_BASE 프록시 권장 (없으면 dapi 직접 → 브라우저 CORS 가능)
- * - JS SDK는 보조 (JS키+도메인 등록 필요)
+ * - Android/iOS: CapacitorHttp(네이티브)로 dapi 직접 호출 — WebView CORS 우회
+ * - 웹 배포: VITE_KAKAO_API_BASE 프록시 권장
+ * - JS SDK는 웹 전용 보조 (네이티브 WebView는 도메인 미등록으로 거의 항상 실패)
  */
 
-async function kakaoGetJson(pathAndQuery, restKey) {
-  const base = apiBase();
-  const path = pathAndQuery.startsWith('/') ? pathAndQuery : `/${pathAndQuery}`;
-  const url = `${base}${path}`;
+function isNative() {
+  try {
+    return Capacitor.isNativePlatform();
+  } catch {
+    return false;
+  }
+}
+
+function summarizeBody(data) {
+  if (data == null) return '';
+  if (typeof data === 'string') return data.slice(0, 220);
+  try {
+    return JSON.stringify(data).slice(0, 220);
+  } catch {
+    return String(data).slice(0, 220);
+  }
+}
+
+function parseJsonBody(data) {
+  if (data == null) return {};
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch {
+      throw Object.assign(new Error('Kakao response JSON parse failed'), {
+        code: 'KAKAO_PARSE',
+        body: data.slice(0, 220),
+      });
+    }
+  }
+  return data;
+}
+
+async function nativeKakaoGet(url, restKey, params) {
   const headers = {
     Authorization: `KakaoAK ${restKey}`,
     Accept: 'application/json',
   };
 
-  // Native WebView fetch → dapi 는 CORS로 실패하는 경우가 많아 CapacitorHttp 사용
-  if (Capacitor.isNativePlatform()) {
+  const attempts = [
+    // 1) params 분리 + responseType json (권장)
+    {
+      method: 'GET',
+      url,
+      headers,
+      params: params || undefined,
+      connectTimeout: 15000,
+      readTimeout: 20000,
+      responseType: 'json',
+    },
+    // 2) 쿼리 포함 URL만 (일부 WebView/브리지 이슈 대비)
+    {
+      method: 'GET',
+      url: params
+        ? `${url}?${new URLSearchParams(
+            Object.fromEntries(
+              Object.entries(params).map(([k, v]) => [k, String(v)])
+            )
+          ).toString()}`
+        : url,
+      headers,
+      connectTimeout: 15000,
+      readTimeout: 20000,
+    },
+  ];
+
+  const errors = [];
+
+  for (const options of attempts) {
     let res;
     try {
-      res = await CapacitorHttp.get({
-        url,
-        headers,
-        connectTimeout: 12000,
-        readTimeout: 15000,
-      });
+      res = await CapacitorHttp.request(options);
     } catch (e) {
-      throw Object.assign(new Error(`Kakao native request failed: ${e?.message || e}`), {
-        code: 'KAKAO_NATIVE',
-        cause: e,
-      });
+      errors.push(
+        Object.assign(new Error(`Kakao native request failed: ${e?.message || e}`), {
+          code: 'KAKAO_NATIVE',
+          cause: e,
+        })
+      );
+      continue;
     }
+
     const status = Number(res?.status ?? 0);
     if (!status || status < 200 || status >= 300) {
-      const text = typeof res?.data === 'string' ? res.data : JSON.stringify(res?.data || {});
-      throw Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text.slice(0, 200)}`), {
-        code: 'KAKAO_HTTP',
-        status: status || 0,
-      });
+      const text = summarizeBody(res?.data);
+      errors.push(
+        Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text}`), {
+          code: 'KAKAO_HTTP',
+          status: status || 0,
+          body: text,
+        })
+      );
+      continue;
     }
-    if (typeof res.data === 'string') {
-      try {
-        return JSON.parse(res.data);
-      } catch {
-        throw Object.assign(new Error('Kakao response JSON parse failed'), { code: 'KAKAO_PARSE' });
-      }
+
+    try {
+      return parseJsonBody(res.data);
+    } catch (e) {
+      errors.push(e);
     }
-    return res.data || {};
   }
 
-  const res = await fetch(url, { headers });
+  throw errors[errors.length - 1] || Object.assign(new Error('KAKAO_NATIVE'), { code: 'KAKAO_NATIVE' });
+}
+
+async function kakaoGetJson(pathAndQuery, restKey, params) {
+  const base = apiBase();
+  const path = pathAndQuery.startsWith('/') ? pathAndQuery : `/${pathAndQuery}`;
+  // params를 따로 쓸 때는 path에서 쿼리를 빼 둔다
+  const pathOnly = path.split('?')[0];
+  const url = `${base}${params ? pathOnly : path}`;
+
+  if (isNative()) {
+    return nativeKakaoGet(url, restKey, params);
+  }
+
+  const fullUrl = params
+    ? `${url}?${new URLSearchParams(
+        Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+      ).toString()}`
+    : url;
+
+  const res = await fetch(fullUrl, {
+    headers: {
+      Authorization: `KakaoAK ${restKey}`,
+      Accept: 'application/json',
+    },
+  });
   if (!res.ok) {
     const text = await res.text();
     throw Object.assign(new Error(`Kakao HTTP ${res.status}: ${text}`), {
@@ -78,7 +162,7 @@ export function hasKakaoKey() {
 
 function apiBase() {
   if (import.meta.env.VITE_KAKAO_API_BASE) return import.meta.env.VITE_KAKAO_API_BASE.replace(/\/$/, '');
-  if (Capacitor.isNativePlatform()) return 'https://dapi.kakao.com';
+  if (isNative()) return 'https://dapi.kakao.com';
   // 로컬/프리뷰는 Vite 프록시
   if (import.meta.env.DEV) return '/api/kakao';
   // 같은 origin 프록시가 있을 때 (커스텀 도메인 등)
@@ -109,6 +193,14 @@ function loadKakaoMapsSdk() {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return Promise.reject(Object.assign(new Error('NO_DOM'), { code: 'NO_DOM' }));
   }
+  // Android/iOS WebView(https://localhost)는 카카오 JS키 도메인 등록이 없어 SDK 로드가 거의 항상 실패한다.
+  if (isNative()) {
+    return Promise.reject(
+      Object.assign(new Error('KAKAO_SDK_SKIPPED_ON_NATIVE'), {
+        code: 'KAKAO_SDK_SKIPPED_ON_NATIVE',
+      })
+    );
+  }
   const jsKey = getKakaoJsKey();
   if (!jsKey) {
     return Promise.reject(Object.assign(new Error('NO_KAKAO_JS_KEY'), { code: 'NO_KAKAO_JS_KEY' }));
@@ -121,7 +213,17 @@ function loadKakaoMapsSdk() {
     script.async = true;
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${jsKey}&libraries=services&autoload=false`;
     script.onload = () => {
-      window.kakao.maps.load(() => resolve(window.kakao));
+      try {
+        window.kakao.maps.load(() => resolve(window.kakao));
+      } catch (e) {
+        mapsSdkPromise = null;
+        reject(
+          Object.assign(new Error(`KAKAO_SDK_INIT_FAIL: ${e?.message || e}`), {
+            code: 'KAKAO_SDK_INIT_FAIL',
+            cause: e,
+          })
+        );
+      }
     };
     script.onerror = () => {
       mapsSdkPromise = null;
@@ -167,16 +269,16 @@ async function searchViaRest({ query, lat, lng, radius, size }) {
     throw Object.assign(new Error('NO_KAKAO_KEY'), { code: 'NO_KAKAO_KEY' });
   }
 
-  const params = new URLSearchParams({
+  const params = {
     query,
     x: String(lng),
     y: String(lat),
     radius: String(radius),
     size: String(size),
     sort: 'distance',
-  });
+  };
 
-  const data = await kakaoGetJson(`/v2/local/search/keyword.json?${params}`, key);
+  const data = await kakaoGetJson('/v2/local/search/keyword.json', key, params);
   return (data.documents || []).map((doc) => normalizePlace(doc, { lat, lng }));
 }
 
@@ -189,22 +291,30 @@ export async function searchKakaoPlaces({
 }) {
   const errors = [];
 
-  // 1) REST (프록시 경유 시 안정적)
+  // 1) REST (네이티브는 CapacitorHttp, 웹은 프록시/fetch)
   try {
     return await searchViaRest({ query, lat, lng, radius, size });
   } catch (e) {
     errors.push(e);
+    console.warn('[kakaoLocal] REST failed', e?.code || e?.message, e?.status);
   }
 
-  // 2) JS SDK 보조
-  try {
-    return await searchViaSdk({ query, lat, lng, radius, size });
-  } catch (e) {
-    errors.push(e);
+  // 2) JS SDK는 웹 전용. 네이티브에서는 도메인 이슈로 KAKAO_SDK_LOAD_FAIL만 남기므로 스킵.
+  if (!isNative()) {
+    try {
+      return await searchViaSdk({ query, lat, lng, radius, size });
+    } catch (e) {
+      errors.push(e);
+      console.warn('[kakaoLocal] SDK failed', e?.code || e?.message);
+    }
   }
 
-  const last = errors[errors.length - 1] || new Error('KAKAO_SEARCH_FAIL');
-  throw last;
+  // REST 실패가 진짜 원인이므로 마지막(SDK) 대신 첫 에러를 우선 노출
+  const primary =
+    errors.find((e) => e?.code === 'KAKAO_HTTP' || e?.code === 'KAKAO_NATIVE' || e?.code === 'NO_KAKAO_KEY') ||
+    errors[0] ||
+    new Error('KAKAO_SEARCH_FAIL');
+  throw primary;
 }
 
 export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius }) {
@@ -246,12 +356,12 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
 
   if (key) {
     try {
-      const keywordParams = new URLSearchParams({ query, size: '1' });
+      const keywordParams = { query, size: '1' };
       if (userLat && userLng) {
-        keywordParams.append('y', String(userLat));
-        keywordParams.append('x', String(userLng));
+        keywordParams.y = String(userLat);
+        keywordParams.x = String(userLng);
       }
-      const keywordData = await kakaoGetJson(`/v2/local/search/keyword.json?${keywordParams}`, key);
+      const keywordData = await kakaoGetJson('/v2/local/search/keyword.json', key, keywordParams);
       if (keywordData.documents?.length > 0) {
         return {
           lat: Number(keywordData.documents[0].y),
@@ -262,8 +372,10 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
       }
 
       // Fallback to Address Search if Keyword Search finds nothing
-      const addressParams = new URLSearchParams({ query, size: '1' });
-      const addressData = await kakaoGetJson(`/v2/local/search/address.json?${addressParams}`, key);
+      const addressData = await kakaoGetJson('/v2/local/search/address.json', key, {
+        query,
+        size: '1',
+      });
       if (addressData.documents?.length > 0) {
         return {
           lat: Number(addressData.documents[0].y),
@@ -274,38 +386,58 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
       }
     } catch (e) {
       errors.push(e);
+      console.warn('[kakaoLocal] region REST failed', e?.code || e?.message);
     }
   }
 
-  // JS SDK 보조 수단
-  try {
-    const kakao = await loadKakaoMapsSdk();
-    const places = new kakao.maps.services.Places();
-    const geocoder = new kakao.maps.services.Geocoder();
+  // JS SDK 보조 — 웹만
+  if (!isNative()) {
+    try {
+      const kakao = await loadKakaoMapsSdk();
+      const places = new kakao.maps.services.Places();
+      const geocoder = new kakao.maps.services.Geocoder();
 
-    return await new Promise((resolve, reject) => {
-      const options = { size: 1 };
-      if (userLat && userLng) {
-        options.location = new kakao.maps.LatLng(userLat, userLng);
-      }
-      places.keywordSearch(query, (data, status) => {
-        if (status === kakao.maps.services.Status.OK && data.length > 0) {
-          resolve({ lat: Number(data[0].y), lng: Number(data[0].x), label: query, source: 'custom' });
-        } else {
-          // Fallback to JS Address Search
-          geocoder.addressSearch(query, (addrData, addrStatus) => {
-            if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
-              resolve({ lat: Number(addrData[0].y), lng: Number(addrData[0].x), label: query, source: 'custom' });
-            } else {
-              reject(new Error('REGION_NOT_FOUND'));
-            }
-          });
+      return await new Promise((resolve, reject) => {
+        const options = { size: 1 };
+        if (userLat && userLng) {
+          options.location = new kakao.maps.LatLng(userLat, userLng);
         }
-      }, options);
-    });
-  } catch (e) {
-    errors.push(e);
+        places.keywordSearch(
+          query,
+          (data, status) => {
+            if (status === kakao.maps.services.Status.OK && data.length > 0) {
+              resolve({
+                lat: Number(data[0].y),
+                lng: Number(data[0].x),
+                label: query,
+                source: 'custom',
+              });
+            } else {
+              geocoder.addressSearch(query, (addrData, addrStatus) => {
+                if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
+                  resolve({
+                    lat: Number(addrData[0].y),
+                    lng: Number(addrData[0].x),
+                    label: query,
+                    source: 'custom',
+                  });
+                } else {
+                  reject(new Error('REGION_NOT_FOUND'));
+                }
+              });
+            }
+          },
+          options
+        );
+      });
+    } catch (e) {
+      errors.push(e);
+    }
   }
 
-  throw new Error('REGION_SEARCH_FAIL');
+  throw (
+    errors.find((e) => e?.code === 'KAKAO_HTTP' || e?.code === 'KAKAO_NATIVE') ||
+    errors[0] ||
+    new Error('REGION_SEARCH_FAIL')
+  );
 }
