@@ -88,72 +88,44 @@ async function nativeKakaoGet(url, restKey, params, pathOnly) {
     }
   }
 
+  // 69e3085에서 동작하던 방식: 쿼리를 URL에 붙이고 CapacitorHttp.get
+  // (26d6cc9의 request+params 분리가 기기 401로 회귀한 이력 있음)
+  const fullUrl = params
+    ? `${url}?${new URLSearchParams(
+        Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+      ).toString()}`
+    : url;
   const headers = {
     Authorization: `KakaoAK ${restKey}`,
     Accept: 'application/json',
   };
 
-  const attempts = [
-    // 1) params 분리 + responseType json
-    {
-      method: 'GET',
-      url,
-      headers,
-      params: params || undefined,
-      connectTimeout: 15000,
-      readTimeout: 20000,
-      responseType: 'json',
-      disableRedirects: true,
-    },
-    // 2) 쿼리 포함 URL만
-    {
-      method: 'GET',
-      url: params
-        ? `${url}?${new URLSearchParams(
-            Object.fromEntries(
-              Object.entries(params).map(([k, v]) => [k, String(v)])
-            )
-          ).toString()}`
-        : url,
+  try {
+    const res = await CapacitorHttp.get({
+      url: fullUrl,
       headers,
       connectTimeout: 15000,
       readTimeout: 20000,
-      disableRedirects: true,
-    },
-  ];
-
-  for (const options of attempts) {
-    let res;
-    try {
-      res = await CapacitorHttp.request(options);
-    } catch (e) {
-      errors.push(
-        Object.assign(new Error(`Kakao native request failed: ${e?.message || e}`), {
-          code: 'KAKAO_NATIVE',
-          cause: e,
-        })
-      );
-      continue;
-    }
-
+    });
     const status = Number(res?.status ?? 0);
-    if (!status || status < 200 || status >= 300) {
-      const text = summarizeBody(res?.data);
-      errors.push(
-        Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text}`), {
-          code: 'KAKAO_HTTP',
-          status: status || 0,
-          body: text,
-        })
-      );
-      continue;
-    }
-
-    try {
+    if (status >= 200 && status < 300) {
       return parseJsonBody(res.data);
-    } catch (e) {
-      errors.push(e);
     }
+    const text = summarizeBody(res?.data);
+    errors.push(
+      Object.assign(new Error(`Kakao HTTP ${status || 0}: ${text}`), {
+        code: 'KAKAO_HTTP',
+        status: status || 0,
+        body: text,
+      })
+    );
+  } catch (e) {
+    errors.push(
+      Object.assign(new Error(`Kakao native request failed: ${e?.message || e}`), {
+        code: 'KAKAO_NATIVE',
+        cause: e,
+      })
+    );
   }
 
   throw errors[errors.length - 1] || Object.assign(new Error('KAKAO_NATIVE'), { code: 'KAKAO_NATIVE' });

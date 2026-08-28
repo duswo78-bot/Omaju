@@ -139,7 +139,9 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
           : corsLikely
             ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
             : http && e?.status === 401
-              ? '카카오 인증 실패(401). 최신 APK로 다시 설치해 주세요. (로컬 웹은 Vite 프록시라 정상일 수 있음)'
+              ? `카카오 인증 실패(401). 앱에 키가 없거나 Authorization이 빠진 빌드입니다. GitHub Actions 최신 APK로 재설치하세요.${
+                  hasKakaoKey() ? '' : ' (이 빌드에 키 없음)'
+                }`
               : http
                 ? `카카오 검색 오류${detail}. 키/네트워크를 확인한 뒤 다시 시도하세요.`
                 : nativeFail
