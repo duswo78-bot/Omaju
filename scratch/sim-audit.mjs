@@ -98,6 +98,19 @@ await check('double soft ask deny deny', async () => {
   assert(!t[1].recommendation && !t[2].recommendation, 'no rec on denies');
 });
 
+await check('decline alcohol: 오늘은 안마실래', async () => {
+  const t = await turns('오늘은 안마실래');
+  assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `expected DECLINE_ALCOHOL got ${t[0].frame.intent}`);
+  assert(!t[0].recommendation?.alcohol && !t[0].recommendation?.snack, 'no alcohol or snack rec');
+  assert(/쉬어|무리|휴식|힐링|알콜 프리|건강|간/.test(t[0].answer), `empathetic response: ${t[0].answer}`);
+});
+
+await check('decline alcohol: 오늘은 안땡겨', async () => {
+  const t = await turns('오늘은 안땡겨');
+  assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `got ${t[0].frame.intent}`);
+  assert(!t[0].recommendation?.alcohol, 'no alc rec');
+});
+
 console.log(`\nAudit done. failures=${issues.length}`);
 if (issues.length) {
   console.error(issues);
