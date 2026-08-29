@@ -150,6 +150,12 @@ export async function runConversationTurn(text, payload = {}) {
   if (semantic.energy === 'low' && !(frame.slots.constraints || {}).light) {
     frame.slots.constraints = { ...(frame.slots.constraints || {}), light: true };
   }
+  if (semantic.constraints?.onlySnack) {
+    frame.slots.constraints = { ...(frame.slots.constraints || {}), onlySnack: true };
+  }
+  if (semantic.constraints?.nonAlcoholic) {
+    frame.slots.constraints = { ...(frame.slots.constraints || {}), nonAlcoholic: true };
+  }
   updateDialogueStateFromFrame(semantic);
 
   if (

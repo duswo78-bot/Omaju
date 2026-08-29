@@ -7,6 +7,7 @@ const state = {
   mood: /** @type {string|null} */ (null),
   energy: /** @type {string|null} */ (null),
   relation: /** @type {string|null} */ (null),
+  nonAlcoholic: false,
   lastBotAsk: /** @type {string|null} */ (null), // recommend | drink | place | clarify | none
   lastIntent: /** @type {string|null} */ (null),
   recommendHistory: /** @type {Array<{ alcohol?: string, snack?: string, ts: number }>} */ ([]),
@@ -23,6 +24,7 @@ export function resetDialogueState() {
   state.mood = null;
   state.energy = null;
   state.relation = null;
+  state.nonAlcoholic = false;
   state.lastBotAsk = null;
   state.lastIntent = null;
   state.recommendHistory = [];
@@ -41,6 +43,11 @@ export function updateDialogueStateFromFrame(frame) {
   if (frame.energy) state.energy = frame.energy;
   if (frame.relation) state.relation = frame.relation;
   if (frame.intent) state.lastIntent = frame.intent;
+  if (frame.intent === 'DECLINE_ALCOHOL' || frame.constraints?.nonAlcoholic || frame.constraints?.onlySnack) {
+    state.nonAlcoholic = true;
+  } else if ((frame.slots?.alcoholHints || []).length > 0 || (frame.resolved?.alcoholIds || []).length > 0) {
+    state.nonAlcoholic = false;
+  }
   const ex = frame.constraints?.exclude || [];
   if (ex.length) state.exclude = uniq([...state.exclude, ...ex]);
   return getDialogueState();
@@ -55,6 +62,11 @@ export function inheritDialogueState(frame) {
   if (!frame.mood && state.mood) frame.mood = state.mood;
   if (!frame.energy && state.energy) frame.energy = state.energy;
   if (!frame.relation && state.relation) frame.relation = state.relation;
+  if (state.nonAlcoholic && !(frame.slots?.alcoholHints || []).length && !(frame.resolved?.alcoholIds || []).length) {
+    frame.constraints = frame.constraints || {};
+    frame.constraints.onlySnack = true;
+    frame.constraints.nonAlcoholic = true;
+  }
   if (state.exclude.length) {
     frame.constraints = frame.constraints || {};
     frame.constraints.exclude = uniq([...(frame.constraints.exclude || []), ...state.exclude]);

@@ -41,7 +41,11 @@ const SNK_NAME_HINTS = [
     ...snacksData.map((s) => s.name_ko.split(' ')[0]),
   ]),
 ].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '간단', '든든'].includes(n));
-const SHORT_SNACKS = ['회', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치'];
+const SHORT_SNACKS = [
+  '회', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치',
+  '과일', '고기', '해물', '해산물', '생선', '치즈', '탕', '국물', '찌개', '면', '밥',
+  '샐러드', '디저트', '스낵', '빵', '분식', '화채', '플래터', '마른안주', '마른', '감자', '나초', '황도', '메론', '소시지',
+];
 const EXCLUDE_STOP = new Set([
   '그거', '이거', '저거', '다른', '거', '걸로', '건', '게', '것', '센', '약한', '센거', '약한거',
 ]);
@@ -231,15 +235,20 @@ function extractConstraints(text) {
     (/안주|야식|간식|디저트/.test(text) && !mentionsAlcohol) ||
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
+  const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁/.test(text);
+  const light = /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게/.test(text);
+  const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수/.test(text);
+
   return {
     onlyAlcohol,
-    onlySnack,
-    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text),
+    onlySnack: onlySnack || hangover,
+    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text) || hangover,
     spicy: /매운|매콤|불닭|핫/.test(text),
     sweet: /달달|달콤|스위트|단거|디저트/.test(text),
-    light: /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단/.test(text),
+    light,
+    heavy,
     cheap: /싸게|저렴|가성비|싼|저가|호불호/.test(text),
-    hangover: /해장|숙취|속쓰|속이\s*안/.test(text),
+    hangover,
     exclude: uniq(exclude),
   };
 }
@@ -405,16 +414,44 @@ export function ruleNlu(rawText, cleanText) {
   let guideHint;
   let placeQuery;
 
+  // 0.2) 안내 목록의 번호 선택 (1번, 2번, 3번, 4번 등)
+  const isOption1 = /^(?:1|1번|①|첫번째|첫\s*번째|일번|1번으로|1번추천|1번골라)$/i.test(clean);
+  const isOption2 = /^(?:2|2번|②|두번째|두\s*번째|이번|2번으로|2번추천|2번골라)$/i.test(clean);
+  const isOption3 = /^(?:3|3번|③|세번째|세\s*번째|삼번|3번으로|3번추천|3번골라|주변|술집찾기)$/i.test(clean);
+  const isOption4 = /^(?:4|4번|④|네번째|네\s*번째|사번|4번으로|4번추천|4번골라|논알콜|간식)$/i.test(clean);
+
+  if (isOption1) {
+    intent = 'GUIDE';
+    confidence = 0.95;
+    guideHint = 'general';
+  } else if (isOption2) {
+    intent = 'GUIDE';
+    confidence = 0.95;
+    guideHint = 'mood';
+  } else if (isOption3) {
+    intent = 'PLACE';
+    confidence = 0.95;
+    placeQuery = '술집';
+  } else if (isOption4) {
+    intent = 'RECOMMEND';
+    confidence = 0.95;
+    constraints.onlySnack = true;
+    constraints.nonAlcoholic = true;
+    guideHint = 'nonalc';
+  }
   // 0.5) 술 거부 / 금주 / 술 안 땡김 의도 (추천으로 억지 전환 방지)
-  if (declineAlcohol) {
+  else if (declineAlcohol) {
     intent = 'DECLINE_ALCOHOL';
     confidence = 0.94;
     guideHint = 'nonalc';
   }
-  // 1) 짧은 긍정/부정 (상태머신에서 쓰임) — 순수 단답만
-  else if (isPureShortReply(clean, AFFIRM, 6)) {
+  // 1) 긍정/수락/결정 — "좋아 그거 먹을래", "그걸로 할래", "콜", "네"
+  else if (
+    AFFIRM.some((a) => clean === a || (a.length >= 3 && clean.includes(a))) ||
+    /(좋아|그래|그걸로|그거로|이걸로|콜).*(먹을래|할래|줘|갈래|할게|결정|좋아|마음에|맘에|오케이)/.test(text)
+  ) {
     intent = 'AFFIRM';
-    confidence = 0.85;
+    confidence = 0.92;
   } else if (isPureShortReply(clean, DENY, 6)) {
     intent = 'DENY';
     confidence = 0.85;

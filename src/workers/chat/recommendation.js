@@ -16,8 +16,13 @@ export async function handleRecommendation(text, cleanText, context) {
   const hasNewAlc = (frame?.slots?.alcoholHints || []).length > 0;
 
   const constraints = frame?.slots?.constraints || {};
+  const mentionsAlcohol =
+    /술|맥주|소주|와인|막걸리|하이볼|위스키|칵테일|보드카|전통주|마실|한\s*잔|도수/.test(cleanText);
+  const wasOnlySnack = lastRec && lastRec.bestAlc === null && lastRec.bestSnack !== null;
+
   const wantOnlySnack =
     Boolean(constraints.onlySnack) ||
+    (wasOnlySnack && !mentionsAlcohol) ||
     /안주만|음식만|야식만|밥만|디저트만|간식만/.test(cleanText) ||
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요)?$/.test(cleanText);
   const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !wantOnlySnack;
