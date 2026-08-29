@@ -45,6 +45,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     localStorage.setItem('omaju_region_history', JSON.stringify(history));
   }, [history]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleCloseModal = () => {
+      onClose();
+    };
+    window.addEventListener('omaju:close-modal', handleCloseModal);
+    return () => window.removeEventListener('omaju:close-modal', handleCloseModal);
+  }, [open, onClose]);
+
   const handleCustomRegionSearch = async (e) => {
     e.preventDefault();
     if (!customRegion.trim()) return;
