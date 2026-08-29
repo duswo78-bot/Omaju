@@ -668,7 +668,7 @@ export default function AIChatPopup({ onClose }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="chat-input-area">
+      <div className="chat-input-area" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <button
           type="button"
           className={`mic-button ${isListening ? 'listening' : ''}`}
@@ -676,15 +676,24 @@ export default function AIChatPopup({ onClose }) {
           disabled={isThinking}
           aria-label={isListening ? '음성 입력 중지' : '음성 입력 시작'}
           style={{
-            width: '44px', height: '44px',
+            width: '44px',
+            height: '44px',
+            minWidth: '44px',
+            minHeight: '44px',
+            flexShrink: 0,
+            aspectRatio: '1 / 1',
             borderRadius: '50%',
             border: 'none',
             background: isListening ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255,255,255,0.1)',
             color: '#fff',
-            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            display: 'inline-flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             cursor: isThinking ? 'not-allowed' : 'pointer',
             opacity: isThinking ? 0.5 : 1,
-            transition: 'all 0.3s'
+            transition: 'all 0.3s',
+            padding: 0,
+            boxSizing: 'border-box',
           }}
         >
           {isListening ? <MicOff size={20} /> : <Mic size={20} />}
@@ -698,6 +707,7 @@ export default function AIChatPopup({ onClose }) {
           placeholder="예: 비 오는 날 어울리는 탕 메뉴"
           style={{
             flex: 1,
+            minWidth: 0,
             height: '44px',
             borderRadius: '22px',
             border: '1px solid rgba(255,255,255,0.2)',
@@ -705,25 +715,37 @@ export default function AIChatPopup({ onClose }) {
             color: '#fff',
             padding: '0 1rem',
             fontSize: '1rem',
-            outline: 'none'
+            outline: 'none',
+            boxSizing: 'border-box',
           }}
         />
 
         <button
+          type="button"
           onClick={() => handleSend()}
           disabled={!input.trim()}
+          aria-label="메시지 전송"
           style={{
-            width: '44px', height: '44px',
+            width: '44px',
+            height: '44px',
+            minWidth: '44px',
+            minHeight: '44px',
+            flexShrink: 0,
+            aspectRatio: '1 / 1',
             borderRadius: '50%',
             border: 'none',
             background: input.trim() ? '#4ade80' : 'rgba(255,255,255,0.1)',
             color: input.trim() ? '#14532d' : 'rgba(255,255,255,0.3)',
-            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            display: 'inline-flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             cursor: input.trim() ? 'pointer' : 'not-allowed',
-            transition: 'all 0.3s'
+            transition: 'all 0.3s',
+            padding: 0,
+            boxSizing: 'border-box',
           }}
         >
-          <Send size={18} style={{ marginLeft: '2px' }} />
+          <Send size={18} style={{ transform: 'translateX(1px)' }} />
         </button>
       </div>
 
