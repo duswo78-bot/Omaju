@@ -47,9 +47,9 @@ function formatTemplate(template, bestAlc, bestSnack, bestGame, wantOnlySnack = 
                .replace(/\{priceEmoji\}/g, priceEmoji);
   }
 
-  if (bestGame && !wantOnlySnack && bestAlc) {
-    text = text.replace(/\{gameName\}/g, bestGame.name)
-               .replace(/\{gameDesc\}/g, bestGame.description || '재미있는 게임입니다!');
+  if (bestGame) {
+    text = text.replace(/\{gameName\}/g, bestGame.name || '술자리 미니게임')
+               .replace(/\{gameDesc\}/g, bestGame.description || '재미있게 즐겨보세요!');
   }
   
   return text;
