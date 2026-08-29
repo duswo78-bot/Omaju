@@ -4828,5 +4828,305 @@
     "source": "alc_beer_tsingtao",
     "target": "snk_truffle_pizza",
     "score": 73
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_moutai",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yanghe",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_yantai",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_gongfujia",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_wuliangye",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_guobaorou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_malaxiangguo",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_dongporou",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_yangggochi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_gochujapchae",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_menbosha",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_yuringi",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_mapatofu",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_eohyang_gaji",
+    "score": 95
+  },
+  {
+    "source": "alc_baijiu_erguotou",
+    "target": "snk_kyungjang_yuksa",
+    "score": 95
   }
 ]

@@ -1,13 +1,15 @@
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2 } from 'lucide-react';
+import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
+import confetti from 'canvas-confetti';
 import { aiState, subscribeToAI, runTurn } from '../services/aiService';
 import { getSystemLlmProvider, probeSystemLlm, resetLlmProviderCache } from '../services/llm/getProvider';
 import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
+import { playFanfare } from '../utils/audio';
 
 /** 생각 중… 회전 멘트 (3초마다) — 진짜 고심하는 느낌 */
 const THINKING_LINES = [
@@ -380,6 +382,17 @@ export default function AIChatPopup({ onClose }) {
     }
 
     if (opening) clearPendingContext();
+
+    if (/(?:백주|바이주|빠이주|중국)/i.test(userMessage)) {
+      if (localStorage.getItem('omaju_unlocked_baijiu') !== 'true') {
+        localStorage.setItem('omaju_unlocked_baijiu', 'true');
+        window.dispatchEvent(new CustomEvent('omaju:unlock-baijiu'));
+        try {
+          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+          playFanfare();
+        } catch {}
+      }
+    }
 
     try {
       const result = await runTurn(userMessage, {

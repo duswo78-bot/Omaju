@@ -2011,5 +2011,232 @@
       "snk_user_1783696077714_2jtz",
       "snk_baked_brie"
     ]
+  },
+  {
+    "id": "alc_baijiu_moutai",
+    "name_ko": "귀주 마오타이주",
+    "name_en": "Kweichow Moutai",
+    "category": "백주",
+    "subCategory": "장향형 백주",
+    "abv": 53,
+    "sweetness": 2,
+    "body": 5,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 5,
+    "moods": [
+      "special",
+      "celebrate",
+      "romantic"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool"
+    ],
+    "tags": [
+      "백주",
+      "중국술",
+      "마오타이",
+      "국가연회주",
+      "명품주류",
+      "귀빈접대"
+    ],
+    "pairings": [
+      "snk_dongporou",
+      "snk_guobaorou",
+      "snk_malaxiangguo",
+      "snk_kyungjang_yuksa",
+      "snk_yangggochi"
+    ]
+  },
+  {
+    "id": "alc_baijiu_yanghe",
+    "name_ko": "양하대곡",
+    "name_en": "Yanghe Daqu",
+    "category": "백주",
+    "subCategory": "농향형 백주",
+    "abv": 38,
+    "sweetness": 3,
+    "body": 4,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 3,
+    "moods": [
+      "friends",
+      "happy",
+      "hoesik",
+      "celebrate"
+    ],
+    "weather": [
+      "cool",
+      "rain",
+      "spring",
+      "autumn"
+    ],
+    "tags": [
+      "백주",
+      "중국술",
+      "양하대곡",
+      "부드러운목넘김",
+      "회식추천",
+      "가성비명주"
+    ],
+    "pairings": [
+      "snk_guobaorou",
+      "snk_gochujapchae",
+      "snk_menbosha",
+      "snk_yuringi",
+      "snk_yangggochi"
+    ]
+  },
+  {
+    "id": "alc_baijiu_yantai",
+    "name_ko": "연태고량주",
+    "name_en": "Yantai Guniang",
+    "category": "백주",
+    "subCategory": "농향형 백주",
+    "abv": 34,
+    "sweetness": 4,
+    "body": 3,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 2,
+    "moods": [
+      "friends",
+      "happy",
+      "honsul",
+      "hoesik"
+    ],
+    "weather": [
+      "summer",
+      "spring",
+      "cool",
+      "rain"
+    ],
+    "tags": [
+      "백주",
+      "연태고량주",
+      "과일향",
+      "인기1위",
+      "중식당필수",
+      "연맥추천"
+    ],
+    "pairings": [
+      "snk_guobaorou",
+      "snk_malaxiangguo",
+      "snk_yuringi",
+      "snk_eohyang_gaji",
+      "snk_gochujapchae"
+    ]
+  },
+  {
+    "id": "alc_baijiu_gongfujia",
+    "name_ko": "공부가주",
+    "name_en": "Confucius Family Liquor",
+    "category": "백주",
+    "subCategory": "농향형 백주",
+    "abv": 39,
+    "sweetness": 3,
+    "body": 4,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 2,
+    "moods": [
+      "friends",
+      "comfort",
+      "hoesik"
+    ],
+    "weather": [
+      "cool",
+      "autumn",
+      "winter"
+    ],
+    "tags": [
+      "백주",
+      "공부가주",
+      "공자제사주",
+      "은은한단맛",
+      "도자기병"
+    ],
+    "pairings": [
+      "snk_dongporou",
+      "snk_guobaorou",
+      "snk_mapatofu",
+      "snk_kyungjang_yuksa"
+    ]
+  },
+  {
+    "id": "alc_baijiu_wuliangye",
+    "name_ko": "우량예",
+    "name_en": "Wuliangye",
+    "category": "백주",
+    "subCategory": "농향형 백주",
+    "abv": 52,
+    "sweetness": 3,
+    "body": 5,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 5,
+    "moods": [
+      "special",
+      "celebrate",
+      "romantic"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool"
+    ],
+    "tags": [
+      "백주",
+      "우량예",
+      "5대곡물",
+      "중국3대명주",
+      "최고급향"
+    ],
+    "pairings": [
+      "snk_dongporou",
+      "snk_menbosha",
+      "snk_guobaorou",
+      "snk_yangggochi"
+    ]
+  },
+  {
+    "id": "alc_baijiu_erguotou",
+    "name_ko": "홍성 이과두주",
+    "name_en": "Red Star Erguotou",
+    "category": "백주",
+    "subCategory": "청향형 백주",
+    "abv": 56,
+    "sweetness": 1,
+    "body": 4,
+    "carbonation": 0,
+    "country": "중국",
+    "priceLevel": 1,
+    "moods": [
+      "stress",
+      "honsul",
+      "friends"
+    ],
+    "weather": [
+      "winter",
+      "rain",
+      "cold"
+    ],
+    "tags": [
+      "백주",
+      "이과두주",
+      "화끈함",
+      "서민명주",
+      "스트레스해소",
+      "고도수"
+    ],
+    "pairings": [
+      "snk_malaxiangguo",
+      "snk_yangggochi",
+      "snk_guobaorou",
+      "snk_mapatofu"
+    ]
   }
 ]

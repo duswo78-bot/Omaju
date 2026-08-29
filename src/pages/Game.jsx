@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import SpinBottle from '../components/SpinBottle';
 import DadJokes from '../components/DadJokes';
 import SobrietyTest from '../components/SobrietyTest';
@@ -8,7 +8,7 @@ import Baskin31 from '../components/Baskin31';
 import UpDownGame from '../components/UpDownGame';
 import DartGame from '../components/DartGame';
 import GameRules from '../components/GameRules';
-import { playClick } from '../utils/audio';
+import { playClick, playPop, getIsMuted, toggleMute } from '../utils/audio';
 
 const games = [
   { id: 'bottle', title: '돌려돌려 병', component: <SpinBottle /> },
@@ -23,6 +23,22 @@ const games = [
 export default function Game() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isMuted, setIsMuted] = useState(() => getIsMuted());
+
+  useEffect(() => {
+    const handleSoundToggled = (e) => {
+      setIsMuted(e.detail?.isMuted ?? getIsMuted());
+    };
+    window.addEventListener('omaju:sound-toggled', handleSoundToggled);
+    return () => window.removeEventListener('omaju:sound-toggled', handleSoundToggled);
+  }, []);
+
+  const handleToggleSound = (e) => {
+    e?.stopPropagation();
+    const nextMuted = toggleMute();
+    setIsMuted(nextMuted);
+    if (!nextMuted) playPop();
+  };
 
   const paginate = (newDirection) => {
     playClick();
@@ -107,7 +123,30 @@ export default function Game() {
         </motion.button>
 
         <div style={{ textAlign: 'center' }}>
-          <div style={{ color: '#fff', fontWeight: 700, marginBottom: '0.45rem' }}>{games[currentIndex].title}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', color: '#fff', fontWeight: 700, marginBottom: '0.45rem' }}>
+            <span>{games[currentIndex].title}</span>
+            <button
+              onClick={handleToggleSound}
+              style={{
+                background: isMuted ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: isMuted ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: isMuted ? '#f87171' : '#4ade80',
+                padding: 0,
+                transition: 'all 0.2s ease',
+              }}
+              title={isMuted ? '소리 켜기' : '소리 끄기'}
+              aria-label={isMuted ? '소리 켜기' : '소리 끄기'}
+            >
+              {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+            </button>
+          </div>
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
             {games.map((g, idx) => (
               <button

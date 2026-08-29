@@ -1,9 +1,38 @@
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 let audioCtx = null;
+let isMuted = false;
+
+try {
+  const saved = localStorage.getItem('omaju_sound_muted');
+  if (saved !== null) {
+    isMuted = JSON.parse(saved);
+  }
+} catch {}
+
+export function getIsMuted() {
+  return isMuted;
+}
+
+export function toggleMute() {
+  isMuted = !isMuted;
+  try {
+    localStorage.setItem('omaju_sound_muted', JSON.stringify(isMuted));
+  } catch {}
+  window.dispatchEvent(new CustomEvent('omaju:sound-toggled', { detail: { isMuted } }));
+  return isMuted;
+}
+
+export function setMuted(muted) {
+  isMuted = Boolean(muted);
+  try {
+    localStorage.setItem('omaju_sound_muted', JSON.stringify(isMuted));
+  } catch {}
+  window.dispatchEvent(new CustomEvent('omaju:sound-toggled', { detail: { isMuted } }));
+}
 
 function initAudio() {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined' || isMuted) return null;
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }

@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { CupSoda, Heart, Trash2 } from 'lucide-react';
+import { CupSoda, Heart, Trash2, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls, useMotionValue, useSpring } from 'framer-motion';
 import { useDrag } from '@use-gesture/react';
 import confetti from 'canvas-confetti';
 import { useDrinkContext, mixCombinations, nonAlcoholicItems } from '../context/DrinkContext';
 import { buildPendingContext } from '../data/drinkIdMap';
 import { assetUrl } from '../utils/assets';
-import { playFanfare, playApplause, playFail } from '../utils/audio';
+import { playFanfare, playApplause, playFail, playPop, getIsMuted, toggleMute } from '../utils/audio';
 
 function DrinkCard({ drink, handleDragStart, handleDrag, handleDragEnd, handleSelect, isDefaultDrink, isFavorite, toggleFavorite }) {
   const x = useMotionValue(0);
@@ -290,7 +290,23 @@ export default function Home() {
   const [showNonAlcModal, setShowNonAlcModal] = useState(false);
   const [trashHover, setTrashHover] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => getIsMuted());
   const trashRef = useRef(null);
+
+  useEffect(() => {
+    const handleSoundToggled = (e) => {
+      setIsMuted(e.detail?.isMuted ?? getIsMuted());
+    };
+    window.addEventListener('omaju:sound-toggled', handleSoundToggled);
+    return () => window.removeEventListener('omaju:sound-toggled', handleSoundToggled);
+  }, []);
+
+  const handleToggleSound = (e) => {
+    e?.stopPropagation();
+    const nextMuted = toggleMute();
+    setIsMuted(nextMuted);
+    if (!nextMuted) playPop();
+  };
   
   // 드래그와 단순 클릭을 구분하기 위한 레퍼런스
   const isDragAction = useRef(false);
@@ -634,12 +650,35 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <h1 className="text-gradient" style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem', textAlign: 'center' }}>
+      <h1 className="text-gradient" style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.8rem', textAlign: 'center' }}>
         오늘 무슨 술 마시나요?
       </h1>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '3rem', textAlign: 'center', fontSize: '0.9rem' }}>
-        마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다.
-      </p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '2.5rem' }}>
+        <p style={{ color: 'var(--text-secondary)', margin: 0, textAlign: 'center', fontSize: '0.9rem' }}>
+          마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다.
+        </p>
+        <button
+          onClick={handleToggleSound}
+          style={{
+            background: isMuted ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+            border: isMuted ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '50%',
+            width: '26px',
+            height: '26px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: isMuted ? '#f87171' : '#4ade80',
+            padding: 0,
+            transition: 'all 0.2s ease',
+          }}
+          title={isMuted ? '소리 켜기' : '소리 끄기'}
+          aria-label={isMuted ? '소리 켜기' : '소리 끄기'}
+        >
+          {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+        </button>
+      </div>
 
       {/* ===== 드링크 카드 그리드 ===== */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', width: '100%', padding: '0 0.5rem', position: 'relative', zIndex: 10 }}>

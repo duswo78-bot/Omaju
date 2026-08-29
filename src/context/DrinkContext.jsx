@@ -11,6 +11,14 @@ export const initialDrinks = [
   { id: 'highball', name: '하이볼', imagePath: assetUrl('assets/drinks/highball.webp'), color: '#fbbf24' }
 ];
 
+export const hiddenBaijiuDrink = {
+  id: 'baijiu',
+  name: '백주',
+  imagePath: assetUrl('assets/drinks/soju.webp'),
+  color: '#e11d48',
+  isSecret: true,
+};
+
 export const mixCombinations = {
   'beer_soju': { id: 'somaek', name: '소맥', imagePath: assetUrl('assets/drinks/somaek.webp'), color: '#60a5fa' },
   'beer_whiskey': { id: 'bomb', name: '폭탄주', imagePath: assetUrl('assets/drinks/bomb.webp'), color: '#ef4444' },
@@ -38,9 +46,43 @@ export const nonAlcoholicItems = [
 const DrinkContext = createContext();
 
 export function DrinkProvider({ children }) {
-  const [drinks, setDrinks] = useState(initialDrinks);
+  const [isBaijiuUnlocked, setIsBaijiuUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem('omaju_unlocked_baijiu') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const [drinks, setDrinks] = useState(() => {
+    const base = [...initialDrinks];
+    try {
+      if (localStorage.getItem('omaju_unlocked_baijiu') === 'true') {
+        base.push(hiddenBaijiuDrink);
+      }
+    } catch {}
+    return base;
+  });
   const [favorites, setFavorites] = useState([]);
   const [favoriteSnacks, setFavoriteSnacks] = useState([]);
+
+  const unlockBaijiu = () => {
+    if (isBaijiuUnlocked) return;
+    setIsBaijiuUnlocked(true);
+    try {
+      localStorage.setItem('omaju_unlocked_baijiu', 'true');
+    } catch {}
+    setDrinks((prev) => {
+      if (prev.some((d) => d.id === 'baijiu')) return prev;
+      return [...prev, hiddenBaijiuDrink];
+    });
+  };
+
+  useEffect(() => {
+    const handleUnlock = () => unlockBaijiu();
+    window.addEventListener('omaju:unlock-baijiu', handleUnlock);
+    return () => window.removeEventListener('omaju:unlock-baijiu', handleUnlock);
+  }, [isBaijiuUnlocked]);
 
   // Load favorites from local storage on mount
   useEffect(() => {
@@ -52,11 +94,15 @@ export function DrinkProvider({ children }) {
 
     // Reconstruct drink objects for saved favorites
     const loadedDrinks = [...initialDrinks];
+    if (isBaijiuUnlocked && !loadedDrinks.some((d) => d.id === 'baijiu')) {
+      loadedDrinks.push(hiddenBaijiuDrink);
+    }
     
     // Combine all possible custom items
     const allCustomItems = [
       ...Object.values(mixCombinations),
-      ...nonAlcoholicItems
+      ...nonAlcoholicItems,
+      hiddenBaijiuDrink
     ];
 
     savedFavorites.forEach(favId => {
@@ -67,7 +113,7 @@ export function DrinkProvider({ children }) {
     });
 
     setDrinks(loadedDrinks);
-  }, []);
+  }, [isBaijiuUnlocked]);
 
   const addDrink = (drink) => {
     if (initialDrinks.some(d => d.id === drink.id)) return;
@@ -150,7 +196,9 @@ export function DrinkProvider({ children }) {
         favoriteSnacks,
         toggleFavoriteSnack,
         isFavoriteSnack,
-        getFavoriteSnackIds
+        getFavoriteSnackIds,
+        isBaijiuUnlocked,
+        unlockBaijiu
       }}
     >
       {children}

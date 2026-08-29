@@ -24,12 +24,14 @@ import { extractPlaceQueryFromText } from '../../utils/snackToVenueQuery.js';
 const ALC_CATEGORY_HINTS = [
   '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하',
   '진로', '참이슬', '새로', '카스', '테라', '켈리',
+  '백주', '바이주', '빠이주', '고량주', '중국술',
 ];
 const ALC_NAME_HINTS = [
   ...new Set([
     ...alcoholsData.map((a) => a.name_ko),
     ...alcoholsData.map((a) => a.name_ko.split(' ')[0]),
     '발베니', '맥캘란', '글렌피딕', '조니워커', '와일드터키', '잭다니엘', '제임슨', '산토리', '가쿠빈', '라프로익', '아드벡',
+    '마오타이', '양하대곡', '연태고량주', '연태', '공부가주', '우량예', '이과두주',
   ]),
 ].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '선물', '홈술'].includes(n));
 

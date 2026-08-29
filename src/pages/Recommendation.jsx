@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { RefreshCw, Heart } from 'lucide-react';
 import snacksData from '../data/snacks.json';
 import relationsData from '../data/relations.json';
+import alcoholsData from '../data/alcohols.json';
 import { resolveAiAlcoholIds, buildPendingContext } from '../data/drinkIdMap';
 import { useDrinkContext } from '../context/DrinkContext';
 import { weightedSample } from '../workers/utils/random.js';
@@ -28,9 +29,36 @@ function buildScoredSnacks(uiDrinkId) {
   }
 
   for (const snack of snacksData) {
-    if (!snack.bestDrinks?.some((id) => aiIds.has(id))) continue;
-    const prev = scores.get(snack.id) || 0;
-    if (prev < 72) scores.set(snack.id, Math.max(prev, 72));
+    if (snack.bestDrinks?.some((id) => aiIds.has(id))) {
+      const prev = scores.get(snack.id) || 0;
+      if (prev < 80) scores.set(snack.id, Math.max(prev, 80));
+    }
+  }
+
+  // Also check pairings from alcohols.json
+  for (const alc of alcoholsData) {
+    if (!aiIds.has(alc.id)) continue;
+    for (const snkId of alc.pairings || []) {
+      const prev = scores.get(snkId) || 0;
+      if (prev < 90) scores.set(snkId, Math.max(prev, 90));
+    }
+  }
+
+  // Also check category-level matches (e.g. 위스키안주, 와인안주, 맥주안주, 백주안주, 중식안주)
+  const matchedAlcs = alcoholsData.filter((a) => aiIds.has(a.id));
+  const categoryNames = new Set(matchedAlcs.map((a) => a.category));
+  for (const cat of categoryNames) {
+    for (const snack of snacksData) {
+      if (
+        snack.category === `${cat}안주` ||
+        snack.tags?.includes(`${cat}안주`) ||
+        snack.tags?.includes(cat) ||
+        (cat === '백주' && (snack.category === '중식안주' || snack.tags?.includes('중식')))
+      ) {
+        const prev = scores.get(snack.id) || 0;
+        if (prev < 82) scores.set(snack.id, Math.max(prev, 82));
+      }
+    }
   }
 
   return [...scores.entries()]

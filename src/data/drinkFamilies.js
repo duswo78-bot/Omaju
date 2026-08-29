@@ -3,7 +3,7 @@
  * must all compare through this layer (no raw string soup).
  */
 
-/** @typedef {'soju'|'beer'|'wine'|'makgeolli'|'highball'|'whiskey'|'vodka'|'fruit_wine'|'nonalc'|'other'} DrinkFamily */
+/** @typedef {'soju'|'beer'|'wine'|'makgeolli'|'highball'|'whiskey'|'vodka'|'fruit_wine'|'baijiu'|'nonalc'|'other'} DrinkFamily */
 
 /** @type {Record<DrinkFamily, { labels: string[], categories: string[] }>} */
 export const DRINK_FAMILIES = {
@@ -34,6 +34,13 @@ export const DRINK_FAMILIES = {
       '제임슨', '산토리', '가쿠빈', '라프로익', '아드벡', '탈리스커', '글렌리벳', '시바스리갈'
     ],
     categories: ['위스키'],
+  },
+  baijiu: {
+    labels: [
+      '백주', '바이주', '빠이주', '고량주', '중국술', '중국', '마오타이',
+      '양하대곡', '연태고량주', '연태', '공부가주', '우량예', '이과두주'
+    ],
+    categories: ['백주'],
   },
   vodka: {
     labels: ['보드카', '보드카토닉'],

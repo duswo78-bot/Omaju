@@ -14,6 +14,7 @@ export const UI_TO_AI_IDS = {
   whiskey: byCategory('위스키'),
   makgeolli: byCategory('전통주'),
   highball: byCategory('칵테일/하이볼'),
+  baijiu: byCategory('백주'),
   // Mix drinks → closest catalog alcohols
   somaek: ['alc_soju_cham', 'alc_soju_jinro', 'alc_beer_cass', 'alc_beer_terra'],
   bomb: ['alc_whiskey_shot', 'alc_beer_cass', 'alc_beer_terra'],
