@@ -244,6 +244,30 @@ function DrinkCard({ drink, handleDragStart, handleDrag, handleDragEnd, handleSe
       {/* 하단 그라데이션 */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%)', zIndex: 1, pointerEvents: 'none' }} />
 
+      {/* 히든 주류 뱃지 */}
+      {drink.isSecret && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '10px',
+            left: '10px',
+            zIndex: 80,
+            background: 'linear-gradient(90deg, #e11d48, #f59e0b)',
+            color: '#fff',
+            fontSize: '0.65rem',
+            fontWeight: '800',
+            padding: '3px 8px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '3px',
+            boxShadow: '0 2px 8px rgba(225, 29, 72, 0.6)',
+          }}
+        >
+          <Sparkles size={11} /> SECRET
+        </div>
+      )}
+
       {/* 하트 아이콘 */}
       <div 
         className="favorite-btn"

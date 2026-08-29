@@ -10,6 +10,7 @@ import { getSystemLlmProvider, probeSystemLlm, resetLlmProviderCache } from '../
 import { LLM_MODES } from '../services/llm/types';
 import { startListening, stopListening } from '../services/speechService';
 import { playFanfare } from '../utils/audio';
+import { assetUrl } from '../utils/assets';
 
 /** 생각 중… 회전 멘트 (3초마다) — 진짜 고심하는 느낌 */
 const THINKING_LINES = [
@@ -149,6 +150,29 @@ export default function AIChatPopup({ onClose }) {
   const [speechHint, setSpeechHint] = useState('');
   const speechHintTimerRef = useRef(null);
   const [placeFinder, setPlaceFinder] = useState({ open: false, venueQuery: '', label: '' });
+  const [unlockedEasterEgg, setUnlockedEasterEgg] = useState(null);
+
+  const triggerEasterEggModal = () => {
+    setUnlockedEasterEgg({
+      title: '🇨🇳 히든 주류 [중국 백주] 해금!',
+      subtitle: '마오타이 · 연태고량주 · 양하대곡 & 10종 중화 안주',
+      description: '숨겨진 미식의 세계를 발견하셨습니다! 이제 홈 화면에서 [🇨🇳 백주] 카테고리와 꿔바로우, 마라샹궈, 동파육 등 정통 페어링 안주를 만나보실 수 있습니다.',
+      image: assetUrl('assets/drinks/baijiu.webp'),
+    });
+    try {
+      confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+      setTimeout(() => {
+        confetti({ particleCount: 80, spread: 120, origin: { y: 0.6 } });
+      }, 350);
+      playFanfare();
+    } catch {}
+  };
+
+  useEffect(() => {
+    const handleUnlockEvent = () => triggerEasterEggModal();
+    window.addEventListener('omaju:unlock-baijiu', handleUnlockEvent);
+    return () => window.removeEventListener('omaju:unlock-baijiu', handleUnlockEvent);
+  }, []);
 
   const flashSpeechHint = (msg, ms = 2200) => {
     if (speechHintTimerRef.current) clearTimeout(speechHintTimerRef.current);
@@ -708,6 +732,161 @@ export default function AIChatPopup({ onClose }) {
         onClose={() => setPlaceFinder((p) => ({ ...p, open: false }))}
         venueQuery={placeFinder.venueQuery}
       />
+
+      {/* ===== 히든 주류 해금 화려한 팝업 오버레이 ===== */}
+      <AnimatePresence>
+        {unlockedEasterEgg && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 200,
+              background: 'rgba(10, 10, 20, 0.88)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1.5rem',
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.6, y: 40, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.8, y: 30, opacity: 0 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              style={{
+                width: '100%',
+                maxWidth: '340px',
+                background: 'linear-gradient(145deg, rgba(35, 18, 30, 0.95), rgba(18, 12, 28, 0.98))',
+                border: '2px solid rgba(245, 158, 11, 0.6)',
+                boxShadow: '0 0 50px rgba(245, 158, 11, 0.4), 0 20px 40px rgba(0, 0, 0, 0.8)',
+                borderRadius: '24px',
+                padding: '2rem 1.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* 반짝이는 배경 빔 */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-50px',
+                  left: '-50px',
+                  right: '-50px',
+                  height: '160px',
+                  background: 'radial-gradient(circle, rgba(225, 29, 72, 0.45) 0%, transparent 70%)',
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* 뱃지 */}
+              <motion.div
+                animate={{ scale: [1, 1.06, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                style={{
+                  background: 'linear-gradient(90deg, #f59e0b, #e11d48)',
+                  color: '#fff',
+                  fontSize: '0.75rem',
+                  fontWeight: '800',
+                  padding: '5px 14px',
+                  borderRadius: '20px',
+                  letterSpacing: '1px',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  boxShadow: '0 3px 12px rgba(225, 29, 72, 0.5)',
+                  zIndex: 2,
+                }}
+              >
+                <Sparkles size={13} /> SECRET DRINK UNLOCKED
+              </motion.div>
+
+              {/* 바이주 전용 생성 이미지 카드 */}
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+                style={{
+                  width: '140px',
+                  height: '140px',
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 12px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.3)',
+                  marginBottom: '1.2rem',
+                  background: '#1e1b4b',
+                  zIndex: 2,
+                }}
+              >
+                <img
+                  src={unlockedEasterEgg.image}
+                  alt="중국 백주"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </motion.div>
+
+              <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#fff', margin: '0 0 0.35rem 0', zIndex: 2 }}>
+                {unlockedEasterEgg.title}
+              </h2>
+              <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#fbbf24', marginBottom: '0.8rem', zIndex: 2 }}>
+                {unlockedEasterEgg.subtitle}
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.5', margin: '0 0 1.5rem 0', wordBreak: 'keep-all', zIndex: 2 }}>
+                {unlockedEasterEgg.description}
+              </p>
+
+              {/* 액션 버튼 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', zIndex: 2 }}>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setUnlockedEasterEgg(null);
+                    onClose?.();
+                    navigate('/home');
+                  }}
+                  style={{
+                    background: 'linear-gradient(90deg, #e11d48, #f59e0b)',
+                    border: 'none',
+                    borderRadius: '14px',
+                    padding: '0.85rem 1rem',
+                    color: '#fff',
+                    fontWeight: '700',
+                    fontSize: '0.95rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(225, 29, 72, 0.4)',
+                  }}
+                >
+                  🏠 홈 화면에서 확인하기
+                </motion.button>
+                <button
+                  onClick={() => setUnlockedEasterEgg(null)}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '14px',
+                    padding: '0.7rem 1rem',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontWeight: '500',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  계속 대화하기
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

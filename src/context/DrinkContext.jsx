@@ -14,7 +14,7 @@ export const initialDrinks = [
 export const hiddenBaijiuDrink = {
   id: 'baijiu',
   name: '백주',
-  imagePath: assetUrl('assets/drinks/soju.webp'),
+  imagePath: assetUrl('assets/drinks/baijiu.webp'),
   color: '#e11d48',
   isSecret: true,
 };
