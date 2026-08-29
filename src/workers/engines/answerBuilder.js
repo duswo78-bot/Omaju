@@ -18,9 +18,9 @@ import denyTemplates from '../templates/deny.json';
 import { composeGuideAnswer } from '../utils/composeGuide.js';
 
 // Helper to replace template variables
-function formatTemplate(template, bestAlc, bestSnack, bestGame) {
+function formatTemplate(template, bestAlc, bestSnack, bestGame, wantOnlySnack = false) {
   let text = template;
-  if (bestAlc) {
+  if (bestAlc && !wantOnlySnack) {
     const alcTags = [...(bestAlc.tags || [])].sort(() => 0.5 - Math.random()).slice(0, 2);
     const abvInfo = bestAlc.abv > 0 ? `(도수 ${bestAlc.abv}%)` : '(논알콜)';
     const priceEmoji = bestAlc.priceLevel <= 1 ? '💰' : bestAlc.priceLevel <= 2 ? '💰💰' : '💰💰💰';
@@ -33,17 +33,21 @@ function formatTemplate(template, bestAlc, bestSnack, bestGame) {
   }
   
   if (bestSnack) {
-    const snkTags = [...(bestSnack.tags || [])].sort(() => 0.5 - Math.random()).slice(0, 2);
-    // priceLevel field is missing from snacks, just use default
+    let snkTags = [...(bestSnack.tags || [])].sort(() => 0.5 - Math.random());
+    if (wantOnlySnack || !bestAlc) {
+      snkTags = snkTags.filter((t) => !/맥주|소주|와인|위스키|막걸리|하이볼|사케|백주|보드카|술/.test(t));
+    }
+    const s0 = snkTags[0] || '맛있는';
+    const s1 = snkTags[1] || s0;
     const priceEmoji = '💰💰';
 
     text = text.replace(/\{snkName\}/g, bestSnack.name_ko)
-               .replace(/\{s0\}/g, snkTags[0] || '')
-               .replace(/\{s1\}/g, snkTags[1] || snkTags[0] || '')
+               .replace(/\{s0\}/g, s0)
+               .replace(/\{s1\}/g, s1)
                .replace(/\{priceEmoji\}/g, priceEmoji);
   }
 
-  if (bestGame) {
+  if (bestGame && !wantOnlySnack && bestAlc) {
     text = text.replace(/\{gameName\}/g, bestGame.name)
                .replace(/\{gameDesc\}/g, bestGame.description || '재미있는 게임입니다!');
   }
@@ -184,7 +188,7 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
       break;
     case 'RECOMMEND':
     default:
-      if (bestAlc && bestSnack) {
+      if (bestAlc && bestSnack && !wantOnlySnack && !wantOnlyAlc) {
         if (isTargetedSnack) {
           explanation = formatTemplate(pickRandom(targetedSnackTemplates), bestAlc, bestSnack, bestGame);
         } else if (isAlone) {
@@ -192,23 +196,23 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
         } else {
           explanation = formatTemplate(pickRandom(comboTemplates), bestAlc, bestSnack, bestGame);
         }
-      } else if (bestAlc && wantOnlyAlc) {
-        explanation = formatTemplate(pickRandom(alcoholTemplates), bestAlc, null, bestGame);
-      } else if (bestSnack && wantOnlySnack) {
-        explanation = formatTemplate(pickRandom(snackTemplates), null, bestSnack, bestGame);
+      } else if (bestSnack && (wantOnlySnack || !bestAlc)) {
+        explanation = formatTemplate(pickRandom(snackTemplates), null, bestSnack, bestGame, true);
+      } else if (bestAlc && (wantOnlyAlc || !bestSnack)) {
+        explanation = formatTemplate(pickRandom(alcoholTemplates), bestAlc, null, bestGame, false);
       }
       
       // 프로필 취향 반영 문구 추가 (랜덤)
       if (profile) {
-        if (profile.favoriteDrink && bestAlc && Math.random() > 0.5) {
+        if (profile.favoriteDrink && bestAlc && !wantOnlySnack && Math.random() > 0.5) {
           reason = `(평소 ${profile.favoriteDrink}을(를) 좋아하시는 취향을 고려해 골라봤어요!)`;
         } else if (profile.favoriteSnack && bestSnack && Math.random() > 0.5) {
           reason = `(평소 ${profile.favoriteSnack}을(를) 즐기시니 이 안주도 맘에 드실 거예요!)`;
         }
       }
       
-      // 게임 추천이 있으면 텍스트에 덧붙임
-      if (bestGame) {
+      // 게임 추천이 있으면 텍스트에 덧붙임 (단, 안주만 요청 시에는 제외)
+      if (bestGame && !wantOnlySnack && bestAlc) {
         closing = formatTemplate(pickRandom(gameTemplates), null, null, bestGame);
       }
       break;

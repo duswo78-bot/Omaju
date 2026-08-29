@@ -441,8 +441,13 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     (contextSignals?.moods || []).includes('honsul') ||
     /혼자|혼술|혼맥|혼소/.test(cleanText);
 
-  // 5. 게임 — 혼자 마실 때는 단체 술게임을 추천하지 않고 술/안주에 집중
-  if (gameEmbeddings.length > 0 && !(isAlone && !frame?.slots?.wantGame && !cleanText.includes('게임'))) {
+  // 5. 게임 — 혼자 마실 때나 안주만/논알콜 요청 시에는 술게임을 추천하지 않음
+  if (
+    gameEmbeddings.length > 0 &&
+    !wantOnlySnack &&
+    !constraints.nonAlcoholic &&
+    !(isAlone && !frame?.slots?.wantGame && !cleanText.includes('게임'))
+  ) {
     const gameBoost = frame?.slots?.wantGame ? 0.2 : 0;
     const gameCandidates = gameEmbeddings.map(({ item, vector }) => ({
       item,

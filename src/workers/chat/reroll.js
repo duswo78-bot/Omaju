@@ -25,11 +25,22 @@ export async function handleReroll(text, context) {
   );
 
   const constraints = frame?.slots?.constraints || {};
-  const hasExplicitAlc = (frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(pendingText);
+  const wantOnlySnack =
+    Boolean(constraints.onlySnack) ||
+    /안주만|음식만|야식만|밥만|디저트만|간식만/.test(text) ||
+    /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요)?$/.test(text.replace(/\s/g, ''));
+  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !wantOnlySnack;
+
+  if (wantOnlySnack) {
+    recResult.bestAlc = null;
+  }
+  if (wantOnlyAlc) {
+    recResult.bestSnack = null;
+  }
+
+  const hasExplicitAlc = !wantOnlySnack && ((frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(pendingText));
   const hasExplicitSnack = (frame?.slots?.snackHints || []).length > 0 || (frame?.resolved?.snackIds || []).length > 0;
-  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !hasExplicitSnack;
-  const wantOnlySnack = Boolean(constraints.onlySnack) && !hasExplicitAlc;
-  const isTargetedSnack = Boolean(recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || pendingText));
+  const isTargetedSnack = Boolean(!wantOnlySnack && recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || pendingText));
 
   if (!recResult.bestAlc && !recResult.bestSnack) {
     const answer = buildAnswer({ intent: 'UNKNOWN' });

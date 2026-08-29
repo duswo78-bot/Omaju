@@ -102,13 +102,29 @@ await check('decline alcohol: 오늘은 안마실래', async () => {
   const t = await turns('오늘은 안마실래');
   assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `expected DECLINE_ALCOHOL got ${t[0].frame.intent}`);
   assert(!t[0].recommendation?.alcohol && !t[0].recommendation?.snack, 'no alcohol or snack rec');
-  assert(/쉬어|무리|휴식|힐링|알콜 프리|건강|간/.test(t[0].answer), `empathetic response: ${t[0].answer}`);
+  assert(/쉬어|무리|휴식|힐링|알콜 프리|건강|간|술 없는 하루|술 생각 없는|소확행|안 나는 날/.test(t[0].answer), `empathetic response: ${t[0].answer}`);
 });
 
 await check('decline alcohol: 오늘은 안땡겨', async () => {
   const t = await turns('오늘은 안땡겨');
   assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `got ${t[0].frame.intent}`);
   assert(!t[0].recommendation?.alcohol, 'no alc rec');
+});
+
+await check('decline then only snack: 오늘은 안마실래 -> 안주만', async () => {
+  const t = await turns('오늘은 안마실래', '안주만');
+  assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `turn 0 DECLINE_ALCOHOL got ${t[0].frame.intent}`);
+  assert(!t[0].recommendation?.alcohol && !t[0].recommendation?.snack, 'turn 0 no rec');
+  
+  assert(t[1].recommendation?.snack, 'turn 1 has snack');
+  assert(!t[1].recommendation?.alcohol, `turn 1 must NOT have alcohol, got ${t[1].recommendation?.alcohol?.name_ko}`);
+  assert(!/소주|맥주|와인|위스키|막걸리|도수|한 잔/.test(t[1].answer), `answer must not mention alcohol: ${t[1].answer}`);
+});
+
+await check('single turn: 안주만 추천해줘', async () => {
+  const t = await turns('안주만 추천해줘');
+  assert(t[0].recommendation?.snack, 'has snack');
+  assert(!t[0].recommendation?.alcohol, `must not have alcohol, got ${t[0].recommendation?.alcohol?.name_ko}`);
 });
 
 console.log(`\nAudit done. failures=${issues.length}`);

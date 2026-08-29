@@ -15,11 +15,18 @@ export async function handleRecommendation(text, cleanText, context) {
   const frame = context.frame;
   const hasNewAlc = (frame?.slots?.alcoholHints || []).length > 0;
 
-  if (!hasNewAlc && lastRec && lastRec.bestAlc) {
+  const constraints = frame?.slots?.constraints || {};
+  const wantOnlySnack =
+    Boolean(constraints.onlySnack) ||
+    /안주만|음식만|야식만|밥만|디저트만|간식만/.test(cleanText) ||
+    /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요)?$/.test(cleanText);
+  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !wantOnlySnack;
+
+  if (!hasNewAlc && lastRec && lastRec.bestAlc && !wantOnlySnack) {
     contextKeywords += ` ${lastRec.bestAlc.category} ${lastRec.bestAlc.name_ko}`;
   }
 
-  const uiContext = context.uiContext || '';
+  const uiContext = wantOnlySnack ? '' : (context.uiContext || '');
   const combinedText = `${cleanText} ${contextKeywords} ${uiContext}`.trim();
   const contextTokens = `${contextKeywords} ${uiContext}`.split(' ').filter(Boolean);
 
@@ -45,14 +52,18 @@ export async function handleRecommendation(text, cleanText, context) {
     frame
   );
 
+  if (wantOnlySnack) {
+    recResult.bestAlc = null;
+  }
+  if (wantOnlyAlc) {
+    recResult.bestSnack = null;
+  }
+
   setLastRecommendation({ bestAlc: recResult.bestAlc, bestSnack: recResult.bestSnack });
 
-  const constraints = frame?.slots?.constraints || {};
-  const hasExplicitAlc = (frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(context.uiContext);
+  const hasExplicitAlc = !wantOnlySnack && ((frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(context.uiContext));
   const hasExplicitSnack = (frame?.slots?.snackHints || []).length > 0 || (frame?.resolved?.snackIds || []).length > 0;
-  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !hasExplicitSnack;
-  const wantOnlySnack = Boolean(constraints.onlySnack) && !hasExplicitAlc;
-  const isTargetedSnack = Boolean(recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || context.uiContext));
+  const isTargetedSnack = Boolean(!wantOnlySnack && recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || context.uiContext));
 
   if (!recResult.bestAlc && !recResult.bestSnack) {
     const answer = buildAnswer({ intent: 'UNKNOWN' });

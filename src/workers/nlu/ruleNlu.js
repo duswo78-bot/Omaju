@@ -219,15 +219,17 @@ function extractConstraints(text) {
     if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
   }
 
+  const clean = String(text || '').replace(/\s+/g, '');
   const mentionsAlcohol =
     /술|맥주|소주|와인|막걸리|하이볼|위스키|칵테일|보드카|전통주|마실|한\s*잔|도수/.test(text);
   const onlyAlcohol =
     (/술만|주류만|마실\s*것만|술\s*추천|도수/.test(text) && !/안주/.test(text)) ||
     (/약한\s*도수|센\s*거|도\s*낮은/.test(text) && !/안주/.test(text));
   const onlySnack =
-    (/안주만|밥만|식사만|안주\s*위주|음식만|안주\s*추천|안주\s*골라/.test(text) &&
-      !/술\s*추천/.test(text)) ||
-    (/안주/.test(text) && !mentionsAlcohol);
+    (/안주만|밥만|식사만|안주\s*위주|음식만|야식만|먹을\s*것만|간식만|디저트만|안주만\s*추천|안주만\s*골라|안주만\s*줘|안주만\s*해줘|안주만\s*볼래|안주만\s*먹을래/.test(text) &&
+      !/술\s*추천|술도/.test(text)) ||
+    (/안주|야식|간식|디저트/.test(text) && !mentionsAlcohol) ||
+    /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
   return {
     onlyAlcohol,
