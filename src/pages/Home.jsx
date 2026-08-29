@@ -674,34 +674,48 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <h1 className="text-gradient" style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.8rem', textAlign: 'center' }}>
-        오늘 무슨 술 마시나요?
-      </h1>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '2.5rem' }}>
-        <p style={{ color: 'var(--text-secondary)', margin: 0, textAlign: 'center', fontSize: '0.9rem' }}>
-          마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다.
-        </p>
-        <button
-          onClick={handleToggleSound}
-          style={{
-            background: isMuted ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.08)',
-            border: isMuted ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: '50%',
-            width: '26px',
-            height: '26px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: isMuted ? '#f87171' : '#4ade80',
-            padding: 0,
-            transition: 'all 0.2s ease',
+      {/* ===== 홈 헤더 영역 (좌측 정렬 및 80% 크기 조정) ===== */}
+      <div style={{ width: '100%', padding: '0 0.5rem', marginBottom: '2rem' }}>
+        <h1 
+          className="text-gradient" 
+          style={{ 
+            fontSize: '1.6rem', 
+            fontWeight: 'bold', 
+            margin: '0 0 0.45rem 0', 
+            textAlign: 'left',
+            wordBreak: 'keep-all',
+            letterSpacing: '-0.5px'
           }}
-          title={isMuted ? '소리 켜기' : '소리 끄기'}
-          aria-label={isMuted ? '소리 켜기' : '소리 끄기'}
         >
-          {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-        </button>
+          오늘 무슨 술 마시나요?
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem' }}>
+          <p style={{ color: 'var(--text-secondary)', margin: 0, textAlign: 'left', fontSize: '0.88rem', wordBreak: 'keep-all', lineHeight: '1.4' }}>
+            오마주가 마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다. 😊
+          </p>
+          <button
+            onClick={handleToggleSound}
+            style={{
+              background: isMuted ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+              border: isMuted ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '50%',
+              width: '28px',
+              height: '28px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: isMuted ? '#f87171' : '#4ade80',
+              padding: 0,
+              flexShrink: 0,
+              transition: 'all 0.2s ease',
+            }}
+            title={isMuted ? '소리 켜기' : '소리 끄기'}
+            aria-label={isMuted ? '소리 켜기' : '소리 끄기'}
+          >
+            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+          </button>
+        </div>
       </div>
 
       {/* ===== 드링크 카드 그리드 ===== */}
