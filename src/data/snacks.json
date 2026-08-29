@@ -406,7 +406,11 @@
       "alc_beer_stella",
       "alc_whiskey_shot",
       "alc_soju_jinro",
-      "alc_makgeolli_oksusu"
+      "alc_makgeolli_oksusu",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "sad",
@@ -421,7 +425,9 @@
       "마른안주",
       "든든한",
       "신선",
-      "고급"
+      "고급",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "5분",
@@ -597,7 +603,12 @@
       "alc_bokbunja",
       "alc_soju_starlight",
       "alc_wine_sparkling",
-      "alc_chungha"
+      "alc_chungha",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "happy",
@@ -612,7 +623,9 @@
     ],
     "tags": [
       "튀김",
-      "고급"
+      "고급",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "25분",
@@ -646,7 +659,12 @@
       "alc_highball_jimbeam",
       "alc_beer_heineken",
       "alc_highball_jose",
-      "alc_soju_cham"
+      "alc_soju_cham",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "comfort",
@@ -660,7 +678,9 @@
     ],
     "tags": [
       "간단안주",
-      "인기"
+      "인기",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "15분",
@@ -787,7 +807,12 @@
     "sweet": 0,
     "bestDrinks": [
       "alc_bokbunja",
-      "alc_beer_stella"
+      "alc_beer_stella",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "stress",
@@ -804,7 +829,9 @@
       "해산물",
       "든든한",
       "인기",
-      "매콤달콤"
+      "매콤달콤",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "15분",
@@ -2967,7 +2994,12 @@
       "alc_highball_suntory",
       "alc_soju_goodday",
       "alc_wine_port",
-      "alc_soju_starlight"
+      "alc_soju_starlight",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "casual",
@@ -2983,7 +3015,9 @@
       "간단안주",
       "신선",
       "고급",
-      "가성비"
+      "가성비",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "15분",
@@ -3521,7 +3555,12 @@
     "bestDrinks": [
       "alc_beer_guinness",
       "alc_highball_jimbeam",
-      "alc_cocktail_midori"
+      "alc_cocktail_midori",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "comfort",
@@ -3534,7 +3573,9 @@
     ],
     "tags": [
       "고기/구이",
-      "든든한"
+      "든든한",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "25분",
@@ -3614,7 +3655,12 @@
     "bestDrinks": [
       "alc_beer_tsingtao",
       "alc_beer_heineken",
-      "alc_beer_kelly"
+      "alc_beer_kelly",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "romantic",
@@ -3630,7 +3676,9 @@
     "tags": [
       "간단안주",
       "고급",
-      "가성비"
+      "가성비",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "10분",
@@ -3661,7 +3709,12 @@
     "bestDrinks": [
       "alc_wine_white",
       "alc_makgeolli_oksusu",
-      "alc_cocktail_peach"
+      "alc_cocktail_peach",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "stress",
@@ -3676,7 +3729,9 @@
     "tags": [
       "간단안주",
       "가성비",
-      "단짠"
+      "단짠",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "10분",
@@ -3888,7 +3943,11 @@
     "bestDrinks": [
       "alc_whiskey_shot",
       "alc_beer_heineken",
-      "alc_soju_hwayo"
+      "alc_soju_hwayo",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "happy",
@@ -3902,7 +3961,9 @@
       "튀김",
       "인기",
       "추천",
-      "클래식"
+      "클래식",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "30분",
@@ -3933,7 +3994,12 @@
     "sweet": 2,
     "bestDrinks": [
       "alc_soju_starlight",
-      "alc_vodka_tonic"
+      "alc_vodka_tonic",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "stress",
@@ -3947,7 +4013,9 @@
     "tags": [
       "간단안주",
       "매콤달콤",
-      "단짠"
+      "단짠",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "20분",
@@ -4992,7 +5060,9 @@
     "tags": [
       "고기",
       "든든한",
-      "소주안주"
+      "소주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -5007,7 +5077,12 @@
     "bestDrinks": [
       "alc_soju_cham",
       "alc_beer_cass",
-      "alc_wine_red"
+      "alc_wine_red",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -8502,7 +8577,9 @@
       "포차",
       "단짠",
       "야식",
-      "소주안주"
+      "소주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -8516,7 +8593,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_soju_cham",
-      "alc_beer_cass"
+      "alc_beer_cass",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "30분",
@@ -8594,7 +8676,9 @@
       "마른안주",
       "바삭한",
       "간단한",
-      "맥주안주"
+      "맥주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -8609,7 +8693,12 @@
     "bestDrinks": [
       "alc_beer_cass",
       "alc_beer_guinness",
-      "alc_beer_tsingtao"
+      "alc_beer_tsingtao",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "20분",
@@ -8778,7 +8867,9 @@
       "마른안주",
       "바삭한",
       "간단한",
-      "맥주안주"
+      "맥주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -8793,7 +8884,12 @@
     "bestDrinks": [
       "alc_beer_cass",
       "alc_beer_guinness",
-      "alc_beer_tsingtao"
+      "alc_beer_tsingtao",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -8916,7 +9012,9 @@
       "마른안주",
       "바삭한",
       "간단한",
-      "맥주안주"
+      "맥주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -8931,7 +9029,12 @@
     "bestDrinks": [
       "alc_beer_cass",
       "alc_beer_guinness",
-      "alc_beer_tsingtao"
+      "alc_beer_tsingtao",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "20분",
@@ -9146,7 +9249,9 @@
       "마른안주",
       "바삭한",
       "간단한",
-      "맥주안주"
+      "맥주안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9161,7 +9266,12 @@
     "bestDrinks": [
       "alc_beer_cass",
       "alc_beer_guinness",
-      "alc_beer_tsingtao"
+      "alc_beer_tsingtao",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -9376,7 +9486,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9390,7 +9502,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -9421,7 +9538,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9435,7 +9554,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -9466,7 +9590,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9480,7 +9606,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9511,7 +9642,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9525,7 +9658,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9556,7 +9694,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9570,7 +9710,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9601,7 +9746,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9615,7 +9762,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9691,7 +9843,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9705,7 +9859,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -9736,7 +9895,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9750,7 +9911,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9826,7 +9992,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9840,7 +10008,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9871,7 +10044,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9885,7 +10060,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -9961,7 +10141,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -9975,7 +10157,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -10096,7 +10283,9 @@
       "치즈",
       "고급스러운",
       "분위기",
-      "와인안주"
+      "와인안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -10110,7 +10299,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_wine_red",
-      "alc_wine_white"
+      "alc_wine_white",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -10140,7 +10334,8 @@
     "tags": [
       "달콤한",
       "고급스러운",
-      "위스키안주"
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -10156,7 +10351,11 @@
       "alc_whiskey_shot",
       "alc_makgeolli_jipyeong",
       "alc_wine_red",
-      "alc_cocktail_kahlua"
+      "alc_cocktail_kahlua",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "5분",
@@ -10185,7 +10384,8 @@
     "tags": [
       "달콤한",
       "고급스러운",
-      "위스키안주"
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -10200,7 +10400,11 @@
     "bestDrinks": [
       "alc_whiskey_shot",
       "alc_makgeolli_jipyeong",
-      "alc_beer_guinness"
+      "alc_beer_guinness",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "10분",
@@ -10317,7 +10521,9 @@
     "tags": [
       "단짠",
       "바삭한",
-      "하이볼안주"
+      "하이볼안주",
+      "위스키안주",
+      "위스키"
     ],
     "moods": [
       "회식",
@@ -10331,7 +10537,12 @@
     "spicyLevel": 0,
     "bestDrinks": [
       "alc_highball_suntory",
-      "alc_highball_earlgrey"
+      "alc_highball_earlgrey",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "recipe": {
       "time": "15분",
@@ -13626,7 +13837,12 @@
       "alc_beer_cass",
       "alc_beer_terra",
       "alc_soju_cham",
-      "alc_soju_jinro"
+      "alc_soju_jinro",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "sad",
@@ -13638,7 +13854,9 @@
     "tags": [
       "식사/면",
       "야식",
-      "든든한"
+      "든든한",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "10분",
@@ -14068,7 +14286,12 @@
       "alc_beer_cass",
       "alc_beer_terra",
       "alc_soju_cham",
-      "alc_soju_jinro"
+      "alc_soju_jinro",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "friends",
@@ -14080,7 +14303,9 @@
     "tags": [
       "매운안주",
       "치즈",
-      "인기"
+      "인기",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "40분",
@@ -14306,7 +14531,12 @@
       "alc_beer_cass",
       "alc_beer_terra",
       "alc_beer_kelly",
-      "alc_highball_suntory"
+      "alc_highball_suntory",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "refresh",
@@ -14322,7 +14552,9 @@
     "tags": [
       "맥주안주",
       "치즈",
-      "든든한"
+      "든든한",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "20분",
@@ -15087,7 +15319,12 @@
       "alc_beer_cass",
       "alc_beer_terra",
       "alc_highball_suntory",
-      "alc_cocktail_peach"
+      "alc_cocktail_peach",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "movie",
@@ -15101,7 +15338,9 @@
     "tags": [
       "치즈",
       "트렌디",
-      "맥주안주"
+      "맥주안주",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "20분",
@@ -15381,7 +15620,12 @@
       "alc_wine_white",
       "alc_wine_sparkling",
       "alc_highball_suntory",
-      "alc_soju_starlight"
+      "alc_soju_starlight",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "celebrate",
@@ -15397,7 +15641,9 @@
     "tags": [
       "와인안주",
       "신선한",
-      "트렌디"
+      "트렌디",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "10분",
@@ -15627,7 +15873,12 @@
       "alc_wine_red",
       "alc_wine_white",
       "alc_highball_suntory",
-      "alc_beer_tsingtao"
+      "alc_beer_tsingtao",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
     ],
     "moods": [
       "movie",
@@ -15643,7 +15894,9 @@
     "tags": [
       "와인안주",
       "고급스러운",
-      "트렌디"
+      "트렌디",
+      "위스키안주",
+      "위스키"
     ],
     "recipe": {
       "time": "10분",
@@ -15662,6 +15915,270 @@
         "빵·크래커와 함께 플레이팅합니다.",
         "와인 잔과 어울리게 구성합니다.",
         "술과 함께 내기 직전 향이 좋은 파·깨로 마감합니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_dark_chocolate",
+    "name_ko": "다크 생초콜릿",
+    "name_en": "Dark Pave Chocolate",
+    "category": "위스키안주",
+    "spicy": 0,
+    "greasy": 2,
+    "sweet": 3,
+    "bestDrinks": [
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_wild_turkey",
+      "alc_whiskey_laphroaig",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
+    ],
+    "moods": [
+      "romantic",
+      "special",
+      "honsul",
+      "comfort"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "rain",
+      "cool"
+    ],
+    "tags": [
+      "위스키안주",
+      "디저트",
+      "달콤쌉싸름",
+      "고급",
+      "로맨틱",
+      "위스키짝꿍",
+      "위스키"
+    ],
+    "recipe": {
+      "time": "20분",
+      "difficulty": "초급",
+      "ingredients": [
+        "다크초콜릿 200g",
+        "생크림 100ml",
+        "무가당 코코아파우더 약간",
+        "버터 10g"
+      ],
+      "steps": [
+        "생크림을 냄비에 넣고 가장자리가 끓어오를 때까지 데웁니다.",
+        "잘게 썬 다크초콜릿에 데운 생크림과 버터를 넣고 부드럽게 녹여줍니다.",
+        "사각 틀에 유산지를 깔고 초콜릿을 부어 냉장고에서 2시간 이상 굳힙니다.",
+        "한 입 크기로 깍둑썰기한 후 코코아파우더를 골고루 묻혀 완성합니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_baked_brie",
+    "name_ko": "구운 브리치즈 & 견과류",
+    "name_en": "Baked Brie with Honey & Nuts",
+    "category": "위스키안주",
+    "spicy": 0,
+    "greasy": 3,
+    "sweet": 3,
+    "bestDrinks": [
+      "alc_whiskey_balvenie",
+      "alc_whiskey_macallan",
+      "alc_whiskey_shot",
+      "alc_whiskey_laphroaig",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
+    ],
+    "moods": [
+      "special",
+      "romantic",
+      "comfort",
+      "honsul"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool"
+    ],
+    "tags": [
+      "위스키안주",
+      "치즈",
+      "달콤고소",
+      "비주얼안주",
+      "와인위스키공용",
+      "위스키"
+    ],
+    "recipe": {
+      "time": "15분",
+      "difficulty": "초급",
+      "ingredients": [
+        "통 브리치즈 1개",
+        "호두/아몬드/피칸 한 줌",
+        "꿀 2큰술",
+        "로즈마리 약간",
+        "크래커"
+      ],
+      "steps": [
+        "브리치즈 윗면에 격자무늬로 칼집을 냅니다.",
+        "오븐용 용기에 치즈를 올리고 견과류와 로즈마리를 얹은 뒤 꿀을 듬뿍 뿌립니다.",
+        "180도로 예열된 에어프라이어나 오븐에서 8~10분간 치즈가 부드럽게 녹을 때까지 굽습니다.",
+        "따뜻할 때 바삭한 크래커에 얹어 위스키와 함께 곁들입니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_jamon_melon",
+    "name_ko": "하몽 멜론 플래터",
+    "name_en": "Jamon & Melon Platter",
+    "category": "위스키안주",
+    "spicy": 0,
+    "greasy": 2,
+    "sweet": 4,
+    "bestDrinks": [
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_shot",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_johnnie_black"
+    ],
+    "moods": [
+      "special",
+      "romantic",
+      "happy",
+      "refresh"
+    ],
+    "weather": [
+      "summer",
+      "spring",
+      "cool"
+    ],
+    "tags": [
+      "위스키안주",
+      "단짠조합",
+      "고급플래터",
+      "와인위스키공용",
+      "홈파티",
+      "위스키"
+    ],
+    "recipe": {
+      "time": "10분",
+      "difficulty": "초급",
+      "ingredients": [
+        "잘 익은 멜론 1/4통",
+        "이베리코 하몽 50g",
+        "올리브유 약간",
+        "통후추 약간"
+      ],
+      "steps": [
+        "멜론을 먹기 좋은 크기(웨지 모양)로 썬 후 껍질과 과육을 살짝 분리합니다.",
+        "얇게 썬 하몽을 멜론 조각 위에 자연스럽게 감싸 올립니다.",
+        "엑스트라 버진 올리브유를 살짝 두르고 통후추를 갈아 올려 완성합니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_beef_tartare",
+    "name_ko": "트러플 소고기 타르타르 (육회)",
+    "name_en": "Truffle Beef Tartare",
+    "category": "위스키안주",
+    "spicy": 0,
+    "greasy": 3,
+    "sweet": 1,
+    "bestDrinks": [
+      "alc_whiskey_wild_turkey",
+      "alc_whiskey_johnnie_black",
+      "alc_whiskey_shot",
+      "alc_whiskey_macallan",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_glenfiddich"
+    ],
+    "moods": [
+      "special",
+      "celebrate",
+      "honsul"
+    ],
+    "weather": [
+      "autumn",
+      "winter",
+      "cool"
+    ],
+    "tags": [
+      "위스키안주",
+      "고급육류",
+      "트러플향",
+      "버번찰떡",
+      "단백질안주",
+      "위스키"
+    ],
+    "recipe": {
+      "time": "15분",
+      "difficulty": "중급",
+      "ingredients": [
+        "신선한 소고기 우둔살/홍두깨살 150g",
+        "트러플오일 1작은술",
+        "소금·후추 약간",
+        "케이퍼 1작은술",
+        "달걀노른자 1개",
+        "바게트"
+      ],
+      "steps": [
+        "소고기를 얇고 곱게 다집니다.",
+        "볼에 다진 소고기, 트러플오일, 소금, 통후추, 케이퍼를 넣고 가볍게 버무립니다.",
+        "접시에 원형 틀을 이용해 모양을 잡고 가운데 노른자를 얹습니다.",
+        "구운 바게트에 얹어 묵직한 위스키와 곁들여 즐깁니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_pecan_pie",
+    "name_ko": "호두 & 피칸 파이",
+    "name_en": "Pecan & Walnut Pie",
+    "category": "위스키안주",
+    "spicy": 0,
+    "greasy": 3,
+    "sweet": 4,
+    "bestDrinks": [
+      "alc_whiskey_wild_turkey",
+      "alc_whiskey_jack_daniels",
+      "alc_whiskey_balvenie",
+      "alc_whiskey_shot",
+      "alc_whiskey_macallan",
+      "alc_whiskey_glenfiddich",
+      "alc_whiskey_johnnie_black"
+    ],
+    "moods": [
+      "comfort",
+      "honsul",
+      "romantic"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool"
+    ],
+    "tags": [
+      "위스키안주",
+      "버번위스키짝꿍",
+      "고소달콤",
+      "디저트페어링",
+      "위스키"
+    ],
+    "recipe": {
+      "time": "30분",
+      "difficulty": "중급",
+      "ingredients": [
+        "피칸 및 호두 150g",
+        "파이 크러스트",
+        "메이플시럽 3큰술",
+        "황설탕 2큰술",
+        "버터 20g",
+        "계란 2개"
+      ],
+      "steps": [
+        "버터와 메이플시럽, 황설탕, 계란을 잘 섞어 필링을 만듭니다.",
+        "파이 틀에 크러스트를 깔고 볶은 피칸과 호두를 가득 채웁니다.",
+        "필링을 붓고 175도 오븐에서 25분간 노릇하게 구워냅니다.",
+        "한 김 식힌 후 버번위스키의 바닐라/오크 향과 함께 페어링합니다."
       ]
     }
   }

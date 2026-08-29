@@ -25,8 +25,20 @@ const ALC_CATEGORY_HINTS = [
   '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하',
   '진로', '참이슬', '새로', '카스', '테라', '켈리',
 ];
-const ALC_NAME_HINTS = alcoholsData.map((a) => a.name_ko).filter(Boolean);
-const SNK_NAME_HINTS = snacksData.map((s) => s.name_ko).filter(Boolean);
+const ALC_NAME_HINTS = [
+  ...new Set([
+    ...alcoholsData.map((a) => a.name_ko),
+    ...alcoholsData.map((a) => a.name_ko.split(' ')[0]),
+    '발베니', '맥캘란', '글렌피딕', '조니워커', '와일드터키', '잭다니엘', '제임슨', '산토리', '가쿠빈', '라프로익', '아드벡',
+  ]),
+].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '선물', '홈술'].includes(n));
+
+const SNK_NAME_HINTS = [
+  ...new Set([
+    ...snacksData.map((s) => s.name_ko),
+    ...snacksData.map((s) => s.name_ko.split(' ')[0]),
+  ]),
+].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '간단', '든든'].includes(n));
 const SHORT_SNACKS = ['회', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치'];
 const EXCLUDE_STOP = new Set([
   '그거', '이거', '저거', '다른', '거', '걸로', '건', '게', '것', '센', '약한', '센거', '약한거',

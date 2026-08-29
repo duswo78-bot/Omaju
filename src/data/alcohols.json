@@ -1396,6 +1396,13 @@
       "클래식"
     ],
     "pairings": [
+      "snk_dark_chocolate",
+      "snk_baked_brie",
+      "snk_cheese_platter",
+      "snk_jamon_melon",
+      "snk_steak",
+      "snk_user_1783696077714_2jtz",
+      "snk_user_1783696077714_8ffb",
       "snk_meoktae",
       "snk_truffle_fries"
     ]
@@ -1655,6 +1662,354 @@
       "snk_chicken",
       "snk_pizza",
       "snk_nacho"
+    ]
+  },
+  {
+    "id": "alc_whiskey_balvenie",
+    "name_ko": "발베니 12년 더블우드",
+    "name_en": "The Balvenie 12 DoubleWood",
+    "category": "위스키",
+    "subCategory": "싱글몰트",
+    "abv": 40,
+    "sweetness": 3,
+    "body": 4,
+    "carbonation": 0,
+    "country": "스코틀랜드",
+    "priceLevel": 4,
+    "moods": [
+      "special",
+      "comfort",
+      "romantic",
+      "honsul"
+    ],
+    "weather": [
+      "autumn",
+      "winter",
+      "rain",
+      "cool"
+    ],
+    "tags": [
+      "위스키",
+      "싱글몰트",
+      "달콤한오크",
+      "고급",
+      "혼술추천",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_dark_chocolate",
+      "snk_baked_brie",
+      "snk_cheese_platter",
+      "snk_steak",
+      "snk_user_1783696077714_8ffb"
+    ]
+  },
+  {
+    "id": "alc_whiskey_macallan",
+    "name_ko": "맥캘란 12년 셰리오크",
+    "name_en": "The Macallan 12 Sherry Oak",
+    "category": "위스키",
+    "subCategory": "싱글몰트",
+    "abv": 40,
+    "sweetness": 3,
+    "body": 5,
+    "carbonation": 0,
+    "country": "스코틀랜드",
+    "priceLevel": 5,
+    "moods": [
+      "special",
+      "romantic",
+      "celebrate",
+      "comfort"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool",
+      "rain"
+    ],
+    "tags": [
+      "위스키",
+      "셰리캐스크",
+      "묵직한풍미",
+      "선물용",
+      "고급",
+      "기념일"
+    ],
+    "pairings": [
+      "snk_dark_chocolate",
+      "snk_jamon_melon",
+      "snk_user_1783696077714_2jtz",
+      "snk_cheese_platter",
+      "snk_steak"
+    ]
+  },
+  {
+    "id": "alc_whiskey_glenfiddich",
+    "name_ko": "글렌피딕 12년",
+    "name_en": "Glenfiddich 12 Year Old",
+    "category": "위스키",
+    "subCategory": "싱글몰트",
+    "abv": 40,
+    "sweetness": 2,
+    "body": 3,
+    "carbonation": 0,
+    "country": "스코틀랜드",
+    "priceLevel": 4,
+    "moods": [
+      "refresh",
+      "happy",
+      "honsul",
+      "friends"
+    ],
+    "weather": [
+      "spring",
+      "summer",
+      "cool"
+    ],
+    "tags": [
+      "위스키",
+      "싱글몰트",
+      "청사과향",
+      "입문용위스키",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_salmon_carpaccio_extra",
+      "snk_user_1783696077714_xpn1",
+      "snk_cheese_platter",
+      "snk_truffle_fries",
+      "snk_user_1783696077714_xwdf"
+    ]
+  },
+  {
+    "id": "alc_whiskey_johnnie_black",
+    "name_ko": "조니워커 블랙 라벨",
+    "name_en": "Johnnie Walker Black Label",
+    "category": "위스키",
+    "subCategory": "블렌디드",
+    "abv": 40,
+    "sweetness": 2,
+    "body": 4,
+    "carbonation": 0,
+    "country": "스코틀랜드",
+    "priceLevel": 3,
+    "moods": [
+      "friends",
+      "comfort",
+      "honsul",
+      "hoesik"
+    ],
+    "weather": [
+      "cool",
+      "rain",
+      "winter"
+    ],
+    "tags": [
+      "위스키",
+      "블렌디드",
+      "스모키",
+      "하이볼추천",
+      "가성비",
+      "스테디셀러"
+    ],
+    "pairings": [
+      "snk_meoktae",
+      "snk_user_1783696077714_8mc4",
+      "snk_truffle_fries",
+      "snk_user_1783696077714_2jtz",
+      "snk_steak"
+    ]
+  },
+  {
+    "id": "alc_whiskey_wild_turkey",
+    "name_ko": "와일드터키 101",
+    "name_en": "Wild Turkey 101",
+    "category": "위스키",
+    "subCategory": "버번",
+    "abv": 50.5,
+    "sweetness": 3,
+    "body": 5,
+    "carbonation": 0,
+    "country": "미국",
+    "priceLevel": 3,
+    "moods": [
+      "stress",
+      "honsul",
+      "friends",
+      "celebrate"
+    ],
+    "weather": [
+      "winter",
+      "autumn",
+      "cool"
+    ],
+    "tags": [
+      "위스키",
+      "버번",
+      "고도수",
+      "강렬한바닐라",
+      "스트레스해소",
+      "남성미"
+    ],
+    "pairings": [
+      "snk_beef_tartare",
+      "snk_steak",
+      "snk_pecan_pie",
+      "snk_user_1783696077714_8mc4",
+      "snk_dark_chocolate"
+    ]
+  },
+  {
+    "id": "alc_whiskey_jack_daniels",
+    "name_ko": "잭 다니엘스 올드 No.7",
+    "name_en": "Jack Daniel's Old No.7",
+    "category": "위스키",
+    "subCategory": "테네시",
+    "abv": 40,
+    "sweetness": 3,
+    "body": 4,
+    "carbonation": 0,
+    "country": "미국",
+    "priceLevel": 3,
+    "moods": [
+      "party",
+      "friends",
+      "movie",
+      "happy"
+    ],
+    "weather": [
+      "summer",
+      "spring",
+      "cool"
+    ],
+    "tags": [
+      "위스키",
+      "잭콕",
+      "달콤한카라멜",
+      "파티인기",
+      "클래식"
+    ],
+    "pairings": [
+      "snk_nacho",
+      "snk_truffle_fries",
+      "snk_user_1783696077714_bn24",
+      "snk_cheese_stick",
+      "snk_user_1783696077714_8ffb"
+    ]
+  },
+  {
+    "id": "alc_whiskey_jameson",
+    "name_ko": "제임슨 스탠다드",
+    "name_en": "Jameson Irish Whiskey",
+    "category": "위스키",
+    "subCategory": "아이리시",
+    "abv": 40,
+    "sweetness": 2,
+    "body": 2,
+    "carbonation": 0,
+    "country": "아일랜드",
+    "priceLevel": 2,
+    "moods": [
+      "friends",
+      "happy",
+      "refresh",
+      "party"
+    ],
+    "weather": [
+      "spring",
+      "summer",
+      "cool"
+    ],
+    "tags": [
+      "위스키",
+      "아이리시",
+      "부드러움",
+      "가성비",
+      "하이볼황제",
+      "이지드링크"
+    ],
+    "pairings": [
+      "snk_truffle_fries",
+      "snk_user_1783696077714_xwdf",
+      "snk_user_1783696077714_8ffb",
+      "snk_meoktae"
+    ]
+  },
+  {
+    "id": "alc_whiskey_suntory",
+    "name_ko": "산토리 가쿠빈",
+    "name_en": "Suntory Kakubin",
+    "category": "위스키",
+    "subCategory": "재패니즈",
+    "abv": 40,
+    "sweetness": 1,
+    "body": 3,
+    "carbonation": 0,
+    "country": "일본",
+    "priceLevel": 3,
+    "moods": [
+      "honsul",
+      "friends",
+      "refresh",
+      "happy"
+    ],
+    "weather": [
+      "summer",
+      "spring",
+      "rain"
+    ],
+    "tags": [
+      "위스키",
+      "가쿠하이볼",
+      "이자카야필수",
+      "깔끔함",
+      "이자카야안주찰떡"
+    ],
+    "pairings": [
+      "snk_user_1783696077714_8mc4",
+      "snk_truffle_fries",
+      "snk_salmon",
+      "snk_meoktae",
+      "snk_user_1783696077714_xwdf"
+    ]
+  },
+  {
+    "id": "alc_whiskey_laphroaig",
+    "name_ko": "라프로익 10년",
+    "name_en": "Laphroaig 10 Year Old",
+    "category": "위스키",
+    "subCategory": "아일라 싱글몰트",
+    "abv": 40,
+    "sweetness": 1,
+    "body": 5,
+    "carbonation": 0,
+    "country": "스코틀랜드",
+    "priceLevel": 5,
+    "moods": [
+      "special",
+      "honsul",
+      "stress"
+    ],
+    "weather": [
+      "winter",
+      "rain",
+      "autumn"
+    ],
+    "tags": [
+      "위스키",
+      "피트위스키",
+      "스모키",
+      "매니아추천",
+      "개성만점",
+      "깊은여운"
+    ],
+    "pairings": [
+      "snk_user_1783696077714_zwrx",
+      "snk_user_1783696077714_xpn1",
+      "snk_dark_chocolate",
+      "snk_user_1783696077714_2jtz",
+      "snk_baked_brie"
     ]
   }
 ]

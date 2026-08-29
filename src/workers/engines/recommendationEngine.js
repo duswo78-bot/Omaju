@@ -28,7 +28,15 @@ for (const rel of relationsData) {
 }
 
 function getRelationScore(alcId, snkId) {
-  return relationMap.get(`${alcId}|${snkId}`) || 0;
+  let score = relationMap.get(`${alcId}|${snkId}`) || 0;
+  if (!score && alcId && snkId) {
+    const alc = alcoholsData.find((a) => a.id === alcId);
+    const snk = snacksData.find((b) => b.id === snkId);
+    if (alc?.pairings?.includes(snkId) || snk?.bestDrinks?.includes(alcId)) {
+      score = 92;
+    }
+  }
+  return score;
 }
 
 function diversityPenalty(id, recentIds) {
