@@ -216,8 +216,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     explicitFamilies.includes('nonalc') ||
     (userTokens || []).some((t) => /논알|무알/.test(String(t)));
 
-  // 1. 주류 검색
-  if (!wantOnlySnack) {
+  // 1. 주류 검색 (안주 위주 요청이라도 술이 이미 정해졌다면 해당 술을 찾아 유지함)
+  if (!wantOnlySnack || hasExplicitAlc) {
     let alcCandidates = [];
     for (const { item, vector } of alcoholEmbeddings) {
       if (wantNonAlc && item.category !== '논알콜/음료' && item.abv !== 0) continue;
@@ -393,14 +393,14 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       (resolvedAlcIds.has(a.id) || itemMatchesHint(a, alcoholHints))
   );
 
-  if (!bestAlc && alcoholsData.length > 0 && !wantOnlySnack) {
+  if (!bestAlc && alcoholsData.length > 0 && (!wantOnlySnack || hasExplicitAlc)) {
     if (hasExplicitAlc && explicitAlcPool.length) bestAlc = pickRandom(explicitAlcPool);
     else {
       const pool = alcoholsData.filter((a) => !alcHardExcluded(a));
       bestAlc = pickRandom(pool.length ? pool : alcoholsData);
     }
   }
-  if (!bestSnack && snacksData.length > 0 && !wantOnlyAlc) {
+  if (!bestSnack && snacksData.length > 0 && (!wantOnlyAlc || hasExplicitSnack)) {
     if (hasExplicitSnack && explicitSnackPool.length) {
       bestSnack = pickRandom(explicitSnackPool);
       isSnackMatched = true;
@@ -424,9 +424,9 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }
   }
 
-  // only* 요청이면 반대편을 강제로 비움
-  if (wantOnlySnack) bestAlc = null;
-  if (wantOnlyAlc) bestSnack = null;
+  // only* 요청이면 반대편을 비우되, 이미 술이나 안주를 정한 상태에서 추천을 요청한 경우는 유지
+  if (wantOnlySnack && !hasExplicitAlc) bestAlc = null;
+  if (wantOnlyAlc && !hasExplicitSnack) bestSnack = null;
 
   // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤
   // wantGame이 명시되지 않아도 유사도 후보는 유지하되, 명시 요청 시 가산

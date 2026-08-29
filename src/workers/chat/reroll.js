@@ -25,8 +25,11 @@ export async function handleReroll(text, context) {
   );
 
   const constraints = frame?.slots?.constraints || {};
-  const wantOnlyAlc = Boolean(constraints.onlyAlcohol);
-  const wantOnlySnack = Boolean(constraints.onlySnack);
+  const hasExplicitAlc = (frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(pendingText);
+  const hasExplicitSnack = (frame?.slots?.snackHints || []).length > 0 || (frame?.resolved?.snackIds || []).length > 0;
+  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !hasExplicitSnack;
+  const wantOnlySnack = Boolean(constraints.onlySnack) && !hasExplicitAlc;
+  const isTargetedSnack = Boolean(recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || pendingText));
 
   if (!recResult.bestAlc && !recResult.bestSnack) {
     const answer = buildAnswer({ intent: 'UNKNOWN' });
@@ -39,6 +42,7 @@ export async function handleReroll(text, context) {
     bestSnack: recResult.bestSnack,
     wantOnlyAlc,
     wantOnlySnack,
+    isTargetedSnack,
     skipPrompt: false,
     matchedOpening: null,
     profile: context.profile,

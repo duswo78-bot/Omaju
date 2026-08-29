@@ -48,8 +48,11 @@ export async function handleRecommendation(text, cleanText, context) {
   setLastRecommendation({ bestAlc: recResult.bestAlc, bestSnack: recResult.bestSnack });
 
   const constraints = frame?.slots?.constraints || {};
-  const wantOnlyAlc = Boolean(constraints.onlyAlcohol);
-  const wantOnlySnack = Boolean(constraints.onlySnack);
+  const hasExplicitAlc = (frame?.slots?.alcoholHints || []).length > 0 || (frame?.resolved?.alcoholIds || []).length > 0 || Boolean(context.uiContext);
+  const hasExplicitSnack = (frame?.slots?.snackHints || []).length > 0 || (frame?.resolved?.snackIds || []).length > 0;
+  const wantOnlyAlc = Boolean(constraints.onlyAlcohol) && !hasExplicitSnack;
+  const wantOnlySnack = Boolean(constraints.onlySnack) && !hasExplicitAlc;
+  const isTargetedSnack = Boolean(recResult.bestAlc && recResult.bestSnack && (hasExplicitAlc || context.uiContext));
 
   if (!recResult.bestAlc && !recResult.bestSnack) {
     const answer = buildAnswer({ intent: 'UNKNOWN' });
@@ -63,6 +66,7 @@ export async function handleRecommendation(text, cleanText, context) {
     bestGame: recResult.bestGame,
     wantOnlyAlc,
     wantOnlySnack,
+    isTargetedSnack,
     skipPrompt: context.skipPrompt,
     matchedOpening: frame?.matchedOpening || context.matchedOpening,
     profile: context.profile,
