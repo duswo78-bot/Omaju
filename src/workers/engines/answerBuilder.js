@@ -17,6 +17,20 @@ import goodbyeTemplates from '../templates/goodbye.json';
 import denyTemplates from '../templates/deny.json';
 import { composeGuideAnswer } from '../utils/composeGuide.js';
 
+function attachParticle(word, withFinal, withoutFinal) {
+  if (!word) return '';
+  const lastChar = word[word.length - 1];
+  const code = lastChar.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    const hasFinal = (code - 0xAC00) % 28 !== 0;
+    return `${word}${hasFinal ? withFinal : withoutFinal}`;
+  }
+  return `${word}${withoutFinal}`;
+}
+const eulLeul = (w) => attachParticle(w, '을', '를');
+const eunNeun = (w) => attachParticle(w, '은', '는');
+const gwaWa = (w) => attachParticle(w, '과', '와');
+
 // Helper to replace template variables
 function formatTemplate(template, bestAlc, bestSnack, bestGame, wantOnlySnack = false) {
   let text = template;
@@ -202,12 +216,46 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
         explanation = formatTemplate(pickRandom(alcoholTemplates), bestAlc, null, bestGame, false);
       }
       
-      // 프로필 취향 반영 문구 추가 (랜덤)
+      // 프로필 취향 반영 문구 추가 (일치 여부에 따라 자연스러운 연결 문구 생성)
       if (profile) {
-        if (profile.favoriteDrink && bestAlc && !wantOnlySnack && Math.random() > 0.5) {
-          reason = `(평소 ${profile.favoriteDrink}을(를) 좋아하시는 취향을 고려해 골라봤어요!)`;
-        } else if (profile.favoriteSnack && bestSnack && Math.random() > 0.5) {
-          reason = `(평소 ${profile.favoriteSnack}을(를) 즐기시니 이 안주도 맘에 드실 거예요!)`;
+        if (profile.favoriteDrink && bestAlc && !wantOnlySnack && Math.random() > 0.4) {
+          const fav = profile.favoriteDrink;
+          const isDrinkMatch =
+            (bestAlc.category && bestAlc.category.includes(fav)) ||
+            (bestAlc.name_ko && bestAlc.name_ko.includes(fav)) ||
+            (bestAlc.tags || []).some((t) => String(t).includes(fav));
+
+          if (isDrinkMatch) {
+            reason = pickRandom([
+              `(평소 ${eulLeul(fav)} 좋아하시는 취향에 딱 맞게 골라봤어요! ✨)`,
+              `(평소 즐겨 드시는 ${fav} 중에서 특별히 어울리는 픽이에요! 🍸)`,
+              `(${eunNeun(fav)} 취향 저격! 입맛에 딱 맞으실 거예요 👍)`,
+            ]);
+          } else {
+            reason = pickRandom([
+              `(평소 ${eulLeul(fav)} 즐겨 드시지만, 오늘은 분위기 전환 겸 색다르게 ${gwaWa(bestAlc.name_ko)} 함께해 보세요! 🌟)`,
+              `(평소 좋아하시는 ${gwaWa(fav)}는 또 다른 매력으로 오늘 밤을 채워드릴게요! 🍷)`,
+              `(${eulLeul(fav)} 좋아하시는 분들도 이 조합엔 푹 빠지실 거예요 😊)`,
+            ]);
+          }
+        } else if (profile.favoriteSnack && bestSnack && Math.random() > 0.4) {
+          const favSnk = profile.favoriteSnack;
+          const isSnackMatch =
+            (bestSnack.category && bestSnack.category.includes(favSnk)) ||
+            (bestSnack.name_ko && bestSnack.name_ko.includes(favSnk)) ||
+            (bestSnack.tags || []).some((t) => String(t).includes(favSnk));
+
+          if (isSnackMatch) {
+            reason = pickRandom([
+              `(평소 ${eulLeul(favSnk)} 즐기시는 취향에 맞춰 엄선했어요! 🍽️)`,
+              `(${favSnk}파 손님 취향에 딱 맞는 최고의 안주 픽입니다! ✨)`,
+            ]);
+          } else {
+            reason = pickRandom([
+              `(평소 좋아하시는 ${favSnk} 대신 오늘은 색다른 별미로 골라봤어요! 😋)`,
+              `(${eulLeul(favSnk)} 즐겨 드시는 분의 입맛도 사로잡을 특급 밸런스 안주예요!)`,
+            ]);
+          }
         }
       }
       
