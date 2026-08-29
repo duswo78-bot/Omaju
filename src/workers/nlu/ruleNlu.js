@@ -38,7 +38,22 @@ function uniq(arr) {
   return [...new Set((arr || []).filter(Boolean))];
 }
 
+export function isDeclineAlcohol(hay, text) {
+  return (
+    /술\s*(?:안\s*마|안\s*땡|안\s*먹|안\s*해|생각\s*없|못\s*마|안\s*끌|그만|안마|패스|빼|안먹|안땡|자제|끊)|금주|단주|술\s*됐어|술\s*생각\s*없|술이\s*안\s*땡|술은\s*패스|술\s*안마셔|술\s*안마신다|술\s*안먹어|술안마실|술안먹을/.test(hay || '') ||
+    /술\s*(?:안\s*마|안\s*땡|안\s*먹|생각\s*없|못\s*마|안\s*끌)|금주|단주/.test(text || '')
+  );
+}
+
+export function isAloneUtterance(hay, text) {
+  return (
+    /혼자\s*(?:야|마셔|마시|있어|먹어|한잔|마실|놀|달려|보내|있네|다|당|서|라)|나\s*혼자|혼술|혼맥|혼소|혼와|나홀로\s*술|혼자인데|혼술인데|혼술이야|혼자야/.test(hay || '') ||
+    /혼자\s*(?:야|마셔|마시|있어|먹어|한잔)|나\s*혼자|혼술/.test(text || '')
+  );
+}
+
 function hasRecommendAsk(text) {
+  if (isDeclineAlcohol(text, text)) return false;
   return /추천|골라|뭐\s*마시|뭐\s*먹|먹고싶|마시고싶|한\s*잔|없나|없을까|부탁|각(?:이|임|야)?|어울리|페어링|마실\s*거|먹기\s*좋은|마시기\s*좋은/.test(
     text
   );
@@ -345,7 +360,16 @@ export function ruleNlu(rawText, cleanText) {
     /술게임|게임\s*추천|재밌는\s*게임|놀\s*거리|랜덤\s*게임/.test(hay) ||
     (hay.includes('게임') && domainScore >= 0);
 
+  const declineAlcohol = isDeclineAlcohol(hay, text);
+  const alone = isAloneUtterance(hay, text);
+
   signals.moods = enrichMoodsFromText(text, signals.moods);
+  if (alone) {
+    signals.moods = uniq([...signals.moods, 'honsul', 'comfort', 'quiet']);
+    if (!signals.detectedSituation) {
+      signals.detectedSituation = { id: 'sit_honsul', name: '혼술' };
+    }
+  }
 
   // --- Intent 우선순위 ---
   let intent = 'GUIDE';
@@ -354,8 +378,14 @@ export function ruleNlu(rawText, cleanText) {
   let guideHint;
   let placeQuery;
 
+  // 0.5) 술 거부 / 금주 / 술 안 땡김 의도 (추천으로 억지 전환 방지)
+  if (declineAlcohol) {
+    intent = 'DECLINE_ALCOHOL';
+    confidence = 0.94;
+    guideHint = 'nonalc';
+  }
   // 1) 짧은 긍정/부정 (상태머신에서 쓰임) — 순수 단답만
-  if (isPureShortReply(clean, AFFIRM, 6)) {
+  else if (isPureShortReply(clean, AFFIRM, 6)) {
     intent = 'AFFIRM';
     confidence = 0.85;
   } else if (isPureShortReply(clean, DENY, 6)) {
@@ -468,16 +498,17 @@ export function ruleNlu(rawText, cleanText) {
     guideHint = pickGuideHint(hints, constraints, signals, hay);
     needsClarification = '술·안주·상황 중 어떤 힌트를 줄까요?';
   }
-  // 8) 명확한 추천 신호 + 엔티티/제약/게임/추천 요청
+  // 8) 명확한 추천 신호 + 엔티티/제약/게임/추천 요청 / 혼술 상황
   else if (
     hasEntity ||
     hasConstraintSignal ||
     wantGame ||
     recommendAsk ||
+    alone ||
     (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔/.test(hay) && domainScore >= 1)
   ) {
     intent = 'RECOMMEND';
-    confidence = hasEntity || hasConstraintSignal ? 0.88 : 0.75;
+    confidence = hasEntity || hasConstraintSignal || alone ? 0.88 : 0.75;
   }
   // 9) 도메인 힌트만 있고 애매함 → 상황 확인
   else if (domainScore > 0 && !hasEntity) {

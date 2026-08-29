@@ -27,6 +27,9 @@ export function decideResponsePolicy(frame, dialogue = {}) {
     hardConstraint ||
     (hasEntity && (intent === 'GUIDE' || intent === 'AFFIRM' || open === 'soft'));
 
+  if (intent === 'DECLINE_ALCOHOL') {
+    return { action: 'decline_alcohol', askType: 'nonalc_or_snack', reason: 'decline_alcohol' };
+  }
   if (intent === 'GREETING' || intent === 'THANKS' || intent === 'GOODBYE' || intent === 'QUESTION') {
     return { action: 'social', askType: intent === 'GREETING' ? 'clarify' : null, reason: 'social_intent' };
   }

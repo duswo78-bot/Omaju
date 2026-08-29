@@ -428,18 +428,21 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   if (wantOnlySnack && !hasExplicitAlc) bestAlc = null;
   if (wantOnlyAlc && !hasExplicitSnack) bestSnack = null;
 
-  // 5. 게임 — 유사도 1등만 고르지 않고 상위권에서 랜덤
-  // wantGame이 명시되지 않아도 유사도 후보는 유지하되, 명시 요청 시 가산
-  if (gameEmbeddings.length > 0) {
+  const isAlone =
+    contextSignals?.relation === 'alone' ||
+    (contextSignals?.moods || []).includes('honsul') ||
+    /혼자|혼술|혼맥|혼소/.test(cleanText);
+
+  // 5. 게임 — 혼자 마실 때는 단체 술게임을 추천하지 않고 술/안주에 집중
+  if (gameEmbeddings.length > 0 && !(isAlone && !frame?.slots?.wantGame && !cleanText.includes('게임'))) {
     const gameBoost = frame?.slots?.wantGame ? 0.2 : 0;
     const gameCandidates = gameEmbeddings.map(({ item, vector }) => ({
       item,
       score: cosineSimilarity(queryVec, vector) + gameBoost - diversityPenalty(item.id, recentIds),
     }));
     bestGame = pickFromScoreBand(gameCandidates, 'score', 0.08, 4)?.item || gameCandidates[0]?.item || null;
-    if (!frame?.slots?.wantGame && !cleanText.includes('게임') && !cleanText.includes('놀')) {
-      // 비명시 요청에서는 게임 카드를 항상 붙이지 않도록 null 가능 — 핸들러에서 필터
-    }
+  } else {
+    bestGame = null;
   }
 
   rememberRecommendedIds([bestAlc?.id, bestSnack?.id, bestGame?.id]);

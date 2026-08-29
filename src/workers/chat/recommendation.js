@@ -59,6 +59,11 @@ export async function handleRecommendation(text, cleanText, context) {
     return { answer, bestAlc: null, bestSnack: null, bestGame: null, state: 'IDLE' };
   }
 
+  const isAlone =
+    signals.relation === 'alone' ||
+    (signals.moods || []).includes('honsul') ||
+    /혼자|혼술|혼맥|혼소/.test(cleanText);
+
   const answer = buildAnswer({
     intent: 'RECOMMEND',
     bestAlc: recResult.bestAlc,
@@ -67,6 +72,7 @@ export async function handleRecommendation(text, cleanText, context) {
     wantOnlyAlc,
     wantOnlySnack,
     isTargetedSnack,
+    isAlone,
     skipPrompt: context.skipPrompt,
     matchedOpening: frame?.matchedOpening || context.matchedOpening,
     profile: context.profile,

@@ -36,6 +36,11 @@ export async function handleReroll(text, context) {
     return { answer, bestAlc: null, bestSnack: null, bestGame: null, state: 'IDLE' };
   }
 
+  const isAlone =
+    context.signals?.relation === 'alone' ||
+    (context.signals?.moods || []).includes('honsul') ||
+    /혼자|혼술|혼맥|혼소/.test(combinedText);
+
   const answer = buildAnswer({
     intent: 'REROLL',
     bestAlc: recResult.bestAlc,
@@ -43,6 +48,7 @@ export async function handleReroll(text, context) {
     wantOnlyAlc,
     wantOnlySnack,
     isTargetedSnack,
+    isAlone,
     skipPrompt: false,
     matchedOpening: null,
     profile: context.profile,

@@ -60,7 +60,22 @@ const targetedSnackTemplates = [
   "**{alcName}**에 곁들일 훌륭한 안주를 찾으셨군요! **{snkName}**이(가) 제격입니다. {s0} 풍미가 술맛을 완벽하게 받쳐줄 거예요.",
 ];
 
-export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, isTargetedSnack, skipPrompt, matchedOpening, profile }) {
+const declineAlcoholTemplates = [
+  "오늘은 술 없이 편안하게 쉬어가는 날이군요! 🍵 푹 쉬면서 충전하는 시간도 정말 소중하죠.\n\n혹시 시원한 무알콜 음료나 달콤한 디저트/야식이 필요하시면 언제든 말씀해 주세요!",
+  "술 생각이 전혀 안 나는 날엔 굳이 무리해서 마실 필요 전혀 없죠! 😊\n\n원하시면 속 편한 맛있는 식사 메뉴나 깔끔한 논알콜 음료로 기분 전환하실 수 있게 골라드릴게요.",
+  "금주와 휴식 모드, 적극 추천합니다! 🌿\n\n오늘 밤은 편안하고 따뜻하게 푹 쉬어보세요. 맛있는 야식이나 음료가 생각나면 언제든 불러주세요!",
+  "술은 패스하고 힐링 모드로 가시는군요! 🛋️\n\n속 편안한 따뜻한 티나 논알콜 칵테일, 혹은 든든한 안주/간식이 당기시면 언제든 말씀해 주세요.",
+];
+
+const honsulComboTemplates = [
+  "혼자만의 편안한 시간을 위해 **{alcName}** {abvInfo}과(와) **{snkName}**을(를) 추천해 드려요! 🕯️ 번잡함 없이 온전히 나에게 집중하는 힐링 조합이에요.",
+  "오늘 혼술의 주인공은 **{alcName}**! 여기에 부담 없는 **{snkName}** 한 입 곁들이면 하루 피로가 싹 풀릴 거예요. 🌿",
+  "혼자 즐기기 딱 좋은 꿀조합! **{alcName}** 한 잔에 **{snkName}** 곁들여서 느긋하게 즐겨보세요. {s0} 매력이 {a0} 술맛과 아주 잘 어울립니다.",
+  "조용히 한 잔 기울이고 싶은 날엔 **{alcName}**에 **{snkName}**만 한 게 없죠. 🍷 소소하지만 확실한 행복을 느껴보세요.",
+  "오늘 밤 나를 위한 특별한 선물! **{alcName}** {abvInfo} 한 잔과 찰떡인 **{snkName}** 조합으로 하루를 기분 좋게 마무리해 보세요.",
+];
+
+export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, isTargetedSnack, isAlone, skipPrompt, matchedOpening, profile }) {
   let empathy = "";
   let reason = "";
   let explanation = "";
@@ -97,6 +112,9 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
 
   // 2. 추천 이유 및 페어링 설명 (Reason & Explanation)
   switch (intent) {
+    case 'DECLINE_ALCOHOL':
+      explanation = pickRandom(declineAlcoholTemplates);
+      break;
     case 'GREETING':
       explanation = pickRandom(greetingTemplates);
       break;
@@ -112,6 +130,8 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
       if (bestAlc && bestSnack) {
         if (isTargetedSnack) {
           explanation += " " + formatTemplate(pickRandom(targetedSnackTemplates), bestAlc, bestSnack, bestGame);
+        } else if (isAlone) {
+          explanation += " " + formatTemplate(pickRandom(honsulComboTemplates), bestAlc, bestSnack, bestGame);
         } else {
           explanation += " " + formatTemplate(pickRandom(comboTemplates), bestAlc, bestSnack, bestGame);
         }
@@ -148,6 +168,8 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
       if (bestAlc && bestSnack) {
         if (isTargetedSnack) {
           explanation = formatTemplate(pickRandom(targetedSnackTemplates), bestAlc, bestSnack, bestGame);
+        } else if (isAlone) {
+          explanation = formatTemplate(pickRandom(honsulComboTemplates), bestAlc, bestSnack, bestGame);
         } else {
           explanation = formatTemplate(pickRandom(comboTemplates), bestAlc, bestSnack, bestGame);
         }

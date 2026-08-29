@@ -13,6 +13,7 @@ import { handleComplaint } from './complaint.js';
 import { handleMood } from './mood.js';
 import { handleGoodbye } from './goodbye.js';
 import { handleDenyAsk } from './deny.js';
+import { handleDeclineAlcohol } from './declineAlcohol.js';
 import { isState, STATES } from '../engines/stateMachine.js';
 import { setPendingContextText } from '../engines/memoryEngine.js';
 import { decideResponsePolicy } from '../semantic/policy.js';
@@ -29,6 +30,11 @@ export async function routeChat(text, cleanText, context) {
   const dialogue = getDialogueState();
   const policy = decideResponsePolicy(semantic || { intent: frame?.intent }, dialogue);
 
+  // 0) 술 거부 / 금주 의도
+  if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+    return handleDeclineAlcohol(text, context);
+  }
+
   if (isState(STATES.AWAITING_REC_CONFIRM)) {
     if (frame?.intent === 'REROLL' || frame?.intent === 'DENY') {
       return await finishRecommend(await handleReroll(text, context));
@@ -41,6 +47,9 @@ export async function routeChat(text, cleanText, context) {
 
   // FOLLOWUP: soft ask 이후 긍정 → 추천 / 거절 → 추천하지 않음
   if (isState(STATES.FOLLOWUP)) {
+    if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+      return handleDeclineAlcohol(text, context);
+    }
     if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
       return handleDenyAsk(text, context);
     }
@@ -74,6 +83,9 @@ export async function routeChat(text, cleanText, context) {
   }
 
   if (isState(STATES.ASKING)) {
+    if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+      return handleDeclineAlcohol(text, context);
+    }
     if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
       return handleDenyAsk(text, context);
     }
@@ -100,6 +112,8 @@ async function dispatchByPolicy(text, cleanText, context, policy) {
   const intent = context.frame?.intent || 'GUIDE';
 
   switch (policy.action) {
+    case 'decline_alcohol':
+      return handleDeclineAlcohol(text, context);
     case 'ack_deny':
       return handleDenyAsk(text, context);
     case 'recommend':
