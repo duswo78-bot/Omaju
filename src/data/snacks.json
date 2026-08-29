@@ -16690,5 +16690,247 @@
         "포두부 위에 채소와 고기를 얹어 쌈을 싸서 도수 높은 백주와 페어링합니다."
       ]
     }
+  },
+  {
+    "id": "snk_seasonal_fruit",
+    "name_ko": "계절 모둠 과일",
+    "name_en": "Seasonal Fruit Platter",
+    "category": "디저트",
+    "spicy": 0,
+    "greasy": 0,
+    "sweet": 4,
+    "bestDrinks": [
+      "alc_wine_white",
+      "alc_wine_red",
+      "alc_highball_jimbeam",
+      "alc_beer_cass",
+      "alc_makgeolli_slow"
+    ],
+    "moods": [
+      "happy",
+      "refresh",
+      "special",
+      "friends",
+      "comfort"
+    ],
+    "weather": [
+      "hot",
+      "spring",
+      "summer",
+      "autumn",
+      "any"
+    ],
+    "tags": [
+      "과일",
+      "과일안주",
+      "상큼",
+      "디저트",
+      "가벼운",
+      "인기"
+    ],
+    "recipe": {
+      "time": "10분",
+      "difficulty": "초급",
+      "ingredients": [
+        "수박·멜론·파인애플·포도·방울토마토 등 제철과일",
+        "민트잎 약간",
+        "얼음"
+      ],
+      "steps": [
+        "제철 과일을 먹기 좋은 한입 크기로 슬라이스합니다.",
+        "접시에 색감이 다채롭게 펼쳐 담고 민트잎으로 장식합니다.",
+        "시원하고 상큼하게 가벼운 술이나 와인과 함께 즐깁니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_dried_persimmon_cheese",
+    "name_ko": "곶감 크림치즈 말이",
+    "name_en": "Dried Persimmon with Cream Cheese",
+    "category": "디저트",
+    "spicy": 0,
+    "greasy": 1,
+    "sweet": 4,
+    "bestDrinks": [
+      "alc_whiskey_balvenie",
+      "alc_wine_red",
+      "alc_makgeolli_slow",
+      "alc_traditional_moonbaesool"
+    ],
+    "moods": [
+      "romantic",
+      "special",
+      "comfort",
+      "honsul"
+    ],
+    "weather": [
+      "autumn",
+      "winter",
+      "cold",
+      "any"
+    ],
+    "tags": [
+      "과일",
+      "치즈",
+      "디저트",
+      "고급",
+      "트렌디",
+      "인기"
+    ],
+    "recipe": {
+      "time": "15분",
+      "difficulty": "초급",
+      "ingredients": [
+        "말랑한 곶감 4개",
+        "크림치즈 4큰술",
+        "호두 또는 견과류 4알"
+      ],
+      "steps": [
+        "곶감의 꼭지를 떼고 한쪽 면을 갈라 평평하게 폅니다.",
+        "곶감 위에 부드러운 크림치즈를 도톰하게 펴 바르고 호두를 올립니다.",
+        "김밥처럼 단단하게 말아 랩으로 감싼 뒤 냉동실에 15분간 굳힙니다.",
+        "한입 크기로 동글동글하게 썰어 와인이나 위스키와 곁들입니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_shinemuscat_caprese",
+    "name_ko": "샤인머스캣 카프레제",
+    "name_en": "Shine Muscat Caprese",
+    "category": "샐러드",
+    "spicy": 0,
+    "greasy": 1,
+    "sweet": 3,
+    "bestDrinks": [
+      "alc_wine_white",
+      "alc_highball_jimbeam",
+      "alc_vodka_absolut"
+    ],
+    "moods": [
+      "refresh",
+      "romantic",
+      "special"
+    ],
+    "weather": [
+      "hot",
+      "summer",
+      "spring",
+      "any"
+    ],
+    "tags": [
+      "과일",
+      "샐러드",
+      "치즈",
+      "상큼",
+      "고급"
+    ],
+    "recipe": {
+      "time": "10분",
+      "difficulty": "초급",
+      "ingredients": [
+        "샤인머스캣 1송이",
+        "보코치니(한입 모짜렐라 치즈) 10알",
+        "바질페스토 1큰술",
+        "올리브유 1큰술",
+        "발사믹 글레이즈"
+      ],
+      "steps": [
+        "샤인머스캣을 반으로 자릅니다.",
+        "보코치니 치즈와 샤인머스캣을 번갈아 접시에 담습니다.",
+        "올리브유와 바질페스토, 발사믹 글레이즈를 가볍게 뿌려 완성합니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_strawberry_ricotta",
+    "name_ko": "생딸기 리코타 샐러드",
+    "name_en": "Strawberry Ricotta Salad",
+    "category": "샐러드",
+    "spicy": 0,
+    "greasy": 0,
+    "sweet": 3,
+    "bestDrinks": [
+      "alc_wine_white",
+      "alc_cocktail_mojito",
+      "alc_beer_terra"
+    ],
+    "moods": [
+      "refresh",
+      "happy",
+      "special"
+    ],
+    "weather": [
+      "spring",
+      "winter",
+      "any"
+    ],
+    "tags": [
+      "과일",
+      "샐러드",
+      "디저트",
+      "가벼운",
+      "상큼"
+    ],
+    "recipe": {
+      "time": "10분",
+      "difficulty": "초급",
+      "ingredients": [
+        "신선한 딸기 10알",
+        "리코타 치즈 3큰술",
+        "어린잎 채소 한 줌",
+        "발사믹 글레이즈",
+        "슬라이스 아몬드"
+      ],
+      "steps": [
+        "딸기는 꼭지를 떼고 반으로 썹니다.",
+        "어린잎 채소 위에 딸기와 리코타 치즈를 듬뿍 올립니다.",
+        "슬라이스 아몬드를 뿌리고 발사믹 글레이즈를 둘러 냅니다."
+      ]
+    }
+  },
+  {
+    "id": "snk_mango_cheese_cube",
+    "name_ko": "아이스 망고 & 큐브치즈",
+    "name_en": "Frozen Mango & Cheese Cubes",
+    "category": "디저트",
+    "spicy": 0,
+    "greasy": 1,
+    "sweet": 4,
+    "bestDrinks": [
+      "alc_highball_jimbeam",
+      "alc_beer_cass",
+      "alc_cocktail_mojito"
+    ],
+    "moods": [
+      "refresh",
+      "happy",
+      "comfort"
+    ],
+    "weather": [
+      "hot",
+      "summer",
+      "any"
+    ],
+    "tags": [
+      "과일",
+      "디저트",
+      "치즈",
+      "시원한",
+      "가벼운"
+    ],
+    "recipe": {
+      "time": "5분",
+      "difficulty": "초급",
+      "ingredients": [
+        "냉동 애플망고 1컵",
+        "플레인/과일 큐브치즈 10개",
+        "꿀 또는 연유 약간"
+      ],
+      "steps": [
+        "아이스 망고를 그릇에 담습니다.",
+        "큐브치즈를 고르게 얹고 꿀이나 연유를 살짝 두릅니다.",
+        "시원하고 달콤하게 칵테일이나 맥주 안주로 즐깁니다."
+      ]
+    }
   }
 ]
