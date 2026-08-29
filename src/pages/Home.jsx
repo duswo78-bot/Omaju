@@ -315,7 +315,29 @@ export default function Home() {
   const [trashHover, setTrashHover] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isMuted, setIsMuted] = useState(() => getIsMuted());
+  const [userName, setUserName] = useState(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem('omaju_user_profile') || '{}');
+      return p.name?.trim() || '사용자';
+    } catch {
+      return '사용자';
+    }
+  });
   const trashRef = useRef(null);
+
+  useEffect(() => {
+    const updateUserName = () => {
+      try {
+        const p = JSON.parse(localStorage.getItem('omaju_user_profile') || '{}');
+        setUserName(p.name?.trim() || '사용자');
+      } catch {
+        setUserName('사용자');
+      }
+    };
+    updateUserName();
+    window.addEventListener('storage', updateUserName);
+    return () => window.removeEventListener('storage', updateUserName);
+  }, []);
 
   useEffect(() => {
     const handleSoundToggled = (e) => {
@@ -691,7 +713,7 @@ export default function Home() {
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem' }}>
           <p style={{ color: 'var(--text-secondary)', margin: 0, textAlign: 'left', fontSize: '0.88rem', wordBreak: 'keep-all', lineHeight: '1.4' }}>
-            오마주가 마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다. 😊
+            오마주는 {userName}님이 마시는 술에 딱 맞는 최고의 안주를 추천해 드립니다. 😊
           </p>
           <button
             onClick={handleToggleSound}
