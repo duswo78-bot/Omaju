@@ -30,17 +30,26 @@ export function decideResponsePolicy(frame, dialogue = {}) {
   if (intent === 'DECLINE_ALCOHOL') {
     return { action: 'decline_alcohol', askType: 'nonalc_or_snack', reason: 'decline_alcohol' };
   }
+  if (intent === 'CLARIFY') {
+    return { action: 'clarify', askType: 'clarify_candidate', reason: 'ambiguous_candidate' };
+  }
+  if (intent === 'CAPABILITY_GUIDE') {
+    return { action: 'capability_guide', askType: 'domain_guide', reason: 'scope_guidance' };
+  }
+  if (intent === 'WITTY_CHITCHAT' || intent === 'OFFTOPIC') {
+    return { action: 'witty_chitchat', askType: 'chitchat_pivot', reason: 'witty_smalltalk' };
+  }
   if (intent === 'GREETING' || intent === 'THANKS' || intent === 'GOODBYE' || intent === 'QUESTION') {
     return { action: 'social', askType: intent === 'GREETING' ? 'clarify' : null, reason: 'social_intent' };
   }
-  if (intent === 'COMPLAINT' || intent === 'UNKNOWN') {
+  if (intent === 'COMPLAINT') {
     return { action: 'apology', askType: 'clarify', reason: 'repair' };
+  }
+  if (intent === 'UNKNOWN') {
+    return { action: 'apology', askType: 'clarify', reason: 'unknown_fallback' };
   }
   if (intent === 'PLACE' || frame?.placeQuery) {
     return { action: 'place', askType: 'place', reason: 'place_intent' };
-  }
-  if (intent === 'OFFTOPIC') {
-    return { action: 'apology', askType: 'clarify', reason: 'offtopic_redirect' };
   }
 
   // 직전 soft ask / clarify 이후 긍정·추천 → 추천

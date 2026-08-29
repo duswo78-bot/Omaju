@@ -214,8 +214,9 @@ function extractConstraints(text) {
   return {
     onlyAlcohol,
     onlySnack,
-    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text),
+    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text),
     spicy: /매운|매콤|불닭|핫/.test(text),
+    sweet: /달달|달콤|스위트|단거|디저트/.test(text),
     light: /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단/.test(text),
     cheap: /싸게|저렴|가성비|싼|저가|호불호/.test(text),
     hangover: /해장|숙취|속쓰|속이\s*안/.test(text),
@@ -516,48 +517,32 @@ export function ruleNlu(rawText, cleanText) {
     intent = 'RECOMMEND';
     confidence = hasEntity || hasConstraintSignal || alone ? 0.88 : 0.75;
   }
-  // 9) 도메인 힌트만 있고 애매함 → 상황 확인
+  // 9) 도메인 힌트가 있고 특정 방향이 보임 → 1단계: 명확화 (후보 제시)
   else if (domainScore > 0 && !hasEntity) {
-    intent = 'GUIDE';
-    confidence = 0.7;
     guideHint = pickGuideHint(hints, constraints, signals, hay);
-    needsClarification =
-      guideHint === 'general'
-        ? '술·안주·상황 중 어떤 힌트를 줄까요?'
-        : '조금 더 구체적으로 알려주시면 딱 맞춰 드릴게요.';
+    if (guideHint && guideHint !== 'general') {
+      intent = 'CLARIFY';
+      confidence = 0.75;
+    } else {
+      intent = 'CAPABILITY_GUIDE';
+      confidence = 0.72;
+    }
   }
-  // 9.5) 정말 모르겠는 말(오타·줄임·엉뚱한 소리) → UNKNOWN
-  else if (
-    looksUnintelligible(
-      rawText || text,
-      clean,
-      hay,
-      domainScore,
-      hasEntity,
-      hasConstraintSignal,
-      recommendAsk,
-      wantGame,
-      signals
-    )
-  ) {
-    intent = 'UNKNOWN';
-    confidence = 0.62;
-    guideHint = 'general';
-    needsClarification = '오늘 술 마셔요?';
-  }
-  // 10) 약한 이탈
+  // 9.5) 엉뚱한 질문 / 도메인 밖 질문 / 세상만사 잡담 → 3단계: Witty Chit-chat
   else if (domainScore < 0) {
-    intent = 'OFFTOPIC';
-    confidence = 0.72;
+    intent = 'WITTY_CHITCHAT';
+    confidence = 0.85;
     guideHint = 'redirect';
-  } else {
+  }
+  // 10) 아예 매칭 안 됨 / 모호한 입력 → 2단계: Capability Guide (또는 UNKNOWN 폴백)
+  else {
     intent = 'UNKNOWN';
     confidence = 0.55;
     guideHint = 'general';
   }
 
   // 엔티티가 있으면 이탈로 오분류된 경우 추천으로 교정
-  if (hasEntity && (intent === 'OFFTOPIC' || intent === 'GUIDE' || intent === 'UNKNOWN')) {
+  if (hasEntity && (intent === 'OFFTOPIC' || intent === 'WITTY_CHITCHAT' || intent === 'UNKNOWN')) {
     intent = 'RECOMMEND';
     confidence = Math.max(confidence, 0.82);
   }

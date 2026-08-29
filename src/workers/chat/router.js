@@ -14,6 +14,9 @@ import { handleMood } from './mood.js';
 import { handleGoodbye } from './goodbye.js';
 import { handleDenyAsk } from './deny.js';
 import { handleDeclineAlcohol } from './declineAlcohol.js';
+import { handleClarify } from './clarify.js';
+import { handleCapabilityGuide } from './capabilityGuide.js';
+import { handleWittyChitchat } from './wittyChitchat.js';
 import { isState, STATES } from '../engines/stateMachine.js';
 import { setPendingContextText } from '../engines/memoryEngine.js';
 import { decideResponsePolicy } from '../semantic/policy.js';
@@ -49,6 +52,15 @@ export async function routeChat(text, cleanText, context) {
   if (isState(STATES.FOLLOWUP)) {
     if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
       return handleDeclineAlcohol(text, context);
+    }
+    if (frame?.intent === 'CLARIFY' || policy.action === 'clarify') {
+      return handleClarify(text, context);
+    }
+    if (frame?.intent === 'CAPABILITY_GUIDE' || policy.action === 'capability_guide') {
+      return handleCapabilityGuide(text, context);
+    }
+    if (frame?.intent === 'WITTY_CHITCHAT' || policy.action === 'witty_chitchat') {
+      return handleWittyChitchat(text, context);
     }
     if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
       return handleDenyAsk(text, context);
@@ -86,6 +98,15 @@ export async function routeChat(text, cleanText, context) {
     if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
       return handleDeclineAlcohol(text, context);
     }
+    if (frame?.intent === 'CLARIFY' || policy.action === 'clarify') {
+      return handleClarify(text, context);
+    }
+    if (frame?.intent === 'CAPABILITY_GUIDE' || policy.action === 'capability_guide') {
+      return handleCapabilityGuide(text, context);
+    }
+    if (frame?.intent === 'WITTY_CHITCHAT' || policy.action === 'witty_chitchat') {
+      return handleWittyChitchat(text, context);
+    }
     if (frame?.intent === 'DENY' || policy.action === 'ack_deny') {
       return handleDenyAsk(text, context);
     }
@@ -98,8 +119,7 @@ export async function routeChat(text, cleanText, context) {
     if (frame?.intent === 'MOOD') return handleMood(text, context, policy);
     if (frame?.intent === 'GOODBYE') return handleGoodbye(text, context);
     if (frame?.intent === 'SMALLTALK') return handleSmallTalk(text, context, policy);
-    if (frame?.intent === 'UNKNOWN' || frame?.intent === 'CLARIFY' || policy.action === 'apology') {
-      setLastBotAsk('clarify');
+    if (frame?.intent === 'UNKNOWN' || policy.action === 'apology') {
       return handleUnknown(text, context);
     }
     if (frame?.intent === 'GUIDE') return handleGuide(text, context);
@@ -114,6 +134,12 @@ async function dispatchByPolicy(text, cleanText, context, policy) {
   switch (policy.action) {
     case 'decline_alcohol':
       return handleDeclineAlcohol(text, context);
+    case 'clarify':
+      return handleClarify(text, context);
+    case 'capability_guide':
+      return handleCapabilityGuide(text, context);
+    case 'witty_chitchat':
+      return handleWittyChitchat(text, context);
     case 'ack_deny':
       return handleDenyAsk(text, context);
     case 'recommend':
@@ -128,9 +154,8 @@ async function dispatchByPolicy(text, cleanText, context, policy) {
     case 'empathy':
       return handleMood(text, context, policy);
     case 'apology':
-      setLastBotAsk(policy.askType || 'clarify');
       if (intent === 'COMPLAINT') return handleComplaint(text, context);
-      if (intent === 'OFFTOPIC') return handleOfftopic(text, context);
+      if (intent === 'OFFTOPIC' || intent === 'WITTY_CHITCHAT') return handleWittyChitchat(text, context);
       return handleUnknown(text, context);
     case 'social':
       if (intent === 'GREETING') return handleGreeting(text, context);
