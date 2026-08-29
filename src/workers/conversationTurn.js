@@ -10,6 +10,7 @@ import { buildNluFrame } from './nlu/validate.js';
 import alcoholsData from '../data/alcohols.json';
 import snacksData from '../data/snacks.json';
 import { syncMyProfile, getLearnedProfilePatch } from './engines/profileEngine.js';
+import { getMbtiTrait } from '../data/mbtiTraits.js';
 import {
   annotateGlossary,
   buildSemanticFrame,
@@ -130,6 +131,10 @@ export async function runConversationTurn(text, payload = {}) {
   const frame = buildNluFrame(enrichedText, cleanText, payload?.frontDraft);
   applyDialogueContextToFrame(frame);
   resolveIdsFromHints(frame);
+  if (frame.slots?.mbti) {
+    synced.mbti = frame.slots.mbti;
+    synced.mbtiTrait = getMbtiTrait(frame.slots.mbti);
+  }
 
   const glossary = annotateGlossary(enrichedText);
   let semantic = buildSemanticFrame(frame, glossary);

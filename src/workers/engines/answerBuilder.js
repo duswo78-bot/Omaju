@@ -135,8 +135,14 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
     }
   }
 
-  // MBTI 타입별 특징 힌트 (단정 금지, 경향 표현)
-  if (profile?.mbtiTrait && (intent === 'RECOMMEND' || intent === 'REROLL') && Math.random() > 0.35) {
+  // MBTI 타입별 특징 힌트 (단정 금지, 경향 표현 — matchedOpening에 이미 있으면 중복 방지)
+  const mbtiCode = profile?.mbtiTrait?.code || profile?.mbti?.toUpperCase();
+  if (
+    profile?.mbtiTrait &&
+    (intent === 'RECOMMEND' || intent === 'REROLL') &&
+    !(matchedOpening && mbtiCode && matchedOpening.toUpperCase().includes(mbtiCode)) &&
+    Math.random() > 0.35
+  ) {
     const t = profile.mbtiTrait;
     const code = t.code || profile.mbti?.toUpperCase();
     const label = t.label || '';

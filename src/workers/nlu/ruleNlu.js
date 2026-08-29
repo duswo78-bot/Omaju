@@ -18,6 +18,7 @@ import {
   COMPLAINT_MARKERS,
   GOODBYE_MARKERS,
 } from './domainLexicon.js';
+import { getMbtiTrait, normalizeMbti } from '../../data/mbtiTraits.js';
 import { matchCorpus } from './normalizeKorean.js';
 import { extractPlaceQueryFromText } from '../../utils/snackToVenueQuery.js';
 
@@ -203,9 +204,13 @@ function extractHints(text) {
     else if (/전|부침/.test(text)) snackHints.push('전');
   }
 
+  const mbtiMatch = (text || '').match(/\b(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)\b/i);
+  const mbti = mbtiMatch ? normalizeMbti(mbtiMatch[1]) : null;
+
   return {
     alcoholHints: uniq(alcoholHints),
     snackHints: uniq(snackHints),
+    mbti,
   };
 }
 
@@ -461,6 +466,38 @@ export function ruleNlu(rawText, cleanText) {
     intent = 'PLACE';
     confidence = 0.9;
   }
+  // 1.8) MBTI 성향 기반 추천 & 가이드
+  else if (
+    (text || '').match(/\b(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)\b/i) ||
+    clean.match(/(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)/i) ||
+    /mbti|엠비티아이|성향|유형/.test(hay)
+  ) {
+    const mbtiCodeMatch =
+      (text || '').match(/\b(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)\b/i) ||
+      clean.match(/(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)/i);
+    const detectedMbti = mbtiCodeMatch ? normalizeMbti(mbtiCodeMatch[1]) : null;
+
+    if (detectedMbti) {
+      const trait = getMbtiTrait(detectedMbti);
+      intent = 'RECOMMEND';
+      confidence = 0.95;
+      signals.matchedOpening = `${detectedMbti} (${trait.label})의 감성에 딱 맞춘 페어링이에요! ✨ ${trait.tip}`;
+      hints.mbti = detectedMbti;
+      if (trait.moods?.length) {
+        signals.moods = uniq([...signals.moods, ...trait.moods]);
+      }
+      if (trait.drinkBias?.length && !hints.alcoholHints.length) {
+        hints.alcoholHints = uniq([...hints.alcoholHints, ...trait.drinkBias]);
+      }
+      if (trait.snackBias?.length && !hints.snackHints.length) {
+        hints.snackHints = uniq([...hints.snackHints, ...trait.snackBias]);
+      }
+    } else {
+      intent = 'GUIDE';
+      confidence = 0.93;
+      guideHint = 'mbti';
+    }
+  }
   // 2) 인사/감사
   else if (isGreetingUtterance(hay, clean)) {
     intent = 'GREETING';
@@ -609,6 +646,7 @@ export function ruleNlu(rawText, cleanText) {
     slots: {
       alcoholHints: hints.alcoholHints,
       snackHints: hints.snackHints,
+      mbti: hints.mbti,
       wantGame,
       moods: uniq(signals.moods),
       weather: uniq(signals.weather),
