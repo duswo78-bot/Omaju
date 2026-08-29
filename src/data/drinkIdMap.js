@@ -43,7 +43,16 @@ export function resolveAiAlcoholIds(uiDrinkId) {
   return match ? [match.id] : byCategory('소주');
 }
 
+function getJosa(word, josa1, josa2) {
+  if (!word) return josa1;
+  const lastCode = word.charCodeAt(word.length - 1);
+  if (lastCode < 0xAC00 || lastCode > 0xD7A3) return josa2;
+  const hasBatchim = (lastCode - 0xAC00) % 28 > 0;
+  return hasBatchim ? josa1 : josa2;
+}
+
 export function buildPendingContext(drink) {
   if (!drink?.name) return '';
-  return `지금 테이블에 ${drink.name}가 있어요. ${drink.name}에 잘 어울리는 안주를 중심으로 추천해주세요.`;
+  const josa = getJosa(drink.name, '이', '가');
+  return `지금 테이블에 ${drink.name}${josa} 있어요. ${drink.name}에 잘 어울리는 안주를 중심으로 추천해주세요.`;
 }

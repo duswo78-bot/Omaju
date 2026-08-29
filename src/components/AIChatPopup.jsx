@@ -546,20 +546,33 @@ export default function AIChatPopup({ onClose }) {
         </div>
       )}
 
-      {pendingContext && (
-        <div className="chat-context-banner">
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '0.72rem', opacity: 0.8, marginBottom: '0.15rem' }}>홈에서 고른 술 맥락</div>
-            <div style={{ fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pendingContext}</div>
+      {pendingContext && (() => {
+        const match = pendingContext.match(/지금 테이블에\s+(.+?)(?:이|가)\s+있어요/);
+        const drinkName = match ? match[1].trim() : '';
+        return (
+          <div className="chat-context-banner">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '0.72rem', opacity: 0.85, marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span>🍷</span>
+                <span style={{ fontWeight: 600, color: '#fbcfe8' }}>선택한 술</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {drinkName ? `${drinkName}에 어울리는 안주 찾기` : pendingContext}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleSend(drinkName ? `${drinkName}에 어울리는 안주 추천해줘` : '이거에 어울리는 안주 추천해줘')}
+              className="chat-context-action"
+            >
+              안주 추천받기
+            </button>
+            <button type="button" onClick={clearPendingContext} className="chat-context-clear" aria-label="선택 취소">
+              <X size={14} />
+            </button>
           </div>
-          <button type="button" onClick={() => handleSend('이거에 어울리는 안주 추천해줘')} className="chat-context-action">
-            바로 추천
-          </button>
-          <button type="button" onClick={clearPendingContext} className="chat-context-clear" aria-label="맥락 지우기">
-            <X size={14} />
-          </button>
-        </div>
-      )}
+        );
+      })()}
 
       <div className="chat-messages">
         <AnimatePresence>
