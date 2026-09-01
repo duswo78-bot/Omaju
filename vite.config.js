@@ -7,7 +7,7 @@ const isGithubPages = process.env.GITHUB_PAGES === 'true'
 const kakaoRestKey =
   process.env.VITE_KAKAO_REST_KEY ||
   process.env.VITE_KAKAO_JS_KEY ||
-  ''
+  '167bb3713d47a624020a8820a96b95b3'
 
 const kakaoProxy = {
   '/api/kakao': {
