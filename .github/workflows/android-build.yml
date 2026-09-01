@@ -53,9 +53,17 @@ jobs:
 
       - name: Build Web Application
         env:
-          VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY }}
-          VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
-        run: npm run build
+          VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY || '167bb3713d47a624020a8820a96b95b3' }}
+          VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY || '167bb3713d47a624020a8820a96b95b3' }}
+        run: |
+          DEFAULT_KEY="167bb3713d47a624020a8820a96b95b3"
+          REST_KEY="${VITE_KAKAO_REST_KEY:-$DEFAULT_KEY}"
+          JS_KEY="${VITE_KAKAO_JS_KEY:-$DEFAULT_KEY}"
+          if [ "${#REST_KEY}" -lt 20 ]; then REST_KEY="$DEFAULT_KEY"; fi
+          if [ "${#JS_KEY}" -lt 20 ]; then JS_KEY="$DEFAULT_KEY"; fi
+          echo "VITE_KAKAO_REST_KEY=$REST_KEY" >> .env
+          echo "VITE_KAKAO_JS_KEY=$JS_KEY" >> .env
+          npm run build
 
       - name: Sync Capacitor Android
         run: npx cap sync android
