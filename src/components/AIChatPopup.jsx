@@ -43,17 +43,29 @@ function pickThinkingLine(prev) {
   return next;
 }
 
+function normalizeProbeReason(reason) {
+  const value = String(reason || '').trim();
+  if (!value) return 'unavailable';
+  if (value.startsWith('ok:')) return value;
+  if (value === 'downloadable' || value === 'downloading') return value;
+  if (value.startsWith('failed') || value === 'unavailable' || value === 'unsupported' || value === 'probe_error') {
+    return 'unavailable';
+  }
+  return value;
+}
+
 function ledStyle(mode, reason) {
-  if (mode === LLM_MODES.FULL || String(reason).startsWith('ok:')) {
+  const safeReason = normalizeProbeReason(reason);
+  if (mode === LLM_MODES.FULL || String(safeReason).startsWith('ok:')) {
     return {
       background: '#22c55e',
       boxShadow: '0 0 6px 2px rgba(34, 197, 94, 0.85)',
-      title: reason === 'ok:rewriting'
+      title: safeReason === 'ok:rewriting'
         ? '온디바이스 Rewriting 활성 (S25+)'
         : '온디바이스 GenAI 활성',
     };
   }
-  if (reason === 'downloadable' || reason === 'downloading' || String(reason).startsWith('download')) {
+  if (safeReason === 'downloadable' || safeReason === 'downloading') {
     return {
       background: '#f59e0b',
       boxShadow: '0 0 6px 2px rgba(245, 158, 11, 0.75)',
@@ -63,7 +75,7 @@ function ledStyle(mode, reason) {
   return {
     background: 'rgba(255,255,255,0.18)',
     boxShadow: 'none',
-    title: `NLU+템플릿 (${reason || 'lite'})`,
+    title: `NLU+템플릿 (${safeReason || 'lite'})`,
   };
 }
 import snacksData from '../data/snacks.json';
@@ -152,6 +164,81 @@ export default function AIChatPopup({ onClose }) {
   const [placeFinder, setPlaceFinder] = useState({ open: false, venueQuery: '', label: '' });
   const [unlockedEasterEgg, setUnlockedEasterEgg] = useState(null);
 
+  const shootCelebrationFirework = () => {
+    try {
+      if (navigator?.vibrate) {
+        navigator.vibrate([80, 40, 100, 50, 180]);
+      }
+    } catch {}
+
+    const colors = ['#e11d48', '#f59e0b', '#fbbf24', '#ffffff', '#ef4444', '#ffd700'];
+
+    // 1. Center Big Bang
+    confetti({
+      particleCount: 140,
+      spread: 100,
+      startVelocity: 48,
+      origin: { y: 0.48 },
+      colors,
+    });
+
+    // 2. Left Cannon shot
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        angle: 60,
+        spread: 80,
+        startVelocity: 55,
+        origin: { x: 0.05, y: 0.8 },
+        colors,
+      });
+    }, 200);
+
+    // 3. Right Cannon shot
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        angle: 120,
+        spread: 80,
+        startVelocity: 55,
+        origin: { x: 0.95, y: 0.8 },
+        colors,
+      });
+    }, 400);
+
+    // 4. Golden Star & Glitter Shower from top
+    setTimeout(() => {
+      confetti({
+        particleCount: 110,
+        spread: 140,
+        startVelocity: 35,
+        origin: { y: 0.25 },
+        gravity: 0.75,
+        ticks: 300,
+        shapes: ['star', 'circle'],
+        colors: ['#ffd700', '#fbbf24', '#f59e0b', '#ffffff'],
+      });
+    }, 650);
+
+    // 5. Final grand fountain finale
+    setTimeout(() => {
+      confetti({
+        particleCount: 90,
+        angle: 60,
+        spread: 65,
+        origin: { x: 0.12, y: 0.75 },
+        colors,
+      });
+      confetti({
+        particleCount: 90,
+        angle: 120,
+        spread: 65,
+        origin: { x: 0.88, y: 0.75 },
+        colors,
+      });
+    }, 950);
+  };
+
   const triggerEasterEggModal = () => {
     setUnlockedEasterEgg({
       title: '🇨🇳 히든 주류 [중국 백주] 해금!',
@@ -160,10 +247,7 @@ export default function AIChatPopup({ onClose }) {
       image: assetUrl('assets/drinks/baijiu.webp'),
     });
     try {
-      confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
-      setTimeout(() => {
-        confetti({ particleCount: 80, spread: 120, origin: { y: 0.6 } });
-      }, 350);
+      shootCelebrationFirework();
       playFanfare();
     } catch {}
   };
@@ -228,7 +312,8 @@ export default function AIChatPopup({ onClose }) {
       const on =
         p.available || caps.prompt === 'available' || caps.rewriting === 'available';
       const mode = on ? LLM_MODES.FULL : LLM_MODES.LITE;
-      const reason = p.reason || (on ? 'ok' : 'unavailable');
+      const rawReason = p.reason || (on ? 'ok' : 'unavailable');
+      const reason = normalizeProbeReason(rawReason);
       aiState.mode = mode;
       aiState.lastProvider = p.provider || 'stub';
       aiState.probeReason = reason;
@@ -266,10 +351,13 @@ export default function AIChatPopup({ onClose }) {
         if (state === 'completed') {
           resetLlmProviderCache();
           refreshProbe();
-        } else if (state.startsWith('failed')) {
-          setProbeReason(state);
+        } else if (state === 'failed' || String(state).startsWith('failed')) {
+          setProbeReason('unavailable');
+          aiState.probeReason = 'unavailable';
+          setLlmMode(LLM_MODES.LITE);
         } else if (state === 'started' || state === 'progress') {
           setProbeReason('downloading');
+          aiState.probeReason = 'downloading';
         }
       }).then((h) => { downloadHandle = h; }).catch(() => {});
     }).catch(() => {});
@@ -777,18 +865,18 @@ export default function AIChatPopup({ onClose }) {
             }}
           >
             <motion.div
-              initial={{ scale: 0.6, y: 40, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.8, y: 30, opacity: 0 }}
-              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              initial={{ scale: 0.3, y: 70, opacity: 0, rotate: -4 }}
+              animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.6, y: 40, opacity: 0 }}
+              transition={{ type: 'spring', damping: 15, stiffness: 260 }}
               style={{
                 width: '100%',
-                maxWidth: '340px',
-                background: 'linear-gradient(145deg, rgba(35, 18, 30, 0.95), rgba(18, 12, 28, 0.98))',
-                border: '2px solid rgba(245, 158, 11, 0.6)',
-                boxShadow: '0 0 50px rgba(245, 158, 11, 0.4), 0 20px 40px rgba(0, 0, 0, 0.8)',
-                borderRadius: '24px',
-                padding: '2rem 1.5rem',
+                maxWidth: '350px',
+                background: 'linear-gradient(145deg, rgba(40, 15, 30, 0.98), rgba(20, 10, 32, 0.99))',
+                border: '2px solid rgba(251, 191, 36, 0.85)',
+                boxShadow: '0 0 60px rgba(225, 29, 72, 0.65), 0 0 100px rgba(245, 158, 11, 0.45), 0 30px 60px rgba(0, 0, 0, 0.9)',
+                borderRadius: '26px',
+                padding: '2.2rem 1.6rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -801,90 +889,115 @@ export default function AIChatPopup({ onClose }) {
               <div
                 style={{
                   position: 'absolute',
-                  top: '-50px',
-                  left: '-50px',
-                  right: '-50px',
-                  height: '160px',
-                  background: 'radial-gradient(circle, rgba(225, 29, 72, 0.45) 0%, transparent 70%)',
+                  top: '-60px',
+                  left: '-60px',
+                  right: '-60px',
+                  height: '180px',
+                  background: 'radial-gradient(circle, rgba(225, 29, 72, 0.6) 0%, rgba(245, 158, 11, 0.25) 40%, transparent 75%)',
                   pointerEvents: 'none',
                 }}
               />
 
               {/* 뱃지 */}
               <motion.div
-                animate={{ scale: [1, 1.06, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
                 style={{
-                  background: 'linear-gradient(90deg, #f59e0b, #e11d48)',
+                  background: 'linear-gradient(90deg, #f59e0b, #e11d48, #ffd700)',
                   color: '#fff',
-                  fontSize: '0.75rem',
-                  fontWeight: '800',
-                  padding: '5px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: '900',
+                  padding: '6px 16px',
                   borderRadius: '20px',
-                  letterSpacing: '1px',
-                  marginBottom: '1rem',
+                  letterSpacing: '1.2px',
+                  marginBottom: '1.2rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '5px',
-                  boxShadow: '0 3px 12px rgba(225, 29, 72, 0.5)',
+                  gap: '6px',
+                  boxShadow: '0 4px 18px rgba(225, 29, 72, 0.65), 0 0 10px rgba(251, 191, 36, 0.6)',
                   zIndex: 2,
                 }}
               >
-                <Sparkles size={13} /> SECRET DRINK UNLOCKED
+                <Sparkles size={14} /> 🎆 SECRET UNLOCKED 🎆
               </motion.div>
 
-              {/* 바이주 전용 생성 이미지 카드 */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-                style={{
-                  width: '140px',
-                  height: '140px',
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 12px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.3)',
-                  marginBottom: '1.2rem',
-                  background: '#1e1b4b',
-                  zIndex: 2,
-                }}
-              >
-                <img
-                  src={unlockedEasterEgg.image}
-                  alt="중국 백주"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              {/* 회전하는 황금/진홍빛 후광 (Sunburst Aura) & 이미지 */}
+              <div style={{ position: 'relative', marginBottom: '1.3rem', zIndex: 2 }}>
+                <motion.div
+                  animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                  transition={{
+                    rotate: { repeat: Infinity, duration: 10, ease: 'linear' },
+                    scale: { repeat: Infinity, duration: 2.2, ease: 'easeInOut' },
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: '-25px',
+                    left: '-25px',
+                    right: '-25px',
+                    bottom: '-25px',
+                    borderRadius: '50%',
+                    background: 'conic-gradient(from 0deg, rgba(245, 158, 11, 0.6), rgba(225, 29, 72, 0.7), rgba(255, 215, 0, 0.5), rgba(245, 158, 11, 0.6))',
+                    filter: 'blur(16px)',
+                    zIndex: 0,
+                  }}
                 />
-              </motion.div>
 
-              <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#fff', margin: '0 0 0.35rem 0', zIndex: 2 }}>
+                {/* 바이주 전용 생성 이미지 카드 */}
+                <motion.div
+                  animate={{ y: [0, -8, 0], scale: [1, 1.03, 1] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                  style={{
+                    width: '145px',
+                    height: '145px',
+                    borderRadius: '24px',
+                    overflow: 'hidden',
+                    border: '3px solid rgba(251, 191, 36, 0.95)',
+                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 158, 11, 0.7), 0 0 15px rgba(225, 29, 72, 0.8)',
+                    background: '#1e1b4b',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  <img
+                    src={unlockedEasterEgg.image}
+                    alt="중국 백주"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </motion.div>
+              </div>
+
+              <h2 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#fff', margin: '0 0 0.4rem 0', zIndex: 2, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
                 {unlockedEasterEgg.title}
               </h2>
-              <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#fbbf24', marginBottom: '0.8rem', zIndex: 2 }}>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#fbbf24', marginBottom: '0.9rem', zIndex: 2 }}>
                 {unlockedEasterEgg.subtitle}
               </div>
-              <p style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.5', margin: '0 0 1.5rem 0', wordBreak: 'keep-all', zIndex: 2 }}>
+              <p style={{ fontSize: '0.84rem', color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.55', margin: '0 0 1.6rem 0', wordBreak: 'keep-all', zIndex: 2 }}>
                 {unlockedEasterEgg.description}
               </p>
 
               {/* 액션 버튼 */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', zIndex: 2 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', width: '100%', zIndex: 2 }}>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
+                    try {
+                      confetti({ particleCount: 80, spread: 90, origin: { y: 0.65 } });
+                    } catch {}
                     setUnlockedEasterEgg(null);
                     onClose?.();
                     navigate('/home');
                   }}
                   style={{
-                    background: 'linear-gradient(90deg, #e11d48, #f59e0b)',
+                    background: 'linear-gradient(90deg, #e11d48, #f59e0b, #ffd700)',
                     border: 'none',
-                    borderRadius: '14px',
-                    padding: '0.85rem 1rem',
+                    borderRadius: '16px',
+                    padding: '0.9rem 1rem',
                     color: '#fff',
-                    fontWeight: '700',
-                    fontSize: '0.95rem',
+                    fontWeight: '800',
+                    fontSize: '0.98rem',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(225, 29, 72, 0.4)',
+                    boxShadow: '0 6px 20px rgba(225, 29, 72, 0.55)',
                   }}
                 >
                   🏠 홈 화면에서 확인하기
@@ -893,10 +1006,10 @@ export default function AIChatPopup({ onClose }) {
                   onClick={() => setUnlockedEasterEgg(null)}
                   style={{
                     background: 'transparent',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
                     borderRadius: '14px',
                     padding: '0.7rem 1rem',
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    color: 'rgba(255, 255, 255, 0.75)',
                     fontWeight: '500',
                     fontSize: '0.85rem',
                     cursor: 'pointer',
