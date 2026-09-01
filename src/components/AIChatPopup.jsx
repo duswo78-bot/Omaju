@@ -347,20 +347,7 @@ export default function AIChatPopup({ onClose }) {
         .catch(() => applyProbe({ available: false, reason: Capacitor.isNativePlatform() ? 'probe_error' : 'web' }));
 
     resetLlmProviderCache();
-    refreshProbe().then((reason) => {
-      if (cancelled) return;
-      // 다운로드 대기 중이면 주기적 재probe
-      if (reason === 'downloadable' || reason === 'downloading') {
-        pollTimer = setInterval(() => {
-          refreshProbe().then((r) => {
-            if (r === 'ok' && pollTimer) {
-              clearInterval(pollTimer);
-              pollTimer = null;
-            }
-          });
-        }, 4000);
-      }
-    });
+    refreshProbe();
 
     getSystemLlmProvider().then((provider) => {
       if (cancelled || !provider?.addDownloadListener) return;

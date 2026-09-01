@@ -138,10 +138,8 @@ public class OmajuSystemLlmPlugin extends Plugin {
                     public void onSuccess(Integer status) {
                         int s = status == null ? FeatureStatus.UNAVAILABLE : status;
                         promptStatus[0] = statusName(s);
-                        Log.i(TAG, "prompt status=" + promptStatus[0]);
-                        if (s == FeatureStatus.DOWNLOADABLE) {
-                            startPromptDownload(promptModel());
-                        } else if (s == FeatureStatus.AVAILABLE) {
+                        Log.d(TAG, "prompt status=" + promptStatus[0]);
+                        if (s == FeatureStatus.AVAILABLE) {
                             // First inference latency 개선 (문서: warmup 권장)
                             try {
                                 promptModel().warmup();
@@ -149,12 +147,13 @@ public class OmajuSystemLlmPlugin extends Plugin {
                                 /* optional */
                             }
                         }
+                        // DOWNLOADABLE 상태는 보고만 하고, 다운로드는 generate() 호출 시 시작
                         maybeFinish.run();
                     }
 
                     @Override
                     public void onFailure(@NonNull Throwable t) {
-                        Log.w(TAG, "prompt probe failed", t);
+                        Log.d(TAG, "prompt probe: " + safeMsg(t));
                         promptStatus[0] = "unavailable";
                         maybeFinish.run();
                     }
@@ -162,7 +161,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 ContextCompat.getMainExecutor(getContext())
             );
         } catch (Throwable t) {
-            Log.w(TAG, "prompt init failed", t);
+            Log.d(TAG, "prompt init: " + safeMsg(t));
             promptStatus[0] = "unavailable";
             maybeFinish.run();
         }
@@ -174,12 +173,10 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 Integer status = r.checkFeatureStatus().get();
                 int s = status == null ? FeatureStatus.UNAVAILABLE : status;
                 rewriteStatus[0] = statusName(s);
-                Log.i(TAG, "rewriting status=" + rewriteStatus[0]);
-                if (s == FeatureStatus.DOWNLOADABLE) {
-                    startRewriteDownload(r);
-                }
+                Log.d(TAG, "rewriting status=" + rewriteStatus[0]);
+                // DOWNLOADABLE 상태는 보고만 — 다운로드는 rewrite() 호출 시 시작
             } catch (Throwable t) {
-                Log.w(TAG, "rewriting probe failed", t);
+                Log.d(TAG, "rewriting probe: " + safeMsg(t));
                 rewriteStatus[0] = "unavailable";
             }
             maybeFinish.run();
@@ -193,12 +190,12 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 @Override public void onDownloadProgress(long bytes) { notifyDownload("prompt", "progress", bytes); }
                 @Override public void onDownloadCompleted() { notifyDownload("prompt", "completed", -1); }
                 @Override public void onDownloadFailed(@NonNull GenAiException e) {
-                    Log.w(TAG, "prompt download failed: " + safeMsg(e), e);
+                    Log.d(TAG, "prompt download failed: " + safeMsg(e));
                     notifyDownload("prompt", "failed", -1, safeMsg(e));
                 }
             });
         } catch (Exception e) {
-            Log.w(TAG, "prompt download failed: " + safeMsg(e), e);
+            Log.d(TAG, "prompt download failed: " + safeMsg(e));
             notifyDownload("prompt", "failed", -1, safeMsg(e));
         }
     }
@@ -210,12 +207,12 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 @Override public void onDownloadProgress(long bytes) { notifyDownload("rewriting", "progress", bytes); }
                 @Override public void onDownloadCompleted() { notifyDownload("rewriting", "completed", -1); }
                 @Override public void onDownloadFailed(@NonNull GenAiException e) {
-                    Log.w(TAG, "rewriting download failed: " + safeMsg(e), e);
+                    Log.d(TAG, "rewriting download failed: " + safeMsg(e));
                     notifyDownload("rewriting", "failed", -1, safeMsg(e));
                 }
             });
         } catch (Exception e) {
-            Log.w(TAG, "rewriting download failed: " + safeMsg(e), e);
+            Log.d(TAG, "rewriting download failed: " + safeMsg(e));
             notifyDownload("rewriting", "failed", -1, safeMsg(e));
         }
     }
@@ -261,7 +258,6 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 public void onSuccess(Integer featureStatus) {
                     int status = featureStatus == null ? FeatureStatus.UNAVAILABLE : featureStatus;
                     if (status != FeatureStatus.AVAILABLE) {
-                        if (status == FeatureStatus.DOWNLOADABLE) startPromptDownload(model);
                         call.reject("model_unavailable:status=" + status);
                         return;
                     }
@@ -374,12 +370,7 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 Rewriter r = rewriter();
                 Integer statusObj = r.checkFeatureStatus().get();
                 int status = statusObj == null ? FeatureStatus.UNAVAILABLE : statusObj;
-                if (status == FeatureStatus.DOWNLOADABLE) {
-                    startRewriteDownload(r);
-                    call.reject("rewriter_downloadable");
-                    return;
-                }
-                if (status != FeatureStatus.AVAILABLE && status != FeatureStatus.DOWNLOADING) {
+                if (status != FeatureStatus.AVAILABLE) {
                     call.reject("rewriter_unavailable:status=" + status);
                     return;
                 }
