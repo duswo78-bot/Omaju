@@ -9,16 +9,27 @@ export const KAKAO_CATEGORY = {
   CAFE: 'CE7',
 };
 
-/** 주요 상권 프리셋 (GPS 거부/실패 시) */
+/** 주요 상권 프리셋 (GPS 거부/실패 시 및 키 미설정 시 오프라인 프리셋) */
 export const REGION_PRESETS = [
   { id: 'gangnam', name: '강남역', lat: 37.4979, lng: 127.0276 },
   { id: 'hongdae', name: '홍대입구', lat: 37.5563, lng: 126.9236 },
+  { id: 'sinchon', name: '신촌/이대', lat: 37.5552, lng: 126.9369 },
   { id: 'itaewon', name: '이태원', lat: 37.5345, lng: 126.9946 },
   { id: 'jongno', name: '종로/익선', lat: 37.5720, lng: 126.9870 },
-  { id: 'seongsu', name: '성수', lat: 37.5445, lng: 127.0557 },
+  { id: 'euljiro', name: '을지로/힙지로', lat: 37.5663, lng: 126.9922 },
+  { id: 'seongsu', name: '성수/뚝섬', lat: 37.5445, lng: 127.0557 },
+  { id: 'geondae', name: '건대입구', lat: 37.5404, lng: 127.0692 },
+  { id: 'apgujeong', name: '압구정/신사', lat: 37.5270, lng: 127.0285 },
+  { id: 'yeouido', name: '여의도', lat: 37.5216, lng: 126.9242 },
+  { id: 'hyehwa', name: '대학로/혜화', lat: 37.5826, lng: 127.0019 },
+  { id: 'incheon_bupyeong', name: '인천 부평', lat: 37.4895, lng: 126.7248 },
+  { id: 'suwon_station', name: '수원역', lat: 37.2657, lng: 127.0000 },
   { id: 'busan_seomyeon', name: '부산 서면', lat: 35.1578, lng: 129.0592 },
+  { id: 'busan_haeundae', name: '부산 해운대', lat: 35.1631, lng: 129.1636 },
+  { id: 'daegu_dongseongro', name: '대구 동성로', lat: 35.8690, lng: 128.5960 },
   { id: 'daejeon', name: '대전 둔산', lat: 36.3510, lng: 127.3850 },
-  { id: 'gwangju', name: '광주 충장로', lat: 35.1500, lng: 126.9160 },
+  { id: 'gwangju', name: '광주 상무/충장', lat: 35.1500, lng: 126.9160 },
+  { id: 'jeju_city', name: '제주 시청', lat: 33.4996, lng: 126.5312 },
 ];
 
 /**

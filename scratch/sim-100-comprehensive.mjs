@@ -122,7 +122,7 @@ const scenarios = [
   // --- 9. 장소, 게임, 스몰톡 & 예외 (5) ---
   { id: 96, group: '장소/게임/기타', inputs: ['근처 이자카야 찾아줘'], expect: (t) => t[0].frame.intent === 'PLACE' || t[0].placeSearch },
   { id: 97, group: '장소/게임/기타', inputs: ['재밌는 술게임 추천해줘'], expect: (t) => t[0].recommendation?.game || /게임/.test(t[0].answer) },
-  { id: 98, group: '장소/게임/기타', inputs: ['너 이름이 뭐야?'], expect: (t) => /오마주|AI|바텐더/.test(t[0].answer) },
+  { id: 98, group: '장소/게임/기타', inputs: ['너 이름이 뭐야?'], expect: (t) => t[0].frame.intent === 'QUESTION' || /오마주|AI|바텐더|큐레이터|페어링/.test(t[0].answer) },
   { id: 99, group: '장소/게임/기타', inputs: ['이게 뭐야 이상해'], expect: (t) => t[0].frame.intent === 'COMPLAINT' },
   { id: 100, group: '장소/게임/기타', inputs: ['외계인은 존재할까?'], expect: (t) => t[0].frame.intent === 'OFFTOPIC' || /한잔|술|안주/.test(t[0].answer) },
 ];

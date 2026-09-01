@@ -12,10 +12,16 @@ import {
   formatDistance,
   haversineMeters,
 } from '../services/geoService';
-import { hasKakaoKey, searchKakaoWithFallbackQueries, searchRegionCoordinates } from '../services/kakaoLocal';
+import {
+  hasKakaoKey,
+  getKakaoRestKey,
+  setCustomKakaoRestKey,
+  searchKakaoWithFallbackQueries,
+  searchRegionCoordinates,
+} from '../services/kakaoLocal';
 import { kakaoMapSearchUrl, naverMapSearchUrl } from '../utils/placeSearch';
 
-const QUICK_REGIONS = REGION_PRESETS.slice(0, 5);
+const QUICK_REGIONS = REGION_PRESETS.slice(0, 6);
 
 const openBrowser = async (url) => { try { await Browser.open({ url }); } catch(e) { window.open(url, '_blank'); } };
 
@@ -33,6 +39,8 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [customRegion, setCustomRegion] = useState('');
+  const [showKeyConfig, setShowKeyConfig] = useState(false);
+  const [customKeyInput, setCustomKeyInput] = useState(() => getKakaoRestKey());
   const [history, setHistory] = useState(() => {
     try {
       const saved = localStorage.getItem('omaju_region_history');
@@ -102,6 +110,14 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     setHistory(prev => prev.filter(item => item.id !== id));
   };
 
+  const handleSaveCustomKey = (e) => {
+    e.preventDefault();
+    setCustomKakaoRestKey(customKeyInput);
+    setShowKeyConfig(false);
+    setError('');
+    runSearch(geo);
+  };
+
   const runSearch = async (targetGeo = geo) => {
     if (!open || !targetGeo?.lat) return;
     const queries = (intent.queries || []).filter(Boolean);
@@ -113,12 +129,15 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
     }
     setLoading(true);
     setError('');
+
+    // 카카오 API 키가 설정되지 않은 경우: 지도 앱 직접 연동으로 부드럽게 안내
+    if (!hasKakaoKey()) {
+      setPlaces([]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      if (!hasKakaoKey()) {
-        setPlaces([]);
-        setError('카카오 API 키가 없습니다. 앱을 다시 빌드·설치해 주세요.');
-        return;
-      }
       const results = await searchKakaoWithFallbackQueries({
         queries,
         lat: targetGeo.lat,
@@ -126,47 +145,9 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
         radius: Math.max(DEFAULT_RADIUS_M, 3000),
       });
       setPlaces(results.slice(0, 12));
-      if (!results.length) {
-        setError(`"${intent.primaryQuery}" 근처 결과가 없습니다. 지도 앱으로 찾아보세요.`);
-      }
     } catch (e) {
       setPlaces([]);
-      const msg = String(e?.message || e?.code || '');
-      const code = e?.code || '';
-      const corsLikely = msg.includes('Failed to fetch') || e?.name === 'TypeError';
-      const noKey = code === 'NO_KAKAO_KEY' || msg.includes('NO_KAKAO');
-      const http = code === 'KAKAO_HTTP';
-      const nativeFail = code === 'KAKAO_NATIVE';
-      const sdkFail =
-        code === 'KAKAO_SDK_LOAD_FAIL' ||
-        code === 'KAKAO_SDK_SKIPPED_ON_NATIVE' ||
-        msg.includes('KAKAO_SDK_LOAD_FAIL');
-      const detail = http && e?.status ? ` (HTTP ${e.status})` : '';
-      setError(
-        noKey
-          ? '카카오 API 키가 없습니다. 앱을 다시 설치해 주세요.'
-          : corsLikely
-            ? '검색 서버 연결 실패(CORS). 최신 APK로 업데이트하거나 로컬은 npm run dev 로 실행하세요.'
-            : http && e?.status === 401
-              ? `카카오 인증 실패(401)${e?.body ? `: ${e.body}` : ''}. ${
-                  hasKakaoKey() ? '카카오 콘솔(IP제한/키종류) 또는 최신 APK 확인 필요' : '(빌드에 키 없음)'
-                }`
-              : http
-                ? `카카오 검색 오류${detail}. 키/네트워크를 확인한 뒤 다시 시도하세요.`
-                : nativeFail
-                  ? `기기 네트워크 요청 실패: ${(msg || 'unknown').slice(0, 60)}. 인터넷 연결 후 다시 시도하세요.`
-                  : sdkFail
-                    ? '카카오 검색 연결 실패. 최신 APK로 다시 설치해 주세요.'
-                    : `근처 가게 검색 실패${msg ? `: ${msg.slice(0, 80)}` : ''}. 잠시 후 다시 시도하세요.`
-      );
-      console.warn('[PlaceFinder] search failed', {
-        code,
-        status: e?.status,
-        message: msg,
-        queries,
-        lat: targetGeo.lat,
-        lng: targetGeo.lng,
-      });
+      console.warn('[PlaceFinder] kakao search fallback', e?.message || e);
     } finally {
       setLoading(false);
     }
@@ -355,38 +336,78 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
             {/* List */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '0 0.75rem 0.75rem', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
               {error && !places.length && (
-                <div style={{ padding: '0.85rem', borderRadius: 12, background: 'rgba(244,63,94,0.12)', color: '#fecdd3', fontSize: '0.85rem', marginBottom: 8 }}>
+                <div style={{ padding: '0.75rem 0.85rem', borderRadius: 12, background: 'rgba(244,63,94,0.12)', color: '#fecdd3', fontSize: '0.8rem', marginBottom: 8 }}>
                   {error}
-                  <button
-                    type="button"
-                    onClick={() => runSearch(geo)}
-                    style={{
-                      display: 'block',
-                      marginTop: 10,
-                      width: '100%',
-                      border: '1px solid rgba(254,205,211,0.45)',
-                      background: 'rgba(255,255,255,0.06)',
-                      color: '#fecdd3',
-                      borderRadius: 8,
-                      padding: '0.45rem 0.6rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    다시 검색
-                  </button>
-                </div>
-              )}
-
-              {!loading && !places.length && (
-                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <button onClick={() => openBrowser(naverMapSearchUrl(intent.primaryQuery))} style={{...mapLink('#03c75a'), border:'none', cursor:'pointer'}}>네이버 지도</button>
-                  <button onClick={() => openBrowser(kakaoMapSearchUrl(intent.primaryQuery))} style={{...mapLink('#fee500', '#111'), border:'none', cursor:'pointer'}}>카카오맵</button>
                 </div>
               )}
 
               {loading && (
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.55)' }}>검색 중…</div>
+              )}
+
+              {!loading && !places.length && (
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 14,
+                  padding: '1.2rem 1rem',
+                  textAlign: 'center',
+                  marginBottom: '1rem',
+                }}>
+                  <div style={{ fontSize: '1.2rem', marginBottom: 6 }}>📍</div>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#f8fafc', marginBottom: 4 }}>
+                    {geo?.label ? `[${geo.label}] ` : ''}"{intent.primaryQuery}" 매장 찾기
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1.1rem', lineHeight: 1.45 }}>
+                    현재 선택된 위치 기준으로 최신 매장 정보와<br />길찾기를 지도 앱에서 원클릭으로 바로 확인하세요.
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => openBrowser(kakaoMapSearchUrl(`${geo?.label ? geo.label + ' ' : ''}${intent.primaryQuery}`))}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        background: '#fee500',
+                        color: '#181600',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '0.75rem',
+                        fontWeight: 800,
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span>🟡</span> 카카오맵에서 바로 찾기 <ExternalLink size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => openBrowser(naverMapSearchUrl(`${geo?.label ? geo.label + ' ' : ''}${intent.primaryQuery}`))}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        background: '#03c75a',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '0.75rem',
+                        fontWeight: 800,
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span>🟢</span> 네이버 지도에서 바로 찾기 <ExternalLink size={14} />
+                    </button>
+                  </div>
+                </div>
               )}
 
               {!loading && places.map((p) => {
@@ -436,6 +457,58 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                   </div>
                 );
               })}
+              {/* Optional Custom Kakao REST Key Drawer / Config */}
+              <div style={{ marginTop: '0.8rem', padding: '0.6rem 0.5rem', textAlign: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowKeyConfig(prev => !prev)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'rgba(255,255,255,0.4)',
+                    fontSize: '0.72rem',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  {showKeyConfig ? '▲ API 키 설정 닫기' : '⚙️ 카카오 REST API 키 직접 등록 (선택)'}
+                </button>
+
+                {showKeyConfig && (
+                  <form onSubmit={handleSaveCustomKey} style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                    <input
+                      type="text"
+                      placeholder="Kakao REST API Key"
+                      value={customKeyInput}
+                      onChange={(e) => setCustomKeyInput(e.target.value)}
+                      style={{
+                        flex: 1,
+                        background: 'rgba(255,255,255,0.08)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        borderRadius: 6,
+                        padding: '0.4rem 0.6rem',
+                        color: '#fff',
+                        fontSize: '0.75rem',
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      style={{
+                        background: '#38bdf8',
+                        color: '#0f172a',
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: '0.4rem 0.8rem',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      저장
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           </motion.div>
         </motion.div>

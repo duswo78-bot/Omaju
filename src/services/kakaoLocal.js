@@ -1,5 +1,5 @@
 import { Capacitor, CapacitorHttp, registerPlugin } from '@capacitor/core';
-import { DEFAULT_RADIUS_M } from '../data/venueTaxonomy';
+import { DEFAULT_RADIUS_M, REGION_PRESETS } from '../data/venueTaxonomy';
 import { haversineMeters } from './geoService';
 
 /**
@@ -167,7 +167,30 @@ async function kakaoGetJson(pathAndQuery, restKey, params) {
 }
 
 export function getKakaoRestKey() {
-  return import.meta.env.VITE_KAKAO_REST_KEY || import.meta.env.VITE_KAKAO_JS_KEY || '';
+  let custom = '';
+  try {
+    if (typeof localStorage !== 'undefined') {
+      custom = localStorage.getItem('omaju_kakao_rest_key') || '';
+    }
+  } catch {}
+  return (
+    custom ||
+    import.meta.env.VITE_KAKAO_REST_KEY ||
+    import.meta.env.VITE_KAKAO_JS_KEY ||
+    ''
+  );
+}
+
+export function setCustomKakaoRestKey(key) {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      if (key && key.trim()) {
+        localStorage.setItem('omaju_kakao_rest_key', key.trim());
+      } else {
+        localStorage.removeItem('omaju_kakao_rest_key');
+      }
+    }
+  } catch {}
 }
 
 export function getKakaoJsKey() {
@@ -369,12 +392,25 @@ export async function searchKakaoWithFallbackQueries({ queries, lat, lng, radius
 }
 
 export async function searchRegionCoordinates(query, userLat, userLng) {
+  const trimmed = (query || '').trim();
+  if (!trimmed) {
+    throw new Error('EMPTY_QUERY');
+  }
+
+  // 1) Fast lookup in REGION_PRESETS
+  const matchedPreset = REGION_PRESETS.find(
+    (p) =>
+      trimmed.toLowerCase().includes(p.name.toLowerCase()) ||
+      p.name.toLowerCase().includes(trimmed.toLowerCase()) ||
+      trimmed.toLowerCase().includes(p.id.toLowerCase())
+  );
+
   const key = getKakaoRestKey();
   const errors = [];
 
   if (key) {
     try {
-      const keywordParams = { query, size: '1' };
+      const keywordParams = { query: trimmed, size: '1' };
       if (userLat && userLng) {
         keywordParams.y = String(userLat);
         keywordParams.x = String(userLng);
@@ -384,21 +420,21 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
         return {
           lat: Number(keywordData.documents[0].y),
           lng: Number(keywordData.documents[0].x),
-          label: query,
+          label: keywordData.documents[0].place_name || trimmed,
           source: 'custom',
         };
       }
 
       // Fallback to Address Search if Keyword Search finds nothing
       const addressData = await kakaoGetJson('/v2/local/search/address.json', key, {
-        query,
+        query: trimmed,
         size: '1',
       });
       if (addressData.documents?.length > 0) {
         return {
           lat: Number(addressData.documents[0].y),
           lng: Number(addressData.documents[0].x),
-          label: query,
+          label: addressData.documents[0].address_name || trimmed,
           source: 'custom',
         };
       }
@@ -408,7 +444,17 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
     }
   }
 
-  // JS SDK 보조 — 웹만
+  // 2) Preset fallback when no key or API failed
+  if (matchedPreset) {
+    return {
+      lat: matchedPreset.lat,
+      lng: matchedPreset.lng,
+      label: matchedPreset.name,
+      source: 'preset',
+    };
+  }
+
+  // 3) JS SDK 보조 — 웹만
   if (!isNative()) {
     try {
       const kakao = await loadKakaoMapsSdk();
@@ -421,22 +467,22 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
           options.location = new kakao.maps.LatLng(userLat, userLng);
         }
         places.keywordSearch(
-          query,
+          trimmed,
           (data, status) => {
             if (status === kakao.maps.services.Status.OK && data.length > 0) {
               resolve({
                 lat: Number(data[0].y),
                 lng: Number(data[0].x),
-                label: query,
+                label: trimmed,
                 source: 'custom',
               });
             } else {
-              geocoder.addressSearch(query, (addrData, addrStatus) => {
+              geocoder.addressSearch(trimmed, (addrData, addrStatus) => {
                 if (addrStatus === kakao.maps.services.Status.OK && addrData.length > 0) {
                   resolve({
                     lat: Number(addrData[0].y),
                     lng: Number(addrData[0].x),
-                    label: query,
+                    label: trimmed,
                     source: 'custom',
                   });
                 } else {
@@ -451,6 +497,24 @@ export async function searchRegionCoordinates(query, userLat, userLng) {
     } catch (e) {
       errors.push(e);
     }
+  }
+
+  // 4) Last fallback to user coords or primary preset
+  if (matchedPreset) {
+    return {
+      lat: matchedPreset.lat,
+      lng: matchedPreset.lng,
+      label: matchedPreset.name,
+      source: 'preset',
+    };
+  }
+  if (userLat && userLng) {
+    return {
+      lat: Number(userLat),
+      lng: Number(userLng),
+      label: trimmed,
+      source: 'custom',
+    };
   }
 
   throw (

@@ -342,7 +342,9 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       needles: scoreOpts.excludedNeedles,
       ids: scoreOpts.excludedIds,
     }) ||
-    (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0);
+    (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0) ||
+    (constraints.heavy && typeof alc.abv === 'number' && alc.abv < 20) ||
+    (constraints.light && typeof alc.abv === 'number' && alc.abv > 15);
 
   // 3. 짝꿍 매칭 — 명시 힌트는 덮어쓰지 않음
   // 안주만 맞음 → 술은 페어링으로 채움 (치킨은 유지)

@@ -153,18 +153,18 @@ export function calculateScore(
 
   if (!isSnack && typeof item?.abv === 'number') {
     if (constraints.heavy) {
-      if (item.abv >= 25) score += 1.5;
-      else if (item.abv >= 16) score += 0.6;
-      else score -= 1.8;
+      if (item.abv >= 25) score += 2.5;
+      else if (item.abv >= 16) score += 1.0;
+      else score -= 6.0;
     }
     if (constraints.light) {
-      if (item.abv <= 8) score += 1.2;
-      else if (item.abv <= 15) score += 0.6;
-      else score -= 1.8;
+      if (item.abv <= 8) score += 2.5;
+      else if (item.abv <= 15) score += 1.2;
+      else score -= 6.0;
     }
     if (constraints.sweet) {
-      if (typeof item.sweetness === 'number' && item.sweetness >= 3) score += 1.2;
-      else score -= 0.6;
+      if (typeof item.sweetness === 'number' && item.sweetness >= 3) score += 1.5;
+      else score -= 1.0;
     }
   }
 

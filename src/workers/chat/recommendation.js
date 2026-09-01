@@ -37,6 +37,10 @@ export async function handleRecommendation(text, cleanText, context) {
 
   const signals = {
     ...(context.signals || {}),
+    constraints: {
+      ...(context.signals?.constraints || {}),
+      ...(constraints || {}),
+    },
     energy: context.semantic?.energy || context.signals?.energy || null,
     relation: context.semantic?.relation || context.signals?.relation || null,
     moods: [

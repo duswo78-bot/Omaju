@@ -244,7 +244,7 @@ function extractConstraints(text) {
 
   const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁/.test(text);
   const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주/.test(text);
-  const light = !heavy && /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술/.test(text);
+  const light = !heavy && /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술|약한/.test(text);
 
   return {
     onlyAlcohol,

@@ -52,6 +52,9 @@ jobs:
         run: npm ci || npm install
 
       - name: Build Web Application
+        env:
+          VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY }}
+          VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
         run: npm run build
 
       - name: Sync Capacitor Android
