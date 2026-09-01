@@ -75,10 +75,17 @@ public class OmajuSystemLlmPlugin extends Plugin {
     }
 
     private void notifyDownload(String kind, String state, long bytes) {
+        notifyDownload(kind, state, bytes, null);
+    }
+
+    private void notifyDownload(String kind, String state, long bytes, String error) {
         JSObject data = new JSObject();
         data.put("kind", kind);
         data.put("state", state);
         data.put("bytes", bytes);
+        if (error != null && !error.isEmpty()) {
+            data.put("error", error);
+        }
         notifyListeners("aicoreDownload", data);
     }
 
@@ -186,11 +193,13 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 @Override public void onDownloadProgress(long bytes) { notifyDownload("prompt", "progress", bytes); }
                 @Override public void onDownloadCompleted() { notifyDownload("prompt", "completed", -1); }
                 @Override public void onDownloadFailed(@NonNull GenAiException e) {
-                    notifyDownload("prompt", "failed:" + safeMsg(e), -1);
+                    Log.w(TAG, "prompt download failed: " + safeMsg(e), e);
+                    notifyDownload("prompt", "failed", -1, safeMsg(e));
                 }
             });
         } catch (Exception e) {
-            notifyDownload("prompt", "failed:" + safeMsg(e), -1);
+            Log.w(TAG, "prompt download failed: " + safeMsg(e), e);
+            notifyDownload("prompt", "failed", -1, safeMsg(e));
         }
     }
 
@@ -201,11 +210,13 @@ public class OmajuSystemLlmPlugin extends Plugin {
                 @Override public void onDownloadProgress(long bytes) { notifyDownload("rewriting", "progress", bytes); }
                 @Override public void onDownloadCompleted() { notifyDownload("rewriting", "completed", -1); }
                 @Override public void onDownloadFailed(@NonNull GenAiException e) {
-                    notifyDownload("rewriting", "failed:" + safeMsg(e), -1);
+                    Log.w(TAG, "rewriting download failed: " + safeMsg(e), e);
+                    notifyDownload("rewriting", "failed", -1, safeMsg(e));
                 }
             });
         } catch (Exception e) {
-            notifyDownload("rewriting", "failed:" + safeMsg(e), -1);
+            Log.w(TAG, "rewriting download failed: " + safeMsg(e), e);
+            notifyDownload("rewriting", "failed", -1, safeMsg(e));
         }
     }
 

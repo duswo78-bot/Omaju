@@ -157,7 +157,7 @@ export async function runConversationTurn(text, payload = {}) {
       ]),
     ];
   }
-  if (semantic.energy === 'low' && !(frame.slots.constraints || {}).light) {
+  if (semantic.energy === 'low' && !(frame.slots.constraints || {}).light && !(frame.slots.constraints || {}).heavy) {
     frame.slots.constraints = { ...(frame.slots.constraints || {}), light: true };
   }
   if (semantic.constraints?.onlySnack) {

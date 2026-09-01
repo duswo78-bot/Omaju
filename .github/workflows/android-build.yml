@@ -1,98 +1,85 @@
-name: Android Build
+name: Android Build & APK Release
 
 on:
   push:
-    branches: [main]
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
-
-concurrency:
-  group: android-build-${{ github.ref }}
-  cancel-in-progress: true
+    inputs:
+      build_type:
+        description: 'Build Type (debug / release / all)'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+          - all
 
 jobs:
   build:
+    name: Build Android APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: 20
+          cache: 'npm'
 
-      # Capacitor 8 android compileOptions = Java 21 (JDK 25 breaks Gradle 8.14)
-      - name: Setup JDK 21
-        uses: actions/setup-java@v5
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android platform 36 + build-tools
-        run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Install npm deps
-        run: npm ci
+      - name: Install Dependencies
+        run: npm ci || npm install
 
-      - name: Write env
-        env:
-          VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
-          VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY }}
-          VITE_NLG_API_BASE: ${{ secrets.VITE_NLG_API_BASE }}
-        run: |
-          # 강제로 올바른 키 사용 (GitHub Secret이 잘못되었을 경우 방지)
-          DEFAULT_KEY="167bb3713d47a624020a8820a96b95b3"
-          JS_KEY="$DEFAULT_KEY"
-          REST_KEY="$DEFAULT_KEY"
-          echo "VITE_KAKAO_JS_KEY=$JS_KEY" >> .env
-          echo "VITE_KAKAO_REST_KEY=$REST_KEY" >> .env
-          echo "VITE_NLG_API_BASE=${VITE_NLG_API_BASE:-}" >> .env
-          echo "Kakao key lengths: js=${#JS_KEY} rest=${#REST_KEY}"
-
-      - name: Build web (Capacitor assets)
+      - name: Build Web Application
         run: npm run build
-
-      - name: Verify Kakao key baked into bundle
-        run: |
-          if ! grep -R -l "167bb3713d47a624020a8820a96b95b3\|KakaoAK" dist >/dev/null 2>&1; then
-            # secret이 기본과 다를 수 있으니 키 문자열 길이만이라도 번들에 있는지 확인은 어려움
-            # REST 호출 경로 심볼은 반드시 존재해야 함
-            grep -R -l "dapi.kakao.com\|/v2/local/search" dist || (echo "Kakao search path missing from dist" && exit 1)
-          fi
-          echo "dist Kakao references ok"
 
       - name: Sync Capacitor Android
         run: npx cap sync android
 
-      - name: Ensure no machine-local Gradle JDK path
-        # Windows 개발 PC용 org.gradle.java.home 이 커밋돼 있어도 CI(Linux)에서는 제거
-        run: sed -i '/^org\.gradle\.java\.home=/d' android/gradle.properties
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x android/gradlew
 
-      - name: Assemble debug APK
-        working-directory: android
+      - name: Build Android Debug APK
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'all' }}
         run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace --info 2>&1 | tee ../scratch-ci-gradle.log
-          # 실패 시 핵심 에러만 요약해 로그에 남김
-          if [ ${PIPESTATUS[0]} -ne 0 ]; then
-            echo "::error::Gradle assembleDebug failed"
-            grep -E "FAILED|error:|What went wrong|Execution failed|e: file" ../scratch-ci-gradle.log | tail -n 80 || true
-            exit 1
-          fi
+          cd android
+          ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload Debug APK Artifact
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'all' }}
         uses: actions/upload-artifact@v4
         with:
-          name: omaju-android-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          name: omaju-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Build Android Release APK (Unsigned)
+        if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'all') }}
+        run: |
+          cd android
+          ./gradlew assembleRelease --stacktrace
+
+      - name: Upload Release APK Artifact
+        if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'all') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: omaju-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
           retention-days: 14

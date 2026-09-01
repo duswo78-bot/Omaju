@@ -147,28 +147,33 @@ export function calculateScore(
     else if (idx === 2) score += 0.25;
   }
 
-  // ── L1 Strong: preferred ABV ────────────────────────────────
+  // ── L1 Strong: preferred ABV & Constraints ─────────────────
   const abvRelaxed = explicitFamilies.has('whiskey');
+  const constraints = contextSignals.constraints || {};
 
-  if (!isSnack && typeof item?.abv === 'number' && profile.preferredAbv) {
-    const abv = item.abv;
-    if (profile.preferredAbv === 'low') {
-      if (abv === 0) score += wantsNonalc ? 0.55 : 0;
-      else if (abv <= 8) score += 0.4;
-      else if (abv <= 12) score += 0.15;
-      else if (abv >= 20) score -= abvRelaxed ? 0.15 : 0.7;
-      else score -= 0.25;
-    } else if (profile.preferredAbv === 'mid') {
-      if (abv > 4 && abv < 20) score += 0.2;
-      else if (abv >= 35) score -= abvRelaxed ? 0.05 : 0.55;
-      else if (abv >= 25) score -= abvRelaxed ? 0 : 0.25;
-    } else if (profile.preferredAbv === 'high') {
-      if (abv >= 16) score += 0.45;
-      else if (abv >= 12) score += 0.2;
-      else if (abv > 0 && abv < 8) score -= 0.35;
-      if (abv === 0) score -= 0.25;
-      if (itemFam === 'whiskey') score += 0.2;
-      if (itemFam === 'highball' && abv < 10) score -= 0.15;
+  if (!isSnack && typeof item?.abv === 'number') {
+    if (constraints.heavy) {
+      if (item.abv >= 25) score += 1.5;
+      else if (item.abv >= 16) score += 0.6;
+      else score -= 1.8;
+    }
+    if (constraints.light) {
+      if (item.abv <= 8) score += 1.2;
+      else if (item.abv <= 15) score += 0.6;
+      else score -= 1.8;
+    }
+    if (constraints.sweet) {
+      if (typeof item.sweetness === 'number' && item.sweetness >= 3) score += 1.2;
+      else score -= 0.6;
+    }
+  }
+
+  if (isSnack) {
+    if (constraints.spicy && (tags.includes('매운') || tags.includes('매콤') || nameKo.includes('매운') || nameKo.includes('불') || nameKo.includes('얼큰'))) {
+      score += 1.5;
+    }
+    if (constraints.cheap && typeof item.priceLevel === 'number' && item.priceLevel <= 2) {
+      score += 0.8;
     }
   }
 

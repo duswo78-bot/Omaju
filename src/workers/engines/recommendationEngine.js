@@ -146,6 +146,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     weather: [...(contextSignals?.weather || []), ...(frame?.slots?.weather || [])],
     energy: contextSignals?.energy || null,
     relation: contextSignals?.relation || null,
+    constraints: { ...(contextSignals?.constraints || {}), ...(frame?.slots?.constraints || {}) },
   };
 
   let isAlcMatched = false;
@@ -230,6 +231,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     for (const { item, vector } of alcoholEmbeddings) {
       if (wantNonAlc && item.category !== '논알콜/음료' && item.abv !== 0) continue;
       if (!allowNonAlcInPool && item.category === '논알콜/음료') continue;
+      if (constraints.heavy && typeof item.abv === 'number' && item.abv < 20) continue;
+      if (constraints.light && typeof item.abv === 'number' && item.abv > 15) continue;
       if (isExcludedItem(item, {
         families: scoreOpts.excludedFamilies,
         needles: scoreOpts.excludedNeedles,

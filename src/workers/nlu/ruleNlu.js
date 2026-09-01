@@ -23,7 +23,7 @@ import { matchCorpus } from './normalizeKorean.js';
 import { extractPlaceQueryFromText } from '../../utils/snackToVenueQuery.js';
 
 const ALC_CATEGORY_HINTS = [
-  '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하',
+  '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하', '샴페인',
   '진로', '참이슬', '새로', '카스', '테라', '켈리',
   '백주', '바이주', '빠이주', '고량주', '중국술',
   '사케', '청주', '니혼슈', '일본술', '온사케',
@@ -34,7 +34,7 @@ const ALC_NAME_HINTS = [
     ...alcoholsData.map((a) => a.name_ko.split(' ')[0]),
     '발베니', '맥캘란', '글렌피딕', '조니워커', '와일드터키', '잭다니엘', '제임슨', '산토리', '가쿠빈', '라프로익', '아드벡',
     '마오타이', '양하대곡', '연태고량주', '연태', '공부가주', '우량예', '이과두주',
-    '닷사이', '쿠보타', '간바레오또상', '센킨', '백화수복', '경주법주',
+    '닷사이', '쿠보타', '간바레오또상', '센킨', '백화수복', '경주법주', '샴페인',
   ]),
 ].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '선물', '홈술'].includes(n));
 
@@ -45,7 +45,7 @@ const SNK_NAME_HINTS = [
   ]),
 ].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '간단', '든든'].includes(n));
 const SHORT_SNACKS = [
-  '회', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치',
+  '회', '모둠회', '사시미', '숙성회', '골뱅이', '골뱅이소면', '명란', '야키토리', '오뎅', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치',
   '과일', '고기', '해물', '해산물', '생선', '치즈', '탕', '국물', '찌개', '면', '밥',
   '샐러드', '디저트', '스낵', '빵', '분식', '화채', '플래터', '마른안주', '마른', '감자', '나초', '황도', '메론', '소시지',
 ];
@@ -243,8 +243,8 @@ function extractConstraints(text) {
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
   const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁/.test(text);
-  const light = /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게/.test(text);
-  const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수/.test(text);
+  const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주/.test(text);
+  const light = !heavy && /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술/.test(text);
 
   return {
     onlyAlcohol,
@@ -262,10 +262,13 @@ function extractConstraints(text) {
 
 function enrichMoodsFromText(text, moods) {
   const next = [...(moods || [])];
-  if (/친구|동료|회식|여러|같이\s*마시/.test(text)) next.push('friends');
+  if (/친구|동료|회식|여러|같이\s*마시|모임|2차/.test(text)) next.push('friends', 'celebrate');
   if (/혼자|혼술|혼맥|혼소/.test(text)) next.push('honsul', 'comfort');
-  if (/데이트|소개팅|연인|남친|여친/.test(text)) next.push('romantic', 'special');
-  if (/파티|불금|주말|신나게/.test(text)) next.push('celebrate', 'friends', 'happy');
+  if (/데이트|소개팅|연인|남친|여친|기념일/.test(text)) next.push('romantic', 'special');
+  if (/파티|불금|주말|신나게|달려|달린다|집들이/.test(text)) next.push('celebrate', 'friends', 'happy');
+  if (/승진|축하|대박|기분\s*좋|기분\s*최고|행복/.test(text)) next.push('happy', 'celebrate', 'special');
+  if (/야근|피곤|힘들|지쳐|지쳤|울적|우울|위로|슬프/.test(text)) next.push('tired', 'comfort', 'honsul');
+  if (/캠핑|글램핑|숯불/.test(text)) next.push('friends', 'happy', 'special');
   if (/가벼|라이트|약하게|약한\s*도수/.test(text)) next.push('refresh');
   return uniq(next);
 }
@@ -443,7 +446,9 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
       constraints.onlySnack ||
       constraints.nonAlcoholic ||
       constraints.spicy ||
+      constraints.sweet ||
       constraints.light ||
+      constraints.heavy ||
       constraints.cheap ||
       constraints.hangover ||
       (constraints.exclude || []).length
@@ -555,7 +560,7 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     intent = 'GREETING';
     confidence = 0.92;
   } else if (
-    ['고마', '감사', '땡큐', '최고야', '완벽해', '고마워', '고마워요', 'ㄱㅅ'].some((t) => hay.includes(t)) &&
+    ['고마', '감사', '땡큐', '완벽해', '고마워', '고마워요', 'ㄱㅅ', '고맙'].some((t) => hay.includes(t)) &&
     clean.length <= 14
   ) {
     intent = 'THANKS';
@@ -655,7 +660,8 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     wantGame ||
     recommendAsk ||
     alone ||
-    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔/.test(hay) && domainScore >= 1)
+    signals.detectedSituation ||
+    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑/.test(hay) && domainScore >= 1)
   ) {
     intent = 'RECOMMEND';
     confidence = hasEntity || hasConstraintSignal || alone ? 0.88 : 0.75;
