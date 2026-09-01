@@ -2,6 +2,8 @@ import { routeChat } from './chat/router.js';
 import { setState, resetState } from './engines/stateMachine.js';
 import {
   pushHistory,
+  getHistory,
+  getLastRecommendation,
   applyDialogueContextToFrame,
   clearConversationMemory,
 } from './engines/memoryEngine.js';
@@ -128,7 +130,10 @@ export async function runConversationTurn(text, payload = {}) {
   const cleanText = cleanTextString(enrichedText);
   const tokens = simpleTokenize(enrichedText);
 
-  const frame = buildNluFrame(enrichedText, cleanText, payload?.frontDraft);
+  const frame = buildNluFrame(enrichedText, cleanText, payload?.frontDraft, {
+    historyLength: getHistory().length,
+    hasPreviousRecommendation: Boolean(getLastRecommendation()),
+  });
   applyDialogueContextToFrame(frame);
   resolveIdsFromHints(frame);
   if (frame.slots?.mbti) {

@@ -50,7 +50,7 @@ const SHORT_SNACKS = [
 const EXCLUDE_STOP = new Set([
   '그거', '이거', '저거', '다른', '거', '걸로', '건', '게', '것', '센', '약한', '센거', '약한거',
 ]);
-const GREETING_TOKENS = ['안녕하세요', '안녕하세여', '안녕', '반가워', '반가워요', '방가', 'ㅎㅇ', 'ㅎ2', '오랜만'];
+const GREETING_TOKENS = ['안녕하세요', '안녕하세여', '반가워', '반가워요', '방가', 'ㅎㅇ', 'ㅎ2', '오랜만', '처음이야', '처음왔어'];
 // '하이'는 하이볼 오탐이 많아 단독 토큰으로만 허용
 
 function uniq(arr) {
@@ -268,34 +268,61 @@ function enrichMoodsFromText(text, moods) {
   return uniq(next);
 }
 
-function isGreetingUtterance(hay, clean) {
+function isGreetingUtterance(hay, clean, hasEntity, hints, nluContext) {
+  if (hasEntity) return false;
   if (clean.length > 12) return false;
-  // 하이볼/하이네켄 등 주류 오탐 방지
-  if (/하이볼|하이네켄|하이볼ㄹ/.test(hay)) return false;
+  // 하이볼/하이네켄/바이주 등 주류 오탐 방지
+  if (/하이볼|하이네켄|하이볼ㄹ|바이주|빠이주|백주/.test(hay)) return false;
+
+  // 1. 명확한 인사말 ("안녕하세요", "반가워", "오랜만" 등)
   if (GREETING_TOKENS.some((g) => hay.includes(g))) return true;
-  // '하이'는 짧은 단독 인사만
+
+  // 2. '하이', 'hi', 'hello' 단독 토큰
   if (/^(하이|hi|hello)$/i.test(clean)) return true;
+
+  // 3. '안녕', '안뇽' 등 캐주얼 인사 (대화 맥락 고려: 이전 턴이 없거나 시작 단계일 때만 인사)
+  const isCasualAnnyeong = /^(안녕|안뇽|안녕안녕|안뇽안뇽)(~|!|\?|\.)*$/i.test(clean);
+  if (isCasualAnnyeong) {
+    const isLaterTurn = Boolean(
+      (nluContext?.historyLength && nluContext.historyLength >= 2) ||
+      nluContext?.hasPreviousRecommendation
+    );
+    // 대화가 이미 진행된 후(2턴 이상 or 추천 후)의 '안녕'은 작별 인사로 넘김
+    if (isLaterTurn) return false;
+    return true;
+  }
+
   return false;
 }
 
-function isGoodbyeUtterance(hay, clean, hasEntity, hints) {
+function isGoodbyeUtterance(hay, clean, hasEntity, hints, nluContext) {
   // 1. 주류/안주 엔티티나 힌트가 있으면 작별 인사가 아님 (예: 바이주, 빠이주, 바이엔슈테판, 바베큐 등)
   if (hasEntity) return false;
   if ((hints?.alcoholHints || []).length > 0 || (hints?.snackHints || []).length > 0) return false;
   if (/바이주|빠이주|백주|고량주|바이엔|바이젠|바베큐|바비큐|바이럴/.test(hay)) return false;
-  if (/안녕하세요|안녕하세|하이|ㅎㅇ/.test(hay)) return false;
+  if (/안녕하세요|안녕하세|반가워|처음이야|처음왔/.test(hay)) return false;
 
   // 2. 명확한 복합 작별 어구
   if (GOODBYE_MARKERS.some((g) => hay.includes(g) || clean.includes(g.replace(/\s/g, '')))) {
     return true;
   }
 
-  // 3. '바이', '빠이', 'bye', 'ㅂㅂ' 등 짧은 단독 토큰은 독립된 단어나 단독 문장으로만 매칭
-  if (/^(바이|빠이|bye|byebye|ㅂㅂ|빠빠|이만|ㅃㅃ)(~|!|\?|\.)*$/i.test(clean)) {
+  // 3. '바이', '빠이', 'bye', 'byebye', '빠이빠이', '바이바이', '빠빠', 'ㅂㅂ', 'ㅃㅃ', '잘있어', '수고해' 등
+  if (/^(바이|빠이|bye|byebye|바이바이|빠이빠이|빠빠|ㅂㅂ|ㅃㅃ|이만|잘있어|수고해|수고해라|수고수고)(~|!|\?|\.)*$/i.test(clean)) {
     return true;
   }
-  if (/(?:^|\s)(바이|빠이|bye|ㅂㅂ|바이바이|빠이빠이|굿바이|goodbye|빠빠|잘\s*가)(?:~|!|\?|\s|$)/i.test(hay)) {
+  if (/(?:^|\s)(바이|빠이|bye|byebye|ㅂㅂ|ㅃㅃ|바이바이|빠이빠이|굿바이|goodbye|빠빠|잘\s*가|잘\s*있어)(?:~|!|\?|\s|$)/i.test(hay)) {
     return true;
+  }
+
+  // 4. 대화가 진행된 상태(2턴 이상 또는 이전 추천 완료)에서 들어온 '안녕', '안뇽'은 작별 인사로 판정
+  const isCasualAnnyeong = /^(안녕|안뇽|안녕안녕|안뇽안뇽)(~|!|\?|\.)*$/i.test(clean);
+  if (isCasualAnnyeong) {
+    const isLaterTurn = Boolean(
+      (nluContext?.historyLength && nluContext.historyLength >= 2) ||
+      nluContext?.hasPreviousRecommendation
+    );
+    if (isLaterTurn) return true;
   }
 
   return false;
@@ -396,7 +423,7 @@ function pickGuideHint(hints, constraints, signals, text = '') {
  * @param {string} cleanText
  * @returns {import('./schema.js').NluFrame}
  */
-export function ruleNlu(rawText, cleanText) {
+export function ruleNlu(rawText, cleanText, nluContext = {}) {
   const corpus = matchCorpus(rawText || '');
   // 매칭은 정규화본 중심, rawText는 프레임에 원문 보존
   const text = corpus.normalized || rawText || '';
@@ -522,7 +549,7 @@ export function ruleNlu(rawText, cleanText) {
     }
   }
   // 2) 인사/감사
-  else if (isGreetingUtterance(hay, clean)) {
+  else if (isGreetingUtterance(hay, clean, hasEntity, hints, nluContext)) {
     intent = 'GREETING';
     confidence = 0.92;
   } else if (
@@ -532,8 +559,8 @@ export function ruleNlu(rawText, cleanText) {
     intent = 'THANKS';
     confidence = 0.9;
   }
-  // 2.4) 작별/종료 (안녕하세요 및 주류/안주와 분리)
-  else if (isGoodbyeUtterance(hay, clean, hasEntity, hints)) {
+  // 2.4) 작별/종료 (안녕하세요 및 주류/안주와 분리, 턴 맥락 반영)
+  else if (isGoodbyeUtterance(hay, clean, hasEntity, hints, nluContext)) {
     intent = 'GOODBYE';
     confidence = 0.9;
   }

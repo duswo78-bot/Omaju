@@ -121,10 +121,11 @@ export function parseFrontDraft(draft) {
  * @param {string} rawText
  * @param {string} cleanText
  * @param {unknown} [frontDraft]
+ * @param {object} [nluContext]
  * @returns {import('./schema.js').NluFrame}
  */
-export function buildNluFrame(rawText, cleanText, frontDraft) {
-  const rule = ruleNlu(rawText, cleanText);
+export function buildNluFrame(rawText, cleanText, frontDraft, nluContext = {}) {
+  const rule = ruleNlu(rawText, cleanText, nluContext);
   const draft = parseFrontDraft(frontDraft);
 
   if (!draft) {
