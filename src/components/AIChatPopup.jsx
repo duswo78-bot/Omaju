@@ -487,8 +487,8 @@ export default function AIChatPopup({ onClose }) {
     setHasPartialAnswer(false);
     pendingAiMsgIdRef.current = null;
 
-    const opening = pendingContext || localStorage.getItem('omaju_pending_context') || '';
-    const skipPrompt = Boolean(opening);
+    let opening = pendingContext || localStorage.getItem('omaju_pending_context') || '';
+    let skipPrompt = Boolean(opening);
 
     let profile = null;
     try {
@@ -500,17 +500,21 @@ export default function AIChatPopup({ onClose }) {
 
     if (opening) clearPendingContext();
 
-    if (/(?:백주|바이주|빠이주|중국술|중국)/i.test(userMessage)) {
+    if (/(?:백주|바이주|빠이주|중국술|고량주)/i.test(userMessage)) {
       if (localStorage.getItem('omaju_unlocked_baijiu') !== 'true') {
         localStorage.setItem('omaju_unlocked_baijiu', 'true');
         window.dispatchEvent(new CustomEvent('omaju:unlock-baijiu'));
+        opening = "해금된 건 축하드려요! 숨겨진 술 [백주]를 찾으셨군요. 🎊 여기 어울리는 맞춤 안주 추천해드릴게요!";
+        skipPrompt = false; // 강제로 opening을 노출
       }
     }
 
-    if (/(?:사케|청주|니혼슈|일본술|일본|이자카야|닷사이|쿠보타|간바레|온사케)/i.test(userMessage)) {
+    if (/(?:사케|청주|니혼슈|일본술|이자카야|닷사이|쿠보타|간바레|온사케)/i.test(userMessage)) {
       if (localStorage.getItem('omaju_unlocked_sake') !== 'true') {
         localStorage.setItem('omaju_unlocked_sake', 'true');
         window.dispatchEvent(new CustomEvent('omaju:unlock-sake'));
+        opening = "해금된 건 축하드려요! 숨겨진 술 [사케/청주]를 찾으셨군요. 🌸 여기 어울리는 맞춤 안주 추천해드릴게요!";
+        skipPrompt = false; // 강제로 opening을 노출
       }
     }
 
