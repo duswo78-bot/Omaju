@@ -278,6 +278,29 @@ function isGreetingUtterance(hay, clean) {
   return false;
 }
 
+function isGoodbyeUtterance(hay, clean, hasEntity, hints) {
+  // 1. 주류/안주 엔티티나 힌트가 있으면 작별 인사가 아님 (예: 바이주, 빠이주, 바이엔슈테판, 바베큐 등)
+  if (hasEntity) return false;
+  if ((hints?.alcoholHints || []).length > 0 || (hints?.snackHints || []).length > 0) return false;
+  if (/바이주|빠이주|백주|고량주|바이엔|바이젠|바베큐|바비큐|바이럴/.test(hay)) return false;
+  if (/안녕하세요|안녕하세|하이|ㅎㅇ/.test(hay)) return false;
+
+  // 2. 명확한 복합 작별 어구
+  if (GOODBYE_MARKERS.some((g) => hay.includes(g) || clean.includes(g.replace(/\s/g, '')))) {
+    return true;
+  }
+
+  // 3. '바이', '빠이', 'bye', 'ㅂㅂ' 등 짧은 단독 토큰은 독립된 단어나 단독 문장으로만 매칭
+  if (/^(바이|빠이|bye|byebye|ㅂㅂ|빠빠|이만|ㅃㅃ)(~|!|\?|\.)*$/i.test(clean)) {
+    return true;
+  }
+  if (/(?:^|\s)(바이|빠이|bye|ㅂㅂ|바이바이|빠이빠이|굿바이|goodbye|빠빠|잘\s*가)(?:~|!|\?|\s|$)/i.test(hay)) {
+    return true;
+  }
+
+  return false;
+}
+
 /** 알아듣기 어려운 입력(자모만, 의미 약한 짧은말, 도메인 신호 0) */
 function looksUnintelligible(raw, clean, hay, domainScore, hasEntity, hasConstraintSignal, recommendAsk, wantGame, signals) {
   if (hasEntity || hasConstraintSignal || recommendAsk || wantGame) return false;
@@ -509,11 +532,8 @@ export function ruleNlu(rawText, cleanText) {
     intent = 'THANKS';
     confidence = 0.9;
   }
-  // 2.4) 작별/종료 (안녕하세요와 분리)
-  else if (
-    GOODBYE_MARKERS.some((g) => hay.includes(g) || clean.includes(g.replace(/\s/g, ''))) &&
-    !/안녕하세요|안녕하세|하이|ㅎㅇ/.test(hay)
-  ) {
+  // 2.4) 작별/종료 (안녕하세요 및 주류/안주와 분리)
+  else if (isGoodbyeUtterance(hay, clean, hasEntity, hints)) {
     intent = 'GOODBYE';
     confidence = 0.9;
   }

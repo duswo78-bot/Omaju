@@ -102,7 +102,7 @@ await check('decline alcohol: 오늘은 안마실래', async () => {
   const t = await turns('오늘은 안마실래');
   assert(t[0].frame.intent === 'DECLINE_ALCOHOL', `expected DECLINE_ALCOHOL got ${t[0].frame.intent}`);
   assert(!t[0].recommendation?.alcohol && !t[0].recommendation?.snack, 'no alcohol or snack rec');
-  assert(/쉬어|무리|휴식|힐링|알콜 프리|건강|간|술 없는 하루|술 생각 없는|소확행|안 나는 날/.test(t[0].answer), `empathetic response: ${t[0].answer}`);
+  assert(/쉬어|무리|휴식|힐링|알콜 프리|건강|간|술 없는 하루|술 생각 없는|소확행|안 나는 날|릴랙스|리프레시/.test(t[0].answer), `empathetic response: ${t[0].answer}`);
 });
 
 await check('decline alcohol: 오늘은 안땡겨', async () => {
@@ -125,6 +125,32 @@ await check('single turn: 안주만 추천해줘', async () => {
   const t = await turns('안주만 추천해줘');
   assert(t[0].recommendation?.snack, 'has snack');
   assert(!t[0].recommendation?.alcohol, `must not have alcohol, got ${t[0].recommendation?.alcohol?.name_ko}`);
+});
+
+await check('mbti turn: 나 INFP야', async () => {
+  const t = await turns('나 INFP야');
+  assert(t[0].frame.intent === 'RECOMMEND', `expected RECOMMEND got ${t[0].frame.intent}`);
+  assert(t[0].recommendation, 'has recommendation');
+  assert(/INFP|감성|이상/.test(t[0].answer), `answer mentions INFP trait: ${t[0].answer}`);
+});
+
+await check('mbti guide: MBTI 알아?', async () => {
+  const t = await turns('MBTI 알아?');
+  assert(t[0].frame.intent === 'GUIDE', `expected GUIDE got ${t[0].frame.intent}`);
+  assert(/MBTI|성향|페어링/.test(t[0].answer), `answer guides MBTI: ${t[0].answer}`);
+});
+
+await check('baijiu recognition: 바이주', async () => {
+  const t = await turns('바이주');
+  assert(t[0].frame.intent === 'RECOMMEND', `expected RECOMMEND got ${t[0].frame.intent}`);
+  assert(t[0].frame.slots.alcoholHints.includes('바이주'), 'has 바이주 alcoholHint');
+});
+
+await check('goodbye: 바이바이 & 바이', async () => {
+  const t1 = await turns('바이바이');
+  assert(t1[0].frame.intent === 'GOODBYE', `expected GOODBYE got ${t1[0].frame.intent}`);
+  const t2 = await turns('바이');
+  assert(t2[0].frame.intent === 'GOODBYE', `expected GOODBYE got ${t2[0].frame.intent}`);
 });
 
 console.log(`\nAudit done. failures=${issues.length}`);
