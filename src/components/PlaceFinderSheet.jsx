@@ -39,8 +39,6 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [customRegion, setCustomRegion] = useState('');
-  const [showKeyConfig, setShowKeyConfig] = useState(false);
-  const [customKeyInput, setCustomKeyInput] = useState(() => getKakaoRestKey());
   const [history, setHistory] = useState(() => {
     try {
       const saved = localStorage.getItem('omaju_region_history');
@@ -108,14 +106,6 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
   const removeHistory = (e, id) => {
     e.stopPropagation();
     setHistory(prev => prev.filter(item => item.id !== id));
-  };
-
-  const handleSaveCustomKey = (e) => {
-    e.preventDefault();
-    setCustomKakaoRestKey(customKeyInput);
-    setShowKeyConfig(false);
-    setError('');
-    runSearch(geo);
   };
 
   const runSearch = async (targetGeo = geo) => {
@@ -457,58 +447,6 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
                   </div>
                 );
               })}
-              {/* Optional Custom Kakao REST Key Drawer / Config */}
-              <div style={{ marginTop: '0.8rem', padding: '0.6rem 0.5rem', textAlign: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowKeyConfig(prev => !prev)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'rgba(255,255,255,0.4)',
-                    fontSize: '0.72rem',
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  {showKeyConfig ? '▲ API 키 설정 닫기' : '⚙️ 카카오 REST API 키 직접 등록 (선택)'}
-                </button>
-
-                {showKeyConfig && (
-                  <form onSubmit={handleSaveCustomKey} style={{ marginTop: 8, display: 'flex', gap: 6 }}>
-                    <input
-                      type="text"
-                      placeholder="Kakao REST API Key"
-                      value={customKeyInput}
-                      onChange={(e) => setCustomKeyInput(e.target.value)}
-                      style={{
-                        flex: 1,
-                        background: 'rgba(255,255,255,0.08)',
-                        border: '1px solid rgba(255,255,255,0.15)',
-                        borderRadius: 6,
-                        padding: '0.4rem 0.6rem',
-                        color: '#fff',
-                        fontSize: '0.75rem',
-                      }}
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        background: '#38bdf8',
-                        color: '#0f172a',
-                        border: 'none',
-                        borderRadius: 6,
-                        padding: '0.4rem 0.8rem',
-                        fontWeight: 700,
-                        fontSize: '0.75rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      저장
-                    </button>
-                  </form>
-                )}
-              </div>
             </div>
           </motion.div>
         </motion.div>
