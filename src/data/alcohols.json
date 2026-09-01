@@ -2238,5 +2238,225 @@
       "snk_guobaorou",
       "snk_mapatofu"
     ]
+  },
+  {
+    "id": "alc_sake_dassai23",
+    "name_ko": "닷사이 23 준마이다이긴죠",
+    "name_en": "Dassai 23 Junmai Daiginjo",
+    "category": "사케",
+    "subCategory": "준마이다이긴죠",
+    "abv": 16,
+    "sweetness": 3,
+    "body": 3,
+    "carbonation": 0,
+    "country": "일본",
+    "priceLevel": 5,
+    "moods": [
+      "special",
+      "celebrate",
+      "romantic"
+    ],
+    "weather": [
+      "cool",
+      "spring",
+      "autumn"
+    ],
+    "tags": [
+      "사케",
+      "일본술",
+      "닷사이",
+      "준마이다이긴죠",
+      "고급사케",
+      "프리미엄"
+    ],
+    "pairings": [
+      "snk_modum_sashimi",
+      "snk_merogui",
+      "snk_takowasabi",
+      "snk_myeongran_gui"
+    ]
+  },
+  {
+    "id": "alc_sake_kubota_manju",
+    "name_ko": "쿠보타 만쥬",
+    "name_en": "Kubota Manju",
+    "category": "사케",
+    "subCategory": "준마이다이긴죠",
+    "abv": 15,
+    "sweetness": 2,
+    "body": 3,
+    "carbonation": 0,
+    "country": "일본",
+    "priceLevel": 4,
+    "moods": [
+      "comfort",
+      "friends",
+      "hoesik",
+      "quiet"
+    ],
+    "weather": [
+      "cool",
+      "winter",
+      "rain"
+    ],
+    "tags": [
+      "사케",
+      "일본술",
+      "쿠보타",
+      "만쥬",
+      "깔끔한맛",
+      "이자카야"
+    ],
+    "pairings": [
+      "snk_yakitori",
+      "snk_odentang",
+      "snk_modum_sashimi",
+      "snk_sukiyaki"
+    ]
+  },
+  {
+    "id": "alc_sake_ganbare_otosan",
+    "name_ko": "간바레 오또상",
+    "name_en": "Ganbare Otosan",
+    "category": "사케",
+    "subCategory": "혼죠조",
+    "abv": 14.5,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 0,
+    "country": "일본",
+    "priceLevel": 2,
+    "moods": [
+      "friends",
+      "happy",
+      "honsul",
+      "hoesik"
+    ],
+    "weather": [
+      "rain",
+      "winter",
+      "autumn"
+    ],
+    "tags": [
+      "사케",
+      "일본술",
+      "간바레오또상",
+      "이자카야",
+      "국민사케",
+      "가성비"
+    ],
+    "pairings": [
+      "snk_odentang",
+      "snk_nagasaki_jjamppong",
+      "snk_yakitori",
+      "snk_takowasabi"
+    ]
+  },
+  {
+    "id": "alc_sake_senkintomi",
+    "name_ko": "센킨 무쿠",
+    "name_en": "Senkin Muku",
+    "category": "사케",
+    "subCategory": "준마이긴죠",
+    "abv": 15,
+    "sweetness": 4,
+    "body": 3,
+    "carbonation": 1,
+    "country": "일본",
+    "priceLevel": 3,
+    "moods": [
+      "romantic",
+      "happy",
+      "refresh"
+    ],
+    "weather": [
+      "spring",
+      "summer",
+      "cool"
+    ],
+    "tags": [
+      "사케",
+      "일본술",
+      "센킨",
+      "과실향",
+      "산미",
+      "트렌디"
+    ],
+    "pairings": [
+      "snk_takowasabi",
+      "snk_modum_sashimi",
+      "snk_merogui"
+    ]
+  },
+  {
+    "id": "alc_sake_baekhwamok",
+    "name_ko": "백화수복 (온사케)",
+    "name_en": "Baekhwa Subok",
+    "category": "사케",
+    "subCategory": "청주",
+    "abv": 13,
+    "sweetness": 3,
+    "body": 2,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 1,
+    "moods": [
+      "comfort",
+      "honsul",
+      "quiet"
+    ],
+    "weather": [
+      "winter",
+      "cold",
+      "rain"
+    ],
+    "tags": [
+      "청주",
+      "사케",
+      "온사케",
+      "데운술",
+      "가성비",
+      "겨울"
+    ],
+    "pairings": [
+      "snk_odentang",
+      "snk_sukiyaki",
+      "snk_yakitori"
+    ]
+  },
+  {
+    "id": "alc_sake_gyeongju_beopju",
+    "name_ko": "경주법주 초특선",
+    "name_en": "Gyeongju Beopju Choteukseon",
+    "category": "사케",
+    "subCategory": "수제청주",
+    "abv": 16,
+    "sweetness": 3,
+    "body": 4,
+    "carbonation": 0,
+    "country": "한국",
+    "priceLevel": 4,
+    "moods": [
+      "special",
+      "celebrate",
+      "comfort"
+    ],
+    "weather": [
+      "cool",
+      "autumn",
+      "winter"
+    ],
+    "tags": [
+      "청주",
+      "전통청주",
+      "경주법주",
+      "초특선",
+      "명품청주"
+    ],
+    "pairings": [
+      "snk_modum_sashimi",
+      "snk_merogui",
+      "snk_myeongran_gui"
+    ]
   }
 ]

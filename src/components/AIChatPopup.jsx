@@ -239,7 +239,7 @@ export default function AIChatPopup({ onClose }) {
     }, 950);
   };
 
-  const triggerEasterEggModal = () => {
+  const triggerBaijiuEasterEggModal = () => {
     setUnlockedEasterEgg({
       title: '🇨🇳 히든 주류 [중국 백주] 해금!',
       subtitle: '마오타이 · 연태고량주 · 양하대곡 & 10종 중화 안주',
@@ -252,10 +252,28 @@ export default function AIChatPopup({ onClose }) {
     } catch {}
   };
 
+  const triggerSakeEasterEggModal = () => {
+    setUnlockedEasterEgg({
+      title: '🇯🇵 히든 주류 [사케 & 청주] 해금!',
+      subtitle: '닷사이 · 쿠보타 · 간바레오또상 & 8종 이자카야 안주',
+      description: '은은하고 깔끔한 쌀의 미학을 발견하셨습니다! 이제 홈 화면에서 [🇯🇵 사케] 카테고리와 타코와사비, 오뎅나베, 야키토리, 메로구이 등 정통 일식 페어링 안주를 만나보실 수 있습니다.',
+      image: assetUrl('assets/drinks/sake.webp'),
+    });
+    try {
+      shootCelebrationFirework();
+      playFanfare();
+    } catch {}
+  };
+
   useEffect(() => {
-    const handleUnlockEvent = () => triggerEasterEggModal();
-    window.addEventListener('omaju:unlock-baijiu', handleUnlockEvent);
-    return () => window.removeEventListener('omaju:unlock-baijiu', handleUnlockEvent);
+    const handleUnlockBaijiu = () => triggerBaijiuEasterEggModal();
+    const handleUnlockSake = () => triggerSakeEasterEggModal();
+    window.addEventListener('omaju:unlock-baijiu', handleUnlockBaijiu);
+    window.addEventListener('omaju:unlock-sake', handleUnlockSake);
+    return () => {
+      window.removeEventListener('omaju:unlock-baijiu', handleUnlockBaijiu);
+      window.removeEventListener('omaju:unlock-sake', handleUnlockSake);
+    };
   }, []);
 
   const flashSpeechHint = (msg, ms = 2200) => {
@@ -495,14 +513,17 @@ export default function AIChatPopup({ onClose }) {
 
     if (opening) clearPendingContext();
 
-    if (/(?:백주|바이주|빠이주|중국)/i.test(userMessage)) {
+    if (/(?:백주|바이주|빠이주|중국술|중국)/i.test(userMessage)) {
       if (localStorage.getItem('omaju_unlocked_baijiu') !== 'true') {
         localStorage.setItem('omaju_unlocked_baijiu', 'true');
         window.dispatchEvent(new CustomEvent('omaju:unlock-baijiu'));
-        try {
-          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-          playFanfare();
-        } catch {}
+      }
+    }
+
+    if (/(?:사케|청주|니혼슈|일본술|일본|이자카야|닷사이|쿠보타|간바레|온사케)/i.test(userMessage)) {
+      if (localStorage.getItem('omaju_unlocked_sake') !== 'true') {
+        localStorage.setItem('omaju_unlocked_sake', 'true');
+        window.dispatchEvent(new CustomEvent('omaju:unlock-sake'));
       }
     }
 

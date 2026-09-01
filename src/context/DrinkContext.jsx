@@ -19,6 +19,14 @@ export const hiddenBaijiuDrink = {
   isSecret: true,
 };
 
+export const hiddenSakeDrink = {
+  id: 'sake',
+  name: '사케',
+  imagePath: assetUrl('assets/drinks/sake.webp'),
+  color: '#0284c7',
+  isSecret: true,
+};
+
 export const mixCombinations = {
   'beer_soju': { id: 'somaek', name: '소맥', imagePath: assetUrl('assets/drinks/somaek.webp'), color: '#60a5fa' },
   'beer_whiskey': { id: 'bomb', name: '폭탄주', imagePath: assetUrl('assets/drinks/bomb.webp'), color: '#ef4444' },
@@ -54,11 +62,22 @@ export function DrinkProvider({ children }) {
     }
   });
 
+  const [isSakeUnlocked, setIsSakeUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem('omaju_unlocked_sake') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [drinks, setDrinks] = useState(() => {
     const base = [...initialDrinks];
     try {
       if (localStorage.getItem('omaju_unlocked_baijiu') === 'true') {
         base.push(hiddenBaijiuDrink);
+      }
+      if (localStorage.getItem('omaju_unlocked_sake') === 'true') {
+        base.push(hiddenSakeDrink);
       }
     } catch {}
     return base;
@@ -78,11 +97,28 @@ export function DrinkProvider({ children }) {
     });
   };
 
+  const unlockSake = () => {
+    if (isSakeUnlocked) return;
+    setIsSakeUnlocked(true);
+    try {
+      localStorage.setItem('omaju_unlocked_sake', 'true');
+    } catch {}
+    setDrinks((prev) => {
+      if (prev.some((d) => d.id === 'sake')) return prev;
+      return [...prev, hiddenSakeDrink];
+    });
+  };
+
   useEffect(() => {
-    const handleUnlock = () => unlockBaijiu();
-    window.addEventListener('omaju:unlock-baijiu', handleUnlock);
-    return () => window.removeEventListener('omaju:unlock-baijiu', handleUnlock);
-  }, [isBaijiuUnlocked]);
+    const handleUnlockBaijiu = () => unlockBaijiu();
+    const handleUnlockSake = () => unlockSake();
+    window.addEventListener('omaju:unlock-baijiu', handleUnlockBaijiu);
+    window.addEventListener('omaju:unlock-sake', handleUnlockSake);
+    return () => {
+      window.removeEventListener('omaju:unlock-baijiu', handleUnlockBaijiu);
+      window.removeEventListener('omaju:unlock-sake', handleUnlockSake);
+    };
+  }, [isBaijiuUnlocked, isSakeUnlocked]);
 
   // Load favorites from local storage on mount
   useEffect(() => {
@@ -97,12 +133,16 @@ export function DrinkProvider({ children }) {
     if (isBaijiuUnlocked && !loadedDrinks.some((d) => d.id === 'baijiu')) {
       loadedDrinks.push(hiddenBaijiuDrink);
     }
+    if (isSakeUnlocked && !loadedDrinks.some((d) => d.id === 'sake')) {
+      loadedDrinks.push(hiddenSakeDrink);
+    }
     
     // Combine all possible custom items
     const allCustomItems = [
       ...Object.values(mixCombinations),
       ...nonAlcoholicItems,
-      hiddenBaijiuDrink
+      hiddenBaijiuDrink,
+      hiddenSakeDrink,
     ];
 
     savedFavorites.forEach(favId => {
@@ -198,7 +238,9 @@ export function DrinkProvider({ children }) {
         isFavoriteSnack,
         getFavoriteSnackIds,
         isBaijiuUnlocked,
-        unlockBaijiu
+        unlockBaijiu,
+        isSakeUnlocked,
+        unlockSake,
       }}
     >
       {children}

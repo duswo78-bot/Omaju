@@ -42,6 +42,13 @@ export const DRINK_FAMILIES = {
     ],
     categories: ['백주'],
   },
+  sake: {
+    labels: [
+      '사케', '청주', '니혼슈', '일본술', '일본', '이자카야', '닷사이', '쿠보타',
+      '간바레오또상', '간바레', '센킨', '백화수복', '경주법주', '초특선', '온사케'
+    ],
+    categories: ['사케'],
+  },
   vodka: {
     labels: ['보드카', '보드카토닉'],
     categories: ['보드카'],

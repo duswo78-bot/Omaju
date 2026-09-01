@@ -16932,5 +16932,335 @@
         "시원하고 달콤하게 칵테일이나 맥주 안주로 즐깁니다."
       ]
     }
+  },
+  {
+    "id": "snk_takowasabi",
+    "name_ko": "타코와사비",
+    "name_en": "Tako Wasabi",
+    "category": "일식안주",
+    "priceLevel": 1,
+    "cookingTime": 5,
+    "cookingDifficulty": "쉬움",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "이자카야",
+      "간단안주",
+      "해산물",
+      "와사비"
+    ],
+    "moods": [
+      "honsul",
+      "friends",
+      "refresh"
+    ],
+    "weather": [
+      "summer",
+      "cool",
+      "spring"
+    ],
+    "bestDrinks": [
+      "alc_sake_dassai23",
+      "alc_sake_ganbare_otosan",
+      "alc_sake_senkintomi",
+      "alc_highball_jimbeam"
+    ],
+    "ingredients": [
+      "자숙 문어 또는 낙지 150g",
+      "생와사비 1큰술",
+      "진간장 1작은술",
+      "맛술 1작은술",
+      "무순 약간",
+      "오이 약간"
+    ],
+    "recipe": [
+      "자숙 문어나 낙지를 한입 크기로 잘게 썰어줍니다.",
+      "볼에 생와사비, 진간장, 맛술을 넣고 고루 섞어 와사비 소스를 만듭니다.",
+      "손질한 문어/낙지를 소스에 버무린 뒤 냉장고에 10분간 차갑게 숙성합니다.",
+      "채 썬 오이와 무순을 곁들여 차가운 사케와 함께 즐깁니다."
+    ]
+  },
+  {
+    "id": "snk_odentang",
+    "name_ko": "간사이 오뎅나베",
+    "name_en": "Kansai Oden Nabe",
+    "category": "일식안주",
+    "priceLevel": 2,
+    "cookingTime": 20,
+    "cookingDifficulty": "보통",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "국물안주",
+      "탕",
+      "겨울안주",
+      "따뜻한"
+    ],
+    "moods": [
+      "comfort",
+      "friends",
+      "honsul",
+      "hoesik"
+    ],
+    "weather": [
+      "winter",
+      "cold",
+      "rain"
+    ],
+    "bestDrinks": [
+      "alc_sake_ganbare_otosan",
+      "alc_sake_baekhwamok",
+      "alc_sake_kubota_manju",
+      "alc_soju_cham"
+    ],
+    "ingredients": [
+      "모둠 어묵 300g",
+      "무 1/4개",
+      "곤약 1/2모",
+      "가쓰오부시 육수 800ml",
+      "쯔유 3큰술",
+      "청양고추 1개",
+      "쑥갓 약간"
+    ],
+    "recipe": [
+      "무를 도톰하게 썰어 가쓰오 육수와 쯔유에 넣고 10분간 푹 끓입니다.",
+      "곤약과 모둠 어묵을 먹기 좋은 크기로 꼬치에 꿰어 냄비에 담습니다.",
+      "국물이 어묵에 은근하게 배어들 때까지 중약불에서 10분간 끓입니다.",
+      "쑥갓을 올리고 따뜻하게 데운 온사케나 청주와 함께 호로록 곁들입니다."
+    ]
+  },
+  {
+    "id": "snk_merogui",
+    "name_ko": "메로 유안야키",
+    "name_en": "Mero Yuan Yaki",
+    "category": "일식안주",
+    "priceLevel": 4,
+    "cookingTime": 20,
+    "cookingDifficulty": "보통",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "생선구이",
+      "고급안주",
+      "이자카야",
+      "기름진"
+    ],
+    "moods": [
+      "special",
+      "romantic",
+      "comfort"
+    ],
+    "weather": [
+      "winter",
+      "cool",
+      "autumn"
+    ],
+    "bestDrinks": [
+      "alc_sake_dassai23",
+      "alc_sake_gyeongju_beopju",
+      "alc_sake_kubota_manju",
+      "alc_wine_white"
+    ],
+    "ingredients": [
+      "메로(비막치어) 목살/턱살 250g",
+      "간장 3큰술",
+      "미림 3큰술",
+      "청주 3큰술",
+      "유자즙 또는 레몬즙 1큰술",
+      "생강편 약간"
+    ],
+    "recipe": [
+      "간장, 미림, 청주, 유자즙을 섞어 유안소스를 만듭니다.",
+      "메로에 칼집을 넣고 유안소스에 20분간 재워 비린내를 잡고 풍미를 입힙니다.",
+      "오븐이나 에어프라이어(190도)에서 15~18분간 노릇하게 구워냅니다.",
+      "기름진 메로의 고소함과 최고급 준마이다이긴죠 닷사이 한 잔을 곁들입니다."
+    ]
+  },
+  {
+    "id": "snk_myeongran_gui",
+    "name_ko": "오이 명란구이",
+    "name_en": "Grilled Mentaiko with Cucumber",
+    "category": "일식안주",
+    "priceLevel": 2,
+    "cookingTime": 8,
+    "cookingDifficulty": "쉬움",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "간단안주",
+      "이자카야",
+      "짭짤",
+      "마요네즈"
+    ],
+    "moods": [
+      "honsul",
+      "friends",
+      "refresh"
+    ],
+    "weather": [
+      "spring",
+      "summer",
+      "cool"
+    ],
+    "bestDrinks": [
+      "alc_sake_dassai23",
+      "alc_sake_senkintomi",
+      "alc_highball_earlgrey",
+      "alc_beer_cass"
+    ],
+    "ingredients": [
+      "저염 백명란 2줄",
+      "버터 1조각(10g)",
+      "백오이 1개",
+      "마요네즈 3큰술",
+      "시치미 약간"
+    ],
+    "recipe": [
+      "오이를 어슷 얇게 썰어 접시 테두리에 둘러 담습니다.",
+      "달군 팬에 버터를 녹이고 저염 명란을 올려 겉면만 노릇하게 3~4분간 굽습니다.",
+      "구운 명란을 한입 크기로 썰어 오이 위에 얹습니다.",
+      "마요네즈와 시치미를 곁들여 상큼한 긴죠 사케와 함께 한입에 쏙 즐깁니다."
+    ]
+  },
+  {
+    "id": "snk_sukiyaki",
+    "name_ko": "소고기 스키야키",
+    "name_en": "Beef Sukiyaki",
+    "category": "일식안주",
+    "priceLevel": 4,
+    "cookingTime": 25,
+    "cookingDifficulty": "보통",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "전골",
+      "나베",
+      "고기안주",
+      "든든"
+    ],
+    "moods": [
+      "special",
+      "friends",
+      "romantic",
+      "celebrate"
+    ],
+    "weather": [
+      "winter",
+      "cold",
+      "rain"
+    ],
+    "bestDrinks": [
+      "alc_sake_kubota_manju",
+      "alc_sake_baekhwamok",
+      "alc_wine_red"
+    ],
+    "ingredients": [
+      "소고기(샤브샤브용/차돌박이) 300g",
+      "배추 4장",
+      "표고버섯 2개",
+      "두부 1/2모",
+      "대파 1대",
+      "스키야키 간장육수 300ml",
+      "신선한 날달걀 2개"
+    ],
+    "recipe": [
+      "무쇠팬에 소기름이나 버터를 두르고 대파와 소고기를 먼저 가볍게 굽습니다.",
+      "배추, 두부, 버섯 등 채소를 가지런히 담고 달콤짭조름한 스키야키 소스를 붓습니다.",
+      "자작하게 끓어오르면 고기와 채소를 익혀 꺼냅니다.",
+      "풀어둔 신선한 날달걀물에 푹 찍어 따뜻한 사케와 함께 호사스럽게 즐깁니다."
+    ]
+  },
+  {
+    "id": "snk_modum_sashimi",
+    "name_ko": "숙성 모둠 사시미",
+    "name_en": "Assorted Aged Sashimi",
+    "category": "일식안주",
+    "priceLevel": 5,
+    "cookingTime": 10,
+    "cookingDifficulty": "쉬움",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "회",
+      "해산물",
+      "고급안주",
+      "깔끔"
+    ],
+    "moods": [
+      "special",
+      "celebrate",
+      "romantic"
+    ],
+    "weather": [
+      "cool",
+      "spring",
+      "autumn"
+    ],
+    "bestDrinks": [
+      "alc_sake_dassai23",
+      "alc_sake_gyeongju_beopju",
+      "alc_sake_senkintomi",
+      "alc_sake_kubota_manju"
+    ],
+    "ingredients": [
+      "숙성 광어/연어/참치 모둠회 300g",
+      "생와사비 1큰술",
+      "수제 사시미 간장 2큰술",
+      "무순 및 락교 약간",
+      "레몬 슬라이스 2조각"
+    ],
+    "recipe": [
+      "감칠맛이 올라온 숙성회를 먹기 좋은 두께로 정갈하게 썹니다.",
+      "얼음이나 차가운 도자기 접시 위에 회를 가지런히 플레이팅합니다.",
+      "무순과 생와사비를 얹고 사시미 간장에 살짝 찍어 먹습니다.",
+      "달콤하고 우아한 준마이다이긴죠 닷사이 한 잔으로 입안을 깔끔하게 씻어줍니다."
+    ]
+  },
+  {
+    "id": "snk_nagasaki_jjamppong",
+    "name_ko": "나가사키 해물 짬뽕",
+    "name_en": "Nagasaki Seafood Jjambbong",
+    "category": "일식안주",
+    "priceLevel": 2,
+    "cookingTime": 20,
+    "cookingDifficulty": "보통",
+    "tags": [
+      "사케안주",
+      "일식안주",
+      "국물안주",
+      "해장",
+      "탕",
+      "시원한"
+    ],
+    "moods": [
+      "friends",
+      "hoesik",
+      "comfort"
+    ],
+    "weather": [
+      "rain",
+      "winter",
+      "cold"
+    ],
+    "bestDrinks": [
+      "alc_sake_ganbare_otosan",
+      "alc_sake_baekhwamok",
+      "alc_soju_cham",
+      "alc_beer_asahi"
+    ],
+    "ingredients": [
+      "모둠 해물(오징어, 홍합, 새우) 200g",
+      "숙주 150g",
+      "양배추 2장",
+      "진한 돈골/닭육수 700ml",
+      "다진 마늘 1큰술",
+      "불맛 소스 또는 고추기름 1큰술"
+    ],
+    "recipe": [
+      "팬에 기름을 두르고 다진 마늘, 양배추, 해물을 센 불에서 빠르게 볶아 불향을 냅니다.",
+      "뽀얗고 진한 육수를 붓고 센 불에서 팔팔 끓여 해물 육수를 우려냅니다.",
+      "마지막에 아삭한 숙주를 듬뿍 넣고 1분간 살짝 숨을 죽입니다.",
+      "칼칼하고 시원한 백짬뽕 국물에 깔끔한 사케나 청주를 곁들이면 완벽한 해장 겸 안주가 됩니다."
+    ]
   }
 ]

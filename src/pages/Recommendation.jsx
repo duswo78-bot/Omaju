@@ -18,7 +18,7 @@ function scoreToStars(score) {
   return 1;
 }
 
-function buildScoredSnacks(uiDrinkId) {
+export function buildScoredSnacks(uiDrinkId) {
   const aiIds = new Set(resolveAiAlcoholIds(uiDrinkId));
   const snackById = new Map(snacksData.map((s) => [s.id, s]));
   const scores = new Map();
@@ -53,8 +53,8 @@ function buildScoredSnacks(uiDrinkId) {
       if (
         snack.category === `${cat}안주` ||
         snack.tags?.includes(`${cat}안주`) ||
-        snack.tags?.includes(cat) ||
-        (cat === '백주' && (snack.category === '중식안주' || snack.tags?.includes('중식')))
+        (cat === '백주' && (snack.category === '중식안주' || snack.tags?.includes('중식'))) ||
+        (cat === '사케' && (snack.category === '일식안주' || snack.tags?.includes('일식') || snack.tags?.includes('이자카야')))
       ) {
         const prev = scores.get(snack.id) || 0;
         if (prev < 82) scores.set(snack.id, Math.max(prev, 82));
