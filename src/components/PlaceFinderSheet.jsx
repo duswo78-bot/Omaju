@@ -137,6 +137,7 @@ export default function PlaceFinderSheet({ open, onClose, snackName, drinkName, 
       setPlaces(results.slice(0, 12));
     } catch (e) {
       setPlaces([]);
+      setError(e?.message || '검색 중 오류가 발생했습니다.');
       console.warn('[PlaceFinder] kakao search fallback', e?.message || e);
     } finally {
       setLoading(false);

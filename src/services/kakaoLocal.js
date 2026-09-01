@@ -169,14 +169,7 @@ async function kakaoGetJson(pathAndQuery, restKey, params) {
 const DEFAULT_KAKAO_KEY = '167bb3713d47a624020a8820a96b95b3';
 
 export function getKakaoRestKey() {
-  let custom = '';
-  try {
-    if (typeof localStorage !== 'undefined') {
-      custom = localStorage.getItem('omaju_kakao_rest_key') || '';
-    }
-  } catch {}
   return (
-    custom ||
     import.meta.env.VITE_KAKAO_REST_KEY ||
     import.meta.env.VITE_KAKAO_JS_KEY ||
     DEFAULT_KAKAO_KEY
@@ -184,15 +177,7 @@ export function getKakaoRestKey() {
 }
 
 export function setCustomKakaoRestKey(key) {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      if (key && key.trim()) {
-        localStorage.setItem('omaju_kakao_rest_key', key.trim());
-      } else {
-        localStorage.removeItem('omaju_kakao_rest_key');
-      }
-    }
-  } catch {}
+  // Removed to enforce default key
 }
 
 export function getKakaoJsKey() {
