@@ -5,6 +5,7 @@ import {
   prepareTemplateForRewrite,
   rewriteKeepsNames,
   backAnswerLooksLikeSoftAsk,
+  rewritePreservesStructure,
 } from './llm/onDeviceNlg.js';
 import { shouldRunFrontLlm } from './frontGate.js';
 
@@ -248,11 +249,14 @@ export async function runTurn(text, payload = {}) {
       if (
         rewritten &&
         rewriteKeepsNames(rewritten, workerResult.facts) &&
-        !backAnswerLooksLikeSoftAsk(rewritten, workerResult.facts)
+        !backAnswerLooksLikeSoftAsk(rewritten, workerResult.facts) &&
+        rewritePreservesStructure(answer, rewritten)
       ) {
         answer = rewritten;
         nlgSource = 'on_device_rewriting';
         if (onDevicePath === 'none') onDevicePath = 'rewriting';
+      } else if (rewritten) {
+        console.warn('Rewriting Back discarded (name/soft-ask/structure guard)');
       }
     } catch (err) {
       console.warn('Rewriting Back failed', err);

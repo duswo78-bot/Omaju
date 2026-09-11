@@ -361,7 +361,8 @@ public class OmajuSystemLlmPlugin extends Plugin {
             call.reject("text_required");
             return;
         }
-        String cleaned = text.replaceAll("[\\p{So}\\p{Cn}]", " ").replaceAll("\\s{2,}", " ").trim();
+        // 이모지와 줄바꿈(\n)은 보존하고, 가로 연속 공백만 정리합니다.
+        String cleaned = text.replaceAll("[^\\S\\r\\n]{2,}", " ").replaceAll("\\n{3,}", "\n\n").trim();
         if (cleaned.length() > 500) cleaned = cleaned.substring(0, 500);
         final String input = cleaned;
 

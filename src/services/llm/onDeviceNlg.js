@@ -2,14 +2,6 @@
  * 온디바이스 NLG 가드: rewrite가 술/안주 고유명사를 바꾸면 폐기.
  */
 
-function stripEmoji(text) {
-  return String(text || '')
-    .replace(/\p{Extended_Pictographic}(\uFE0F|\u200D\p{Extended_Pictographic})*/gu, '')
-    .replace(/[\uFE0F\u200D]/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-}
-
 export function namesFromFacts(facts) {
   const names = [];
   if (facts?.alcohol?.name_ko) names.push(facts.alcohol.name_ko);
@@ -47,6 +39,26 @@ export function backAnswerLooksLikeSoftAsk(answer, facts) {
   );
 }
 
+/**
+ * 다듬기 결과가 원본 템플릿의 가독성(단락/줄바꿈)을 심각하게 훼손하지 않았는지 검증.
+ * 원본이 2개 이상의 단락으로 나뉘어 있는데 다듬은 결과가 1줄로 납작하게 뭉개졌다면 가독성 퇴보로 판단하여 폐기합니다.
+ */
+export function rewritePreservesStructure(original, rewritten) {
+  if (!original || !rewritten) return true;
+  const origParagraphs = String(original).split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  const newParagraphs = String(rewritten).split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  if (origParagraphs.length >= 2 && newParagraphs.length <= 1) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 템플릿 전처리: 이모지와 줄바꿈(\n)은 온전히 보존하고 가로 연속 공백만 정리합니다.
+ */
 export function prepareTemplateForRewrite(templateAnswer) {
-  return stripEmoji(templateAnswer);
+  return String(templateAnswer || '')
+    .replace(/[^\S\r\n]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
