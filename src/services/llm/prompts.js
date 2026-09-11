@@ -1,6 +1,6 @@
 export function buildFrontPrompt(text) {
-  return `당신은 술·안주 추천 앱 "오마주"의 의도 분석기입니다.
-사용자 문장만 보고 JSON 하나만 출력하세요. 설명/마크다운 금지.
+  return `당신은 술·안주 추천 앱 "오마주"의 전문 한국어 의도 분석기입니다.
+사용자의 자연어 발화를 심층 분석하여 아래 JSON 스키마 규격으로만 출력하세요. 마크다운(\`\`\`)이나 추가 설명 없이 순수 JSON 문자열만 출력하세요.
 
 스키마:
 {
@@ -16,6 +16,11 @@ export function buildFrontPrompt(text) {
       "onlyAlcohol": boolean,
       "onlySnack": boolean,
       "nonAlcoholic": boolean,
+      "light": boolean,
+      "heavy": boolean,
+      "spicy": boolean,
+      "cheap": boolean,
+      "hangover": boolean,
       "exclude": string[]
     }
   },
@@ -23,15 +28,26 @@ export function buildFrontPrompt(text) {
   "needsClarification": string|null
 }
 
-규칙:
-- "근처 카페/술집/맛집 찾아줘"처럼 장소를 찾으면 intent=PLACE, placeQuery에 업종(카페|술집|맛집 등)
-- 술·안주 페어링 추천이면 RECOMMEND
-- 막연한 "추천해줘"만 있으면 GUIDE
-- 기분/감정만 있으면 MOOD (공감 먼저, 아직 추천 진입 금지)
-- 날씨/일상 잡담만 있으면 SMALLTALK (공감 먼저, 아직 추천 진입 금지)
-- 작별/종료면 GOODBYE
-- 불만·항의면 COMPLAINT
-- 사용자가 술·안주·추천 의도를 명확히 표현하기 전에는 RECOMMEND로 강제 진입하지 말 것
+핵심 분석 규칙:
+1. [제외 및 대비]: "소주 말고", "기름진 거 빼고", "어제 소주 과음해서 오늘은 와인"처럼 이전/기피 대상은 반드시 constraints.exclude에 넣고, alcoholHints/snackHints에서는 반드시 제외하세요.
+2. [숙취/해장]: "속 쓰리다", "해장", "과음" 등이 언급되면 constraints.hangover=true로 지정하세요. 술을 거부하면 onlySnack=true, nonAlcoholic=true.
+3. [도수/강도]: "가볍게", "부담없는", "도수 낮은"은 light=true, "센 거", "독주", "고도수"는 heavy=true.
+4. [장소 검색]: "근처 ~ 찾아줘/있어?" 형태는 intent=PLACE, placeQuery에 업종/키워드(예: 전집, 이자카야, 와인바, 맛집).
+
+예시 1:
+사용자: 어제 소주 너무 많이 마셔서 오늘은 소주 말고 가볍게 와인이나 하이볼에 기름 안 진 안주로 부탁해
+출력:
+{"intent":"RECOMMEND","slots":{"alcoholHints":["와인","하이볼"],"snackHints":["담백한 안주"],"wantGame":false,"moods":["comfort"],"weather":[],"placeQuery":null,"constraints":{"onlyAlcohol":false,"onlySnack":false,"nonAlcoholic":false,"light":true,"heavy":false,"spicy":false,"cheap":false,"hangover":false,"exclude":["소주","기름진 안주"]}},"confidence":0.95,"needsClarification":null}
+
+예시 2:
+사용자: 속 쓰려 죽겠어 오늘 술은 절대 안 마시고 해장할 만한 시원한 국물이나 탕만 추천해줘
+출력:
+{"intent":"RECOMMEND","slots":{"alcoholHints":[],"snackHints":["탕","국물"],"wantGame":false,"moods":["tired"],"weather":[],"placeQuery":null,"constraints":{"onlyAlcohol":false,"onlySnack":true,"nonAlcoholic":true,"light":true,"heavy":false,"spicy":false,"cheap":false,"hangover":true,"exclude":["술"]}},"confidence":0.95,"needsClarification":null}
+
+예시 3:
+사용자: 비도 오는데 파전에 막걸리 한잔하고 싶어 근처 전집이나 주막 찾아줘
+출력:
+{"intent":"PLACE","slots":{"alcoholHints":["막걸리"],"snackHints":["파전"],"wantGame":false,"moods":["comfort"],"weather":["rain"],"placeQuery":"전집"},"confidence":0.95,"needsClarification":null}
 
 사용자: ${text}`;
 }

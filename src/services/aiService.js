@@ -2,10 +2,8 @@ import { LLM_MODES } from './llm/types.js';
 import { getSystemLlmProvider, probeSystemLlm } from './llm/getProvider.js';
 import { cloudNlg } from './llm/cloudNlg.js';
 import {
-  prepareTemplateForRewrite,
   rewriteKeepsNames,
   backAnswerLooksLikeSoftAsk,
-  rewritePreservesStructure,
 } from './llm/onDeviceNlg.js';
 import { shouldRunFrontLlm } from './frontGate.js';
 
@@ -189,14 +187,16 @@ export async function runTurn(text, payload = {}) {
   let answer = workerResult.templateAnswer || workerResult.answer;
   let nlgSource = 'template';
 
-  // 템플릿을 먼저 보여 체감 대기 시간을 줄임 (BACK은 이어서 교체)
+  const willRunBackPrompt = Boolean(promptOk && provider.generateBack);
+
+  // 템플릿 답변은 즉시 완성형으로 보여주며, 실제 생성형 Prompt 스트리밍이 가능할 때만 pendingPolish 유지
   if (typeof onPartial === 'function' && answer) {
     try {
       onPartial({
         answer,
         recommendation: workerResult.recommendation || null,
         nlgSource: 'template',
-        pendingPolish: Boolean(promptOk || rewriteOk),
+        pendingPolish: willRunBackPrompt,
       });
     } catch {
       /* ignore */
@@ -204,7 +204,7 @@ export async function runTurn(text, payload = {}) {
   }
 
   if (promptOk && provider.generateBack) {
-    notify('back', '문장 다듬는 중… (온디바이스)');
+    notify('back', '문장 생성 중… (온디바이스)');
     try {
       const back = await provider.generateBack({
         facts: workerResult.facts,
@@ -241,30 +241,8 @@ export async function runTurn(text, payload = {}) {
     }
   }
 
-  if (nlgSource === 'template' && rewriteOk && provider.rewriteAnswer) {
-    notify('rewrite', '말투 다듬는 중…');
-    try {
-      const prepared = prepareTemplateForRewrite(answer);
-      const rewritten = await provider.rewriteAnswer(prepared);
-      if (
-        rewritten &&
-        rewriteKeepsNames(rewritten, workerResult.facts) &&
-        !backAnswerLooksLikeSoftAsk(rewritten, workerResult.facts) &&
-        rewritePreservesStructure(answer, rewritten)
-      ) {
-        answer = rewritten;
-        nlgSource = 'on_device_rewriting';
-        if (onDevicePath === 'none') onDevicePath = 'rewriting';
-      } else if (rewritten) {
-        console.warn('Rewriting Back discarded (name/soft-ask/structure guard)');
-      }
-    } catch (err) {
-      console.warn('Rewriting Back failed', err);
-    }
-  }
-
-  // 온디바이스가 전혀 없을 때만 클라우드 NLG
-  if (nlgSource === 'template' && onDevicePath === 'none') {
+  // 온디바이스가 전혀 없고 외부 클라우드가 필요할 때만 예외적 호출
+  if (nlgSource === 'template' && onDevicePath === 'none' && turnPayload.allowCloudNlg) {
     notify('cloud', '응답 다듬는 중…');
     const cloud = await cloudNlg({
       facts: workerResult.facts,

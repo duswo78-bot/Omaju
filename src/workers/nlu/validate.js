@@ -104,6 +104,7 @@ export function parseFrontDraft(draft) {
         nonAlcoholic: Boolean(slots.constraints?.nonAlcoholic),
         spicy: Boolean(slots.constraints?.spicy),
         light: Boolean(slots.constraints?.light),
+        heavy: Boolean(slots.constraints?.heavy),
         cheap: Boolean(slots.constraints?.cheap),
         hangover: Boolean(slots.constraints?.hangover),
         exclude: uniq(slots.constraints?.exclude),
@@ -137,9 +138,22 @@ export function buildNluFrame(rawText, cleanText, frontDraft, nluContext = {}) {
   }
 
   const intent = draft.intent || rule.intent;
+  const excludeList = uniq([
+    ...(draft.slots.constraints?.exclude || []),
+    ...(rule.slots.constraints?.exclude || []),
+  ]);
+  const isExcluded = (hint) =>
+    excludeList.some((ex) => String(hint).includes(ex) || String(ex).includes(hint));
+
   const slots = {
-    alcoholHints: uniq([...(draft.slots.alcoholHints || []), ...(rule.slots.alcoholHints || [])]),
-    snackHints: uniq([...(draft.slots.snackHints || []), ...(rule.slots.snackHints || [])]),
+    alcoholHints: uniq([
+      ...(draft.slots.alcoholHints || []),
+      ...(rule.slots.alcoholHints || []),
+    ]).filter((h) => !isExcluded(h)),
+    snackHints: uniq([
+      ...(draft.slots.snackHints || []),
+      ...(rule.slots.snackHints || []),
+    ]).filter((h) => !isExcluded(h)),
     wantGame: draft.slots.wantGame || rule.slots.wantGame,
     moods: uniq([...(draft.slots.moods || []), ...(rule.slots.moods || [])]),
     weather: uniq([...(draft.slots.weather || []), ...(rule.slots.weather || [])]),
@@ -150,12 +164,10 @@ export function buildNluFrame(rawText, cleanText, frontDraft, nluContext = {}) {
       nonAlcoholic: draft.slots.constraints?.nonAlcoholic || rule.slots.constraints?.nonAlcoholic,
       spicy: draft.slots.constraints?.spicy || rule.slots.constraints?.spicy,
       light: draft.slots.constraints?.light || rule.slots.constraints?.light,
+      heavy: draft.slots.constraints?.heavy || rule.slots.constraints?.heavy,
       cheap: draft.slots.constraints?.cheap || rule.slots.constraints?.cheap,
       hangover: draft.slots.constraints?.hangover || rule.slots.constraints?.hangover,
-      exclude: uniq([
-        ...(draft.slots.constraints?.exclude || []),
-        ...(rule.slots.constraints?.exclude || []),
-      ]),
+      exclude: excludeList,
     },
   };
 
