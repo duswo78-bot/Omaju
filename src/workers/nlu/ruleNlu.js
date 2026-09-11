@@ -25,6 +25,8 @@ import { extractPlaceQueryFromText } from '../../utils/snackToVenueQuery.js';
 const ALC_CATEGORY_HINTS = [
   '소주', '맥주', '막걸리', '와인', '하이볼', '위스키', '칵테일', '보드카', '전통주', '과실주', '청하', '샴페인',
   '진로', '참이슬', '새로', '카스', '테라', '켈리',
+  '생맥', '생맥주', '캔맥', '병맥', '흑맥', '흑맥주', '수제맥주',
+  '진토닉', '모히또', '동동주', '약주', '탁주',
   '백주', '바이주', '빠이주', '고량주', '중국술',
   '사케', '청주', '니혼슈', '일본술', '온사케',
 ];
@@ -46,8 +48,9 @@ const SNK_NAME_HINTS = [
 ].filter((n) => n && n.length >= 2 && !['추천', '인기', '클래식', '트렌디', '고급', '간단', '든든'].includes(n));
 const SHORT_SNACKS = [
   '회', '모둠회', '사시미', '숙성회', '골뱅이', '골뱅이소면', '명란', '야키토리', '오뎅', '치킨', '삼겹', '곱창', '라면', '전', '파전', '족발', '보쌈', '김치', '피자', '튀김', '꼬치',
+  '어묵', '어묵탕', '오뎅탕', '순대', '떡볶이', '닭발', '마라탕', '마라샹궈', '짬뽕', '짜파게티', '육회', '육전', '감바스', '먹태', '노가리', '가라아게', '타코야키', '스테이크', '소세지', '부대찌개', '김치찌개',
   '과일', '고기', '해물', '해산물', '생선', '치즈', '탕', '국물', '찌개', '면', '밥',
-  '샐러드', '디저트', '스낵', '빵', '분식', '화채', '플래터', '마른안주', '마른', '감자', '나초', '황도', '메론', '소시지',
+  '샐러드', '디저트', '스낵', '빵', '분식', '화채', '플래터', '마른안주', '마른', '감자', '나초', '황도', '메론',
 ];
 const EXCLUDE_STOP = new Set([
   '그거', '이거', '저거', '다른', '거', '걸로', '건', '게', '것', '센', '약한', '센거', '약한거',
@@ -200,10 +203,12 @@ function extractHints(text) {
 
   // 카테고리성 안주 힌트 (구체 메뉴명 없이도 슬롯 확보) — 단독 '안주'는 onlySnack으로 처리
   if (/안주/.test(text) && snackHints.length === 0) {
-    if (/매운|매콤/.test(text)) snackHints.push('매운');
-    else if (/마른/.test(text)) snackHints.push('마른');
-    else if (/국물|탕|찌개/.test(text)) snackHints.push('탕');
+    if (/매운|매콤|얼큰|칼칼|알싸|얼얼/.test(text)) snackHints.push('매운');
+    else if (/마른|바삭|스낵|쥐포|먹태/.test(text)) snackHints.push('마른');
+    else if (/국물|탕|찌개|시원한|뜨끈한|어묵/.test(text)) snackHints.push('탕');
     else if (/전|부침/.test(text)) snackHints.push('전');
+    else if (/기름진|고기|삼겹|구이|헤비/.test(text)) snackHints.push('고기');
+    else if (/담백|깔끔|가벼|산뜻/.test(text)) snackHints.push('샐러드');
   }
 
   const mbtiMatch = (text || '').match(/\b(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)\b/i);
@@ -230,6 +235,17 @@ function extractConstraints(text) {
     if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
   }
 
+  // 부정 접두 파생어 ("안~", "덜~") 감지 및 제외 슬롯 자동 등록
+  const notSpicy = /안\s*매[운콤워]|덜\s*매[운콤워]|안\s*맵고|맵지\s*않/.test(text);
+  const notGreasy = /안\s*기름|덜\s*기름|기름기\s*없|안\s*느끼|덜\s*느끼|느끼하지\s*않/.test(text);
+  const notSweet = /안\s*달[달콤]|덜\s*달[달콤]|달지\s*않|안\s*단/.test(text);
+  const notHeavy = /안\s*센|덜\s*센|안\s*독한|덜\s*독한|도수\s*낮/.test(text);
+
+  if (notSpicy) exclude.push('매운', '얼큰', '칼칼');
+  if (notGreasy) exclude.push('기름진', '느끼한');
+  if (notSweet) exclude.push('달달', '달콤');
+  if (notHeavy) exclude.push('독주', '센술');
+
   const clean = String(text || '').replace(/\s+/g, '');
   const mentionsAlcohol =
     /술|맥주|소주|와인|막걸리|하이볼|위스키|칵테일|보드카|전통주|마실|한\s*잔|도수/.test(text);
@@ -242,19 +258,22 @@ function extractConstraints(text) {
     (/안주|야식|간식|디저트/.test(text) && !mentionsAlcohol) ||
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
-  const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁/.test(text);
-  const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주/.test(text);
-  const light = !heavy && /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술|약한/.test(text);
+  const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁|술병|더부룩|니글|느글/.test(text);
+  const heavy = !notHeavy && /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주|쎈거|쎈술|도수\s*높/.test(text);
+  const light = !heavy && (notGreasy || notHeavy || /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술|약한|개운|산뜻|바삭/.test(text));
+  const spicy = !notSpicy && /매운|매콤|불닭|핫|얼큰|칼칼|알싸|얼얼|매워/.test(text);
+  const sweet = !notSweet && /달달|달콤|스위트|단거|디저트|달짝|새콤달콤|상큼/.test(text);
+  const cheap = /싸게|저렴|가성비|싼|저가|호불호|지갑가벼|돈없/.test(text);
 
   return {
     onlyAlcohol,
     onlySnack: onlySnack || hangover,
     nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text) || hangover,
-    spicy: /매운|매콤|불닭|핫/.test(text),
-    sweet: /달달|달콤|스위트|단거|디저트/.test(text),
+    spicy,
+    sweet,
     light,
     heavy,
-    cheap: /싸게|저렴|가성비|싼|저가|호불호/.test(text),
+    cheap,
     hangover,
     exclude: uniq(exclude),
   };
