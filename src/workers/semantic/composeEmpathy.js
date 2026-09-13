@@ -32,6 +32,29 @@ const WEATHER_EMPATHY = {
     '습한 날씨엔 더 쉽게 지쳐요.',
     '끈적한 공기가 기운을 빼네요.',
   ],
+  autumn: [
+    '선선한 가을 공기가 느껴지는 날이네요.',
+    '가을바람이 기분 좋게 스치는 계절이에요.',
+    '가을밤 정취가 물씬 풍기는 하루네요.',
+    '선선해진 날씨라 은은한 분위기가 참 좋아요.',
+    '마음까지 차분해지는 가을밤이네요.',
+  ],
+  spring: [
+    '따스한 봄기운이 느껴지는 날이네요.',
+    '포근한 봄바람이 기분 좋게 부는 날이에요.',
+    '설레는 봄날의 감성이 가득하네요.',
+    '화사한 계절의 분위기가 참 좋아요.',
+  ],
+  summer: [
+    '열기 가득한 여름날이네요.',
+    '시원한 바람이 간절해지는 여름이에요.',
+    '무더위에 지치기 쉬운 계절이죠.',
+  ],
+  winter: [
+    '찬 바람 부는 쌀쌀한 겨울이네요.',
+    '입김 나는 겨울밤 감성이네요.',
+    '추운 날씨엔 따뜻한 온기가 간절해지죠.',
+  ],
 };
 
 const MOOD_EMPATHY = {
@@ -86,6 +109,27 @@ const COLD_ASK = [
   '몸 녹이는 조합으로 맞춰 볼까요?',
 ];
 
+const AUTUMN_ASK = [
+  '선선한 가을밤엔 깊은 풍미의 와인이나 그윽한 위스키가 잘 어울려요. 추천해드릴까요?',
+  '가을 정취에 어울리는 향긋한 페어링 하나 골라드릴까요?',
+  '선선한 날씨엔 은은하게 음미하기 좋은 한 잔이 딱이에요. 볼까요?',
+];
+
+const SPRING_ASK = [
+  '화사한 봄날엔 산뜻한 하이볼이나 가벼운 맥주가 잘 어울려요. 추천해드릴까요?',
+  '봄기운에 어울리는 산뜻한 페어링 하나 골라드릴까요?',
+];
+
+const SUMMER_ASK = [
+  '시원한 생맥주나 차가운 하이볼로 갈증을 풀어볼까요? 추천해드릴까요?',
+  '더위를 싹 잊게 해줄 청량한 한 잔 골라드릴까요?',
+];
+
+const WINTER_ASK = [
+  '추운 날엔 따끈한 국물 안주나 온사케 한 잔이 언 몸을 녹여줘요. 추천해드릴까요?',
+  '몸을 포근하게 녹여줄 따뜻한 조합으로 맞춰 볼까요?',
+];
+
 /**
  * weather + mood 조합으로 공감/질문 문장 조립
  * @param {import('./frame.js').SemanticFrame} semantic
@@ -95,13 +139,16 @@ export function composeSemanticReply(semantic, mode = 'ask') {
   const weather = semantic?.weather?.[0];
   const mood = semantic?.mood || 'neutral';
   const energy = semantic?.energy;
+  const hasExplicitEmotion = Boolean(semantic?.emotion?.labels?.length || semantic?.emotion?.valence);
 
   const parts = [];
   if (weather && WEATHER_EMPATHY[weather]?.length) {
     parts.push(pickRandom(WEATHER_EMPATHY[weather]));
   }
-  if (MOOD_EMPATHY[mood]?.length) {
-    parts.push(pickRandom(MOOD_EMPATHY[mood]));
+  if (hasExplicitEmotion || !weather) {
+    if (MOOD_EMPATHY[mood]?.length) {
+      parts.push(pickRandom(MOOD_EMPATHY[mood]));
+    }
   }
   if (!parts.length) {
     parts.push(pickRandom(MOOD_EMPATHY.neutral));
@@ -114,6 +161,14 @@ export function composeSemanticReply(semantic, mode = 'ask') {
       parts.push(pickRandom(HOT_ASK));
     } else if (weather === 'cold') {
       parts.push(pickRandom(COLD_ASK));
+    } else if (weather === 'autumn') {
+      parts.push(pickRandom(AUTUMN_ASK));
+    } else if (weather === 'spring') {
+      parts.push(pickRandom(SPRING_ASK));
+    } else if (weather === 'summer') {
+      parts.push(pickRandom(SUMMER_ASK));
+    } else if (weather === 'winter') {
+      parts.push(pickRandom(WINTER_ASK));
     } else {
       parts.push(pickRandom(ASK_LINES));
     }

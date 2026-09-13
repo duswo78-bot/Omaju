@@ -126,9 +126,13 @@ function scoreDomain(text) {
 function hasKeyword(spacedText, compactText, keyword) {
   const k = String(keyword || '').trim();
   if (!k) return false;
-  if (k.length <= 2 && /^[가-힣]+$/.test(k)) {
-    // 짧은 키워드는 단어 경계 필수 ("회의"≠"회", "소주말고"≠"주말")
-    const re = new RegExp(`(^|[^가-힣])${k}([^가-힣]|$)`);
+  if (k.length === 1 && /^[가-힣]$/.test(k)) {
+    const re = new RegExp(`(^|[^가-힣])${k}(?:도|은|는|가|와|랑)?([^가-힣]|$)`);
+    return re.test(String(spacedText || ''));
+  }
+  if (k.length === 2 && /^[가-힣]+$/.test(k)) {
+    // 2글자 키워드는 단어 경계 및 한국어 조사 허용 ("가을에", "겨울엔", "소주말고"≠"주말")
+    const re = new RegExp(`(^|[^가-힣])${k}(?:에|엔|도|은|는|이|가|을|를|과|와|의|로|으로|이야|이네|이면)?([^가-힣]|$)`);
     return re.test(String(spacedText || '')) || re.test(String(compactText || ''));
   }
   return String(spacedText || '').includes(k) || String(compactText || '').includes(k);
@@ -164,6 +168,22 @@ function detectSignals(spacedText, compactText = '') {
       signals.detectedSituation = sit;
       if (sit.id === 'sit_rain') signals.weather.push('rain', 'humid');
       if (sit.id === 'sit_snow') signals.weather.push('cold', 'winter');
+      if (sit.id === 'sit_autumn') {
+        signals.weather.push('autumn');
+        signals.moods.push('comfort');
+      }
+      if (sit.id === 'sit_spring') {
+        signals.weather.push('spring');
+        signals.moods.push('comfort');
+      }
+      if (sit.id === 'sit_summer') {
+        signals.weather.push('summer', 'hot');
+        signals.moods.push('refresh');
+      }
+      if (sit.id === 'sit_winter') {
+        signals.weather.push('winter', 'cold');
+        signals.moods.push('comfort');
+      }
       if (sit.id === 'sit_hoesik') signals.moods.push('friends', 'celebrate');
       if (sit.id === 'sit_date') signals.moods.push('romantic', 'special');
       if (sit.id === 'sit_honsul') signals.moods.push('honsul', 'comfort');
@@ -624,7 +644,7 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
       !hay.includes('안주') &&
       !hasEntity;
     const weatherOnly =
-      ['덥', '추', '비', '눈'].some((wm) => hay.includes(wm)) &&
+      ['덥', '추', '비', '눈', '가을', '봄', '여름', '겨울'].some((wm) => hay.includes(wm)) &&
       !hay.includes('추천') &&
       !hay.includes('술') &&
       !hay.includes('안주') &&
@@ -645,11 +665,10 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     confidence = 0.8;
     guideHint = 'mood';
   }
-  // 6.5) 날씨 잡담만 SMALLTALK (기분=MOOD, 회식·데이트 등 술자리 상황은 GUIDE로 하락)
+  // 6.5) 날씨/계절 잡담만 SMALLTALK (기분=MOOD, 회식·데이트 등 술자리 상황은 상황 추천으로)
   else if (
     ((signals.weather || []).length > 0 ||
-      signals.detectedSituation?.id === 'sit_rain' ||
-      signals.detectedSituation?.id === 'sit_snow') &&
+      ['sit_rain', 'sit_snow', 'sit_autumn', 'sit_spring', 'sit_summer', 'sit_winter'].includes(signals.detectedSituation?.id)) &&
     !signals.detectedEmotion &&
     !hasEntity &&
     !hasConstraintSignal &&
@@ -679,7 +698,7 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     wantGame ||
     recommendAsk ||
     alone ||
-    signals.detectedSituation ||
+    (signals.detectedSituation && !['sit_rain', 'sit_snow', 'sit_autumn', 'sit_spring', 'sit_summer', 'sit_winter'].includes(signals.detectedSituation.id)) ||
     (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑/.test(hay) && domainScore >= 1)
   ) {
     intent = 'RECOMMEND';

@@ -46,7 +46,7 @@ export function buildSemanticFrame(nluFrame, glossary) {
 
   let mood = g.emotion?.valence || g.idioms?.valence || null;
   if (!mood && catalogMoods.length) {
-    const neg = ['sad', 'stressed', 'tired', 'comfort'];
+    const neg = ['sad', 'stressed', 'tired'];
     const pos = ['happy', 'celebrate'];
     if (catalogMoods.some((m) => neg.includes(m))) mood = 'negative';
     else if (catalogMoods.some((m) => pos.includes(m))) mood = 'positive';

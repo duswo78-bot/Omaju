@@ -1,6 +1,6 @@
 /**
- * 날씨 표현 → 정규 태그
- * @typedef {'rain'|'snow'|'hot'|'cold'|'humid'} WeatherTag
+ * 날씨 및 계절 표현 → 정규 태그
+ * @typedef {'rain'|'snow'|'hot'|'cold'|'humid'|'autumn'|'spring'|'summer'|'winter'} WeatherTag
  */
 
 /** @type {Array<{ tag: WeatherTag, keys: string[] }>} */
@@ -37,6 +37,31 @@ export const WEATHER_ENTRIES = [
   {
     tag: 'humid',
     keys: ['습해', '습한', '후덥', '끈적', '습도', '후덥지근', '눅눅', 'humid'],
+  },
+  {
+    tag: 'autumn',
+    keys: [
+      '가을', '가을이', '가을날', '가을밤', '가을철', '선선', '단풍', '가을바람', '가을타', '낙엽',
+      'autumn', 'fall',
+    ],
+  },
+  {
+    tag: 'spring',
+    keys: [
+      '봄', '봄이', '봄날', '봄밤', '봄철', '포근', '벚꽃', '봄바람', '봄맞이', 'spring',
+    ],
+  },
+  {
+    tag: 'summer',
+    keys: [
+      '여름', '여름이', '여름날', '여름밤', '여름철', 'summer',
+    ],
+  },
+  {
+    tag: 'winter',
+    keys: [
+      '겨울', '겨울이', '겨울날', '겨울밤', '겨울철', '칼바람', 'winter',
+    ],
   },
 ];
 

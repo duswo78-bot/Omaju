@@ -31,7 +31,7 @@ export async function detectIntent(text, cleanText, isLowConfidence) {
   if (rerolls.some(r => cleanText.includes(r))) {
     // 거절이면서 날씨/감정을 강조하는 경우 (예: "아니 덥다니까") -> 스몰톡으로 자연스럽게 유도
     // 한국어 불규칙 활용 대응 (덥다 -> 더워, 춥다 -> 추워)
-    const weatherMood = ['덥', '더워', '더운', '추', '추워', '추운', '비', '눈', '우울', '슬퍼', '슬픈', '화나', '화가', '짜증', '피곤', '힘들', '심심', '외로'];
+    const weatherMood = ['덥', '더워', '더운', '추', '추워', '추운', '비', '눈', '가을', '봄', '여름', '겨울', '우울', '슬퍼', '슬픈', '화나', '화가', '짜증', '피곤', '힘들', '심심', '외로'];
     if (weatherMood.some(wm => cleanText.includes(wm)) && !cleanText.includes('추천') && !cleanText.includes('먹') && !cleanText.includes('술') && !cleanText.includes('안주')) {
       return 'SMALLTALK'; 
     }
@@ -39,7 +39,7 @@ export async function detectIntent(text, cleanText, isLowConfidence) {
   }
 
   // 4. SMALLTALK (스몰톡 / 감정 표출 / 욕설 / 단순 날씨)
-  const smalltalks = ['멍청', '바보', '심심', '외로', '뭐해', '놀자', '짜증', '우울', '피곤', '힘들', '덥', '더워', '더운', '더웠', '추', '추워', '추운', '추웠', '비', '눈', '날씨', '슬퍼', '슬픈', '화나', '화가', '미치겠'];
+  const smalltalks = ['멍청', '바보', '심심', '외로', '뭐해', '놀자', '짜증', '우울', '피곤', '힘들', '덥', '더워', '더운', '더웠', '추', '추워', '추운', '추웠', '비', '눈', '가을', '봄', '여름', '겨울', '날씨', '슬퍼', '슬픈', '화나', '화가', '미치겠'];
   if (smalltalks.some(s => cleanText.includes(s))) {
     // 명시적인 음식/주류 요구가 없으면 일단 스몰톡으로 공감 후 추천을 유도
     if (!cleanText.includes('술') && !cleanText.includes('추천') && !cleanText.includes('먹') && !cleanText.includes('안주') && !cleanText.includes('뭐')) {
