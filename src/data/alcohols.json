@@ -1514,7 +1514,9 @@
       "snk_chicken",
       "snk_fries",
       "snk_sausage",
-      "snk_pizza"
+      "snk_pizza",
+      "snk_tofu_salad",
+      "snk_smoke_duck_salad"
     ]
   },
   {
@@ -1551,7 +1553,8 @@
       "snk_nacho",
       "snk_takoyaki",
       "snk_fruit",
-      "snk_gimmari"
+      "snk_gimmari",
+      "snk_tofu_salad"
     ]
   },
   {

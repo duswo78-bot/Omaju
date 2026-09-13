@@ -52,16 +52,16 @@ export function decideResponsePolicy(frame, dialogue = {}) {
     return { action: 'place', askType: 'place', reason: 'place_intent' };
   }
 
-  // 직전 soft ask / clarify 이후 긍정·추천 → 추천
+  // 직전 soft ask / clarify / chitchat_pivot 이후 긍정·추천 요청 → 바로 추천
   if (
-    (intent === 'AFFIRM' || intent === 'RECOMMEND' || intent === 'THANKS') &&
-    (lastAsk === 'recommend' || lastAsk === 'clarify')
+    (intent === 'AFFIRM' || intent === 'RECOMMEND' || intent === 'GUIDE' || intent === 'THANKS') &&
+    (lastAsk === 'recommend' || lastAsk === 'clarify' || lastAsk === 'chitchat_pivot')
   ) {
     // clarify 직후 THANKS만으로는 추천하지 않음
     if (intent === 'THANKS' && lastAsk === 'clarify') {
       return { action: 'social', askType: null, reason: 'thanks_after_clarify' };
     }
-    if (intent === 'AFFIRM' || intent === 'RECOMMEND') {
+    if (intent === 'AFFIRM' || intent === 'RECOMMEND' || intent === 'GUIDE') {
       return { action: 'recommend', askType: null, reason: 'affirm_after_ask' };
     }
   }

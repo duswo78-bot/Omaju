@@ -31,6 +31,63 @@ const eulLeul = (w) => attachParticle(w, '을', '를');
 const eunNeun = (w) => attachParticle(w, '은', '는');
 const gwaWa = (w) => attachParticle(w, '과', '와');
 
+export function resolveJosa(text) {
+  if (!text || typeof text !== 'string') return text;
+
+  let res = text.replace(
+    /([가-힣A-Za-z0-9][\s\*\_\)\]]*)\s*(?:을\(를\)|\(을\)를|이\(가\)|\(이\)가|은\(는\)|\(은\)는|과\(와\)|\(과\)와|\(이\)랑|이\(랑\))/g,
+    (match, prefix) => {
+      const chars = prefix.match(/[가-힣A-Za-z0-9]/g);
+      if (!chars || chars.length === 0) return match;
+      const lastChar = chars[chars.length - 1];
+      const code = lastChar.charCodeAt(0);
+
+      let hasBatchim = false;
+      if (code >= 0xac00 && code <= 0xd7a3) {
+        hasBatchim = (code - 0xac00) % 28 !== 0;
+      } else if (/[0-9]/.test(lastChar)) {
+        hasBatchim = /[013678]/.test(lastChar);
+      } else if (/[a-zA-Z]/.test(lastChar)) {
+        hasBatchim = /[lmnptkLRM]/i.test(lastChar);
+      }
+
+      if (match.includes('랑')) {
+        return prefix + (hasBatchim ? '이랑' : '랑');
+      }
+      if (match.includes('을') || match.includes('를')) {
+        return prefix + (hasBatchim ? '을' : '를');
+      }
+      if (match.includes('이') || match.includes('가')) {
+        return prefix + (hasBatchim ? '이' : '가');
+      }
+      if (match.includes('은') || match.includes('는')) {
+        return prefix + (hasBatchim ? '은' : '는');
+      }
+      if (match.includes('과') || match.includes('와')) {
+        return prefix + (hasBatchim ? '과' : '와');
+      }
+      return match;
+    }
+  );
+
+  // 받침 없는 명사 뒤에 '이랑'이 붙은 경우 자동으로 '랑'으로 교정 (예: 막걸리**이랑 -> 막걸리**랑)
+  res = res.replace(/([가-힣A-Za-z0-9][\s\*\_\)\]]*)이랑(?=\s|[.,!?~]|$)/g, (match, prefix) => {
+    const chars = prefix.match(/[가-힣A-Za-z0-9]/g);
+    if (!chars || chars.length === 0) return match;
+    const lastChar = chars[chars.length - 1];
+    const code = lastChar.charCodeAt(0);
+    if (code >= 0xac00 && code <= 0xd7a3) {
+      const hasBatchim = (code - 0xac00) % 28 !== 0;
+      if (!hasBatchim) {
+        return prefix + '랑';
+      }
+    }
+    return match;
+  });
+
+  return res;
+}
+
 // Helper to replace template variables
 function formatTemplate(template, bestAlc, bestSnack, bestGame, wantOnlySnack = false) {
   let text = template;
@@ -275,5 +332,5 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
   // 3. 마무리 (Closing)
   // 조립
   let finalAnswer = [empathy, reason, explanation, closing].filter(part => part.trim().length > 0).join('\n\n');
-  return finalAnswer;
+  return resolveJosa(finalAnswer);
 }

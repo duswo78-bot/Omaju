@@ -221,6 +221,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
 
   const allowNonAlcInPool =
     wantNonAlc ||
+    Boolean(constraints.diet) ||
     favFam === 'nonalc' ||
     explicitFamilies.includes('nonalc') ||
     (userTokens || []).some((t) => /논알|무알/.test(String(t)));
@@ -231,6 +232,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     for (const { item, vector } of alcoholEmbeddings) {
       if (wantNonAlc && item.category !== '논알콜/음료' && item.abv !== 0) continue;
       if (!allowNonAlcInPool && item.category === '논알콜/음료') continue;
+      if (constraints.diet && (item.category?.includes('막걸리') || item.subCategory?.includes('막걸리') || item.name_ko?.includes('막걸리'))) continue;
       if (constraints.heavy && typeof item.abv === 'number' && item.abv < 20) continue;
       if (constraints.light && typeof item.abv === 'number' && item.abv > 15) continue;
       if (isExcludedItem(item, {
@@ -343,6 +345,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       ids: scoreOpts.excludedIds,
     }) ||
     (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0) ||
+    (!allowNonAlcInPool && alc.category === '논알콜/음료') ||
+    (constraints.diet && (alc.category?.includes('막걸리') || alc.subCategory?.includes('막걸리') || alc.name_ko?.includes('막걸리'))) ||
     (constraints.heavy && typeof alc.abv === 'number' && alc.abv < 20) ||
     (constraints.light && typeof alc.abv === 'number' && alc.abv > 15);
 
@@ -359,8 +363,14 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     if (picked) {
       bestAlc = picked;
     } else if (bestSnack.bestDrinks?.length) {
-      const drinkId = pickRandom(bestSnack.bestDrinks);
-      bestAlc = alcoholsData.find(a => a.id === drinkId) || bestAlc;
+      const allowedDrinks = bestSnack.bestDrinks.filter((id) => {
+        const a = alcoholsData.find((x) => x.id === id);
+        return a && !alcHardExcluded(a);
+      });
+      if (allowedDrinks.length) {
+        const drinkId = pickRandom(allowedDrinks);
+        bestAlc = alcoholsData.find((a) => a.id === drinkId) || bestAlc;
+      }
     }
     isLowConfidence = false;
   } else if (!wantOnlyAlc && isAlcMatched && !snackLocked && !isSnackMatched && bestAlc) {

@@ -22,11 +22,11 @@ export function handleUnknown(text, context) {
     return handleClarify(text, context);
   }
 
-  // 3단계: 도메인 밖 엉뚱한 잡담/세상만사 질문이면 Witty Chit-chat
-  if (domainScore < 0 || frame?.intent === 'OFFTOPIC') {
-    return handleWittyChitchat(text, context);
+  // 2단계: 명시적 도움말/사용법/기능 요청일 때만 Capability Guide 제공
+  if (/도움말|사용법|기능|뭘\s*할수|뭐할수|할수있는게|가이드|메뉴판/.test(text)) {
+    return handleCapabilityGuide(text, context);
   }
 
-  // 2단계: 아예 매칭이 안 되거나 도메인 범위 질문이면 Capability Guide
-  return handleCapabilityGuide(text, context);
+  // 3단계: 그 외 모든 일상 발화 / 모호한 질문은 바텐더의 Witty Chit-chat으로 따뜻하게 수용
+  return handleWittyChitchat(text, context);
 }

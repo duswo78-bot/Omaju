@@ -33,8 +33,16 @@ export async function routeChat(text, cleanText, context) {
   const dialogue = getDialogueState();
   const policy = decideResponsePolicy(semantic || { intent: frame?.intent }, dialogue);
 
-  // 0) 술 거부 / 금주 의도
+  const wantOnlySnack =
+    Boolean(frame?.slots?.constraints?.onlySnack) ||
+    /안주만|음식만|야식만|밥만|디저트만|간식만/.test(cleanText) ||
+    /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요)?$/.test(cleanText);
+
+  // 0) 술 거부 / 금주 의도 (단, 야식/안주 요청 시 안주 추천으로 즉시 전환)
   if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+    if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+      return await finishRecommend(await handleRecommendation(text, cleanText, context));
+    }
     return handleDeclineAlcohol(text, context);
   }
 
@@ -51,6 +59,9 @@ export async function routeChat(text, cleanText, context) {
   // FOLLOWUP: soft ask 이후 긍정 → 추천 / 거절 → 추천하지 않음
   if (isState(STATES.FOLLOWUP)) {
     if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+      if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+        return await finishRecommend(await handleRecommendation(text, cleanText, context));
+      }
       return handleDeclineAlcohol(text, context);
     }
     if (frame?.intent === 'CLARIFY' || policy.action === 'clarify') {
@@ -96,6 +107,9 @@ export async function routeChat(text, cleanText, context) {
 
   if (isState(STATES.ASKING)) {
     if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
+      if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+        return await finishRecommend(await handleRecommendation(text, cleanText, context));
+      }
       return handleDeclineAlcohol(text, context);
     }
     if (frame?.intent === 'CLARIFY' || policy.action === 'clarify') {
@@ -125,14 +139,17 @@ export async function routeChat(text, cleanText, context) {
     if (frame?.intent === 'GUIDE') return handleGuide(text, context);
   }
 
-  return await dispatchByPolicy(text, cleanText, context, policy);
+  return await dispatchByPolicy(text, cleanText, context, policy, wantOnlySnack);
 }
 
-async function dispatchByPolicy(text, cleanText, context, policy) {
+async function dispatchByPolicy(text, cleanText, context, policy, wantOnlySnack = false) {
   const intent = context.frame?.intent || 'GUIDE';
 
   switch (policy.action) {
     case 'decline_alcohol':
+      if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+        return await finishRecommend(await handleRecommendation(text, cleanText, context));
+      }
       return handleDeclineAlcohol(text, context);
     case 'clarify':
       return handleClarify(text, context);

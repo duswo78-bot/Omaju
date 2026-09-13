@@ -221,14 +221,14 @@ function extractHints(text) {
     }
   }
 
-  // 카테고리성 안주 힌트 (구체 메뉴명 없이도 슬롯 확보) — 단독 '안주'는 onlySnack으로 처리
-  if (/안주/.test(text) && snackHints.length === 0) {
+  // 카테고리성 안주 힌트 (구체 메뉴명 없이도 "매운 거", "얼큰한 것", "기름진 거" 등 맛/식감으로 슬롯 확보)
+  if (snackHints.length === 0) {
     if (/매운|매콤|얼큰|칼칼|알싸|얼얼/.test(text)) snackHints.push('매운');
     else if (/마른|바삭|스낵|쥐포|먹태/.test(text)) snackHints.push('마른');
-    else if (/국물|탕|찌개|시원한|뜨끈한|어묵/.test(text)) snackHints.push('탕');
+    else if (/국물|탕|찌개|뜨끈한|따뜻한|따끈한|따뜻|어묵|시원한\s*(?:국물|탕|찌개)/.test(text)) snackHints.push('탕');
     else if (/전|부침/.test(text)) snackHints.push('전');
     else if (/기름진|고기|삼겹|구이|헤비/.test(text)) snackHints.push('고기');
-    else if (/담백|깔끔|가벼|산뜻/.test(text)) snackHints.push('샐러드');
+    else if (/담백|깔끔|가벼|산뜻|다이어트|샐러드/.test(text)) snackHints.push('샐러드');
   }
 
   const mbtiMatch = (text || '').match(/\b(INFP|ENFP|INFJ|ENFJ|INTJ|ENTJ|INTP|ENTP|ISFP|ESFP|ISFJ|ESFJ|ISTP|ESTP|ISTJ|ESTJ)\b/i);
@@ -255,6 +255,12 @@ function extractConstraints(text) {
     if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
   }
 
+  // 다이어트/칼로리 부담 시 기름진/헤비 메뉴 자동 제외
+  const isDiet = /다이어트|살\s*빼|살빼|칼로리|저칼로리|살안찌/.test(text);
+  if (isDiet) {
+    exclude.push('기름진', '느끼한', '피자', '치킨', '삼겹살');
+  }
+
   // 부정 접두 파생어 ("안~", "덜~") 감지 및 제외 슬롯 자동 등록
   const notSpicy = /안\s*매[운콤워]|덜\s*매[운콤워]|안\s*맵고|맵지\s*않/.test(text);
   const notGreasy = /안\s*기름|덜\s*기름|기름기\s*없|안\s*느끼|덜\s*느끼|느끼하지\s*않/.test(text);
@@ -275,6 +281,7 @@ function extractConstraints(text) {
   const onlySnack =
     (/안주만|밥만|식사만|안주\s*위주|음식만|야식만|먹을\s*것만|간식만|디저트만|안주만\s*추천|안주만\s*골라|안주만\s*줘|안주만\s*해줘|안주만\s*볼래|안주만\s*먹을래/.test(text) &&
       !/술\s*추천|술도/.test(text)) ||
+    (isDeclineAlcohol(text, text) && /안주|야식|간식|음식|먹을|요리/.test(text)) ||
     (/안주|야식|간식|디저트/.test(text) && !mentionsAlcohol) ||
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
@@ -289,6 +296,7 @@ function extractConstraints(text) {
     onlyAlcohol,
     onlySnack: onlySnack || hangover,
     nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text) || hangover,
+    diet: isDiet,
     spicy,
     sweet,
     light,
@@ -540,11 +548,19 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     constraints.nonAlcoholic = true;
     guideHint = 'nonalc';
   }
-  // 0.5) 술 거부 / 금주 / 술 안 땡김 의도 (추천으로 억지 전환 방지)
+  // 0.5) 술 거부 / 금주 / 술 안 땡김 의도 (추천으로 억지 전환 방지, 단 야식/안주 요청 시 안주 단독 추천)
   else if (declineAlcohol) {
-    intent = 'DECLINE_ALCOHOL';
-    confidence = 0.94;
-    guideHint = 'nonalc';
+    if (constraints.onlySnack || /안주|야식|간식|음식|요리|먹을/.test(hay)) {
+      intent = 'RECOMMEND';
+      confidence = 0.92;
+      constraints.onlySnack = true;
+      constraints.nonAlcoholic = true;
+      guideHint = 'snack';
+    } else {
+      intent = 'DECLINE_ALCOHOL';
+      confidence = 0.94;
+      guideHint = 'nonalc';
+    }
   }
   // 1) 긍정/수락/결정 — "좋아 그거 먹을래", "그걸로 할래", "콜", "네"
   else if (
@@ -711,21 +727,21 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
       intent = 'CLARIFY';
       confidence = 0.75;
     } else {
-      intent = 'CAPABILITY_GUIDE';
+      intent = 'CLARIFY';
       confidence = 0.72;
     }
   }
-  // 9.5) 엉뚱한 질문 / 도메인 밖 질문 / 세상만사 잡담 → 3단계: Witty Chit-chat
-  else if (domainScore < 0) {
-    intent = 'WITTY_CHITCHAT';
-    confidence = 0.85;
-    guideHint = 'redirect';
-  }
-  // 10) 아예 매칭 안 됨 / 모호한 입력 → 2단계: Capability Guide (또는 UNKNOWN 폴백)
+  // 9.5) 엉뚱한 질문 / 도메인 밖 질문 / 세상만사 잡담 / 매칭되지 않는 일반 일상어 → Witty Chit-chat
   else {
-    intent = 'UNKNOWN';
-    confidence = 0.55;
-    guideHint = 'general';
+    if (/도움말|사용법|기능|뭘\s*할수|뭐할수|할수있는게|가이드|메뉴판/.test(hay)) {
+      intent = 'CAPABILITY_GUIDE';
+      confidence = 0.85;
+      guideHint = 'general';
+    } else {
+      intent = 'WITTY_CHITCHAT';
+      confidence = 0.82;
+      guideHint = 'redirect';
+    }
   }
 
   // 엔티티가 있으면 이탈로 오분류된 경우 추천으로 교정

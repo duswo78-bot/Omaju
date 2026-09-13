@@ -169,11 +169,36 @@ export function calculateScore(
   }
 
   if (isSnack) {
-    if (constraints.spicy && (tags.includes('매운') || tags.includes('매콤') || nameKo.includes('매운') || nameKo.includes('불') || nameKo.includes('얼큰'))) {
-      score += 1.5;
+    if (constraints.spicy) {
+      const isSpicy =
+        tags.includes('매운') ||
+        tags.includes('매콤') ||
+        tags.includes('얼큰') ||
+        nameKo.includes('매운') ||
+        nameKo.includes('불') ||
+        nameKo.includes('얼큰');
+      if (isSpicy) {
+        score += 3.5;
+      } else {
+        score -= 3.5;
+      }
+    }
+    if (constraints.diet) {
+      if (item.category === '샐러드/과일' || tags.includes('담백') || tags.includes('샐러드') || tags.includes('가벼운') || tags.includes('저칼로리')) {
+        score += 3.5;
+      } else if (tags.includes('기름진') || tags.includes('튀김') || tags.includes('고기')) {
+        score -= 4.0;
+      }
     }
     if (constraints.cheap && typeof item.priceLevel === 'number' && item.priceLevel <= 2) {
       score += 0.8;
+    }
+  } else if (typeof item?.abv === 'number') {
+    if (constraints.diet) {
+      const isMak = item.category?.includes('막걸리') || item.subCategory?.includes('막걸리') || item.name_ko?.includes('막걸리');
+      if (item.category === '논알콜/음료' || item.abv === 0) score += 4.0;
+      else if (item.abv <= 5 && !isMak) score += 1.5;
+      else if (isMak || item.abv >= 15) score -= 4.0;
     }
   }
 
