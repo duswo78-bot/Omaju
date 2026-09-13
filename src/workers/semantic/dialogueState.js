@@ -13,6 +13,7 @@ const state = {
   recommendHistory: /** @type {Array<{ alcohol?: string, snack?: string, ts: number }>} */ ([]),
   exclude: /** @type {string[]} */ ([]),
   turn: 0,
+  consecutiveChitchatTurns: 0,
 };
 
 export function getDialogueState() {
@@ -30,6 +31,7 @@ export function resetDialogueState() {
   state.recommendHistory = [];
   state.exclude = [];
   state.turn = 0;
+  state.consecutiveChitchatTurns = 0;
 }
 
 /**
@@ -88,6 +90,19 @@ export function pushRecommendHistory(rec) {
     { alcohol: rec.alcohol, snack: rec.snack, ts: Date.now() },
     ...state.recommendHistory,
   ].slice(0, 8);
+}
+
+export function incrementChitchatTurns() {
+  state.consecutiveChitchatTurns += 1;
+  return state.consecutiveChitchatTurns;
+}
+
+export function resetChitchatTurns() {
+  state.consecutiveChitchatTurns = 0;
+}
+
+export function getConsecutiveChitchatTurns() {
+  return state.consecutiveChitchatTurns;
 }
 
 function uniq(arr) {

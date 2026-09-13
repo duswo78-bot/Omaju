@@ -5,6 +5,12 @@ let rejectedItems = new Set(); // 사용자가 거절한 아이템 ID 목록 (�
 let recentRecommendedIds = []; // 최근 추천된 술/안주/게임 ID (다양성용)
 
 const DRINK_HINTS = ['소주', '맥주', '와인', '막걸리', '하이볼', '위스키', '칵테일', '전통주', '논알콜', '청하'];
+const SNACK_HINTS = [
+  '치킨', '피자', '삼겹살', '고기', '탕', '찌개', '전', '파전', '김치전',
+  '샐러드', '회', '라면', '어묵탕', '골뱅이', '먹태', '마른안주', '떡볶이',
+  '튀김', '순대', '국밥', '곱창', '막창', '조개탕', '치즈', '과일', '나초',
+  '감자튀김', '팝콘', '스테이크', '육회', '오뎅'
+];
 const MOOD_HINTS = [
   ['비', 'rain'],
   ['비오', 'rain'],
@@ -43,11 +49,12 @@ export function pushHistory(role, text) {
 
 /**
  * 최근 대화에서 NLU/BACK에 넘길 짧은 맥락 요약.
- * @returns {{ alcoholHints: string[], exclude: string[], moods: string[], notes: string[] }}
+ * @returns {{ alcoholHints: string[], snackHints: string[], exclude: string[], moods: string[], notes: string[] }}
  */
 export function getDialogueContext(limitTurns = 4) {
   const recent = chatHistory.slice(-limitTurns * 2);
-  const alcoholHints = [];
+  let alcoholHints = [];
+  let snackHints = [];
   const exclude = [];
   const moods = [];
   const notes = [];
@@ -57,12 +64,55 @@ export function getDialogueContext(limitTurns = 4) {
     if (!t.trim()) continue;
     if (turn.role === 'user') {
       notes.push(`사용자: ${t.slice(0, 80)}`);
-      for (const d of DRINK_HINTS) {
-        if (t.includes(d)) {
-          if (/싫|별로|말고|제외|빼고|먹었/.test(t)) exclude.push(d);
-          else alcoholHints.push(d);
+
+      // 취향 번복 / 정정(Override) 시그널 감지 ("아니다", "그거 말고", "바꿀래", "소주 말고 맥주" 등)
+      const hasChangeOfMind = /아니(?:다|요|야)?|바꿀래|그거\s*말고|아까\s*말한\s*거\s*말고|생각\s*바뀌/.test(t);
+
+      // "A 말고", "A 빼고", "A 제외" 패턴
+      const excludeRe = /([가-힣A-Za-z0-9]{2,10})\s*(?:말고|제외|빼고|말구)/g;
+      let em;
+      while ((em = excludeRe.exec(t)) !== null) {
+        if (em[1]) {
+          exclude.push(em[1]);
+          alcoholHints = alcoholHints.filter((a) => a !== em[1]);
+          snackHints = snackHints.filter((s) => s !== em[1]);
         }
       }
+
+      // 새 주종이 언급되고 번복 시그널이 있으면 이전 주종 누적값 초기화
+      const foundNewDrinks = DRINK_HINTS.filter((d) => t.includes(d) && !t.includes(`${d} 말고`) && !t.includes(`${d} 빼고`));
+      if (hasChangeOfMind && foundNewDrinks.length > 0) {
+        alcoholHints = [];
+      }
+
+      for (const d of DRINK_HINTS) {
+        if (t.includes(d)) {
+          if (/싫|별로|말고|제외|빼고|먹었/.test(t)) {
+            exclude.push(d);
+            alcoholHints = alcoholHints.filter((a) => a !== d);
+          } else if (!exclude.includes(d)) {
+            alcoholHints.push(d);
+          }
+        }
+      }
+
+      // 새 안주가 언급되고 번복 시그널이 있으면 이전 안주 누적값 초기화
+      const foundNewSnacks = SNACK_HINTS.filter((s) => t.includes(s) && !t.includes(`${s} 말고`) && !t.includes(`${s} 빼고`));
+      if (hasChangeOfMind && foundNewSnacks.length > 0) {
+        snackHints = [];
+      }
+
+      for (const s of SNACK_HINTS) {
+        if (t.includes(s)) {
+          if (/싫|별로|말고|제외|빼고|먹었/.test(t)) {
+            exclude.push(s);
+            snackHints = snackHints.filter((item) => item !== s);
+          } else if (!exclude.includes(s)) {
+            snackHints.push(s);
+          }
+        }
+      }
+
       for (const [kw, mood] of MOOD_HINTS) {
         if (t.includes(kw) && !moods.includes(mood)) moods.push(mood);
       }
@@ -71,12 +121,17 @@ export function getDialogueContext(limitTurns = 4) {
     }
   }
 
+  // 직전 추천 주종은 제외/번복 상태가 아닐 때만 참고
   if (lastRecommendation?.bestAlc?.category) {
-    alcoholHints.push(lastRecommendation.bestAlc.category);
+    const lastCat = lastRecommendation.bestAlc.category;
+    if (!exclude.includes(lastCat) && !alcoholHints.includes(lastCat)) {
+      alcoholHints.push(lastCat);
+    }
   }
 
   return {
     alcoholHints: [...new Set(alcoholHints)],
+    snackHints: [...new Set(snackHints)],
     exclude: [...new Set(exclude)],
     moods: [...new Set(moods)],
     notes: notes.slice(-6),
@@ -93,6 +148,9 @@ export function applyDialogueContextToFrame(frame) {
 
   if (!slots.alcoholHints?.length && ctx.alcoholHints.length) {
     slots.alcoholHints = ctx.alcoholHints.slice(0, 4);
+  }
+  if (!slots.snackHints?.length && ctx.snackHints.length) {
+    slots.snackHints = ctx.snackHints.slice(0, 4);
   }
   if (!slots.moods?.length && ctx.moods.length) {
     slots.moods = ctx.moods.slice(0, 3);

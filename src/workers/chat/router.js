@@ -20,7 +20,7 @@ import { handleWittyChitchat } from './wittyChitchat.js';
 import { isState, STATES } from '../engines/stateMachine.js';
 import { setPendingContextText } from '../engines/memoryEngine.js';
 import { decideResponsePolicy } from '../semantic/policy.js';
-import { getDialogueState, setLastBotAsk, pushRecommendHistory } from '../semantic/dialogueState.js';
+import { getDialogueState, setLastBotAsk, pushRecommendHistory, resetChitchatTurns } from '../semantic/dialogueState.js';
 
 /**
  * @param {string} text
@@ -190,6 +190,7 @@ async function dispatchByPolicy(text, cleanText, context, policy, wantOnlySnack 
 
 async function finishRecommend(result) {
   setLastBotAsk(null);
+  resetChitchatTurns();
   if (result?.bestAlc || result?.bestSnack) {
     pushRecommendHistory({
       alcohol: result.bestAlc?.name_ko,

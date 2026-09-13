@@ -1,5 +1,25 @@
 import { pickRandom } from '../utils/random.js';
-import { setLastBotAsk } from '../semantic/dialogueState.js';
+import { setLastBotAsk, incrementChitchatTurns, getConsecutiveChitchatTurns } from '../semantic/dialogueState.js';
+
+const recentWittySentences = [];
+
+function pickNonRepeating(pool) {
+  const available = (pool || []).filter((t) => !recentWittySentences.includes(t));
+  const chosen = pickRandom(available.length > 0 ? available : pool);
+  recentWittySentences.push(chosen);
+  if (recentWittySentences.length > 10) {
+    recentWittySentences.shift();
+  }
+  return chosen;
+}
+
+const deepListeningAnchorTemplates = [
+  "그런 일이 있으셨군요... 카운터 너머로 온전히 귀 기울여 드릴게요 🕯️ 이야기 편하게 털어놓으시면서, 속이라도 든든하게 채우실 수 있는 따뜻한 짝꿍을 곁에 놓아드릴게요 🍲",
+  "듣기만 해도 한숨이 절로 나오네요. 오늘은 다른 복잡한 생각 다 접어두고, 맛있는 음식으로 몸부터 위로해야 할 밤이에요 ✨ 손님의 지친 마음을 녹여줄 포근한 한 상을 준비해드릴게요.",
+  "세상살이가 참 마음 같지 않죠. 속상하고 화난 날일수록 빈속으로 계시면 안 돼요. 속을 따뜻하게 달래줄 든든한 힐링 메뉴로 기운 차리게 도와드릴게요 🍵",
+  "그 억울하고 답답한 마음, 바텐더로서 온전히 공감해요. 말없이 곁을 지키며 손님의 마음을 든든하게 받쳐줄 위로의 한 잔과 안주를 골라둘게요 🌿",
+  "마음속 응어리는 이야기로 풀고, 몸의 피로는 맛있는 야식과 한 잔으로 씻어내야죠. 오늘 밤만큼은 오롯이 손님만을 위한 치유의 페어링을 내어드릴게요 🍷",
+];
 
 const investTemplates = [
   "차트는 빨갛고 파랗게 널뛰어도, 맛있는 술과 안주는 절대 배신하지 않죠 📈 복잡한 머릿속을 식혀줄 시원한 맥주나 하이볼 한 잔 어떠세요?",
@@ -208,101 +228,108 @@ function detectChitChatCategory(text) {
 }
 
 export function handleWittyChitchat(text, context) {
+  const turns = incrementChitchatTurns();
   const category = detectChitChatCategory(text);
   let pool;
-  switch (category) {
-    case 'traffic':
-      pool = trafficTemplates;
-      break;
-    case 'home_longing':
-      pool = homeLongingTemplates;
-      break;
-    case 'sleepy_tired':
-      pool = sleepyTiredTemplates;
-      break;
-    case 'workout_fitness':
-      pool = workoutFitnessTemplates;
-      break;
-    case 'diet_health':
-      pool = dietHealthTemplates;
-      break;
-    case 'coffee_caffeine':
-      pool = coffeeCaffeineTemplates;
-      break;
-    case 'pet_walk':
-      pool = petWalkTemplates;
-      break;
-    case 'chores_wash':
-      pool = choresWashTemplates;
-      break;
-    case 'interpersonal_conflict':
-      pool = conflictTemplates;
-      break;
-    case 'monday_blues':
-      pool = mondayBluesTemplates;
-      break;
-    case 'sunny_weather':
-      pool = sunnyWeatherTemplates;
-      break;
-    case 'bodily_condition':
-      pool = bodilyConditionTemplates;
-      break;
-    case 'long_day':
-      pool = longDayTemplates;
-      break;
-    case 'fortune':
-      pool = fortuneTemplates;
-      break;
-    case 'ai_meta':
-      pool = aiMetaTemplates;
-      break;
-    case 'testing':
-      pool = testingTemplates;
-      break;
-    case 'language':
-      pool = languageTemplates;
-      break;
-    case 'travel':
-      pool = travelTemplates;
-      break;
-    case 'time':
-      pool = timeTemplates;
-      break;
-    case 'love':
-      pool = loveTemplates;
-      break;
-    case 'work':
-      pool = workTemplates;
-      break;
-    case 'school':
-      pool = schoolTemplates;
-      break;
-    case 'invest':
-      pool = investTemplates;
-      break;
-    case 'philosophy':
-      pool = philosophyTemplates;
-      break;
-    case 'tech':
-      pool = techTemplates;
-      break;
-    case 'sports':
-      pool = sportsTemplates;
-      break;
-    case 'culture':
-      pool = cultureTemplates;
-      break;
-    case 'play':
-      pool = playTemplates;
-      break;
-    case 'praise':
-      pool = praiseTemplates;
-      break;
-    default:
-      pool = generalWittyTemplates;
+
+  // 연속 2턴 이상 감정 배출/넋두리 시: 매번 "골라드릴까요?" 재촉하지 않고 깊은 경청 + 속 달래기 앵커링
+  if (turns >= 2 && (category === 'general' || category === 'work' || category === 'interpersonal_conflict' || category === 'long_day' || category === 'bodily_condition')) {
+    pool = deepListeningAnchorTemplates;
+  } else {
+    switch (category) {
+      case 'traffic':
+        pool = trafficTemplates;
+        break;
+      case 'home_longing':
+        pool = homeLongingTemplates;
+        break;
+      case 'sleepy_tired':
+        pool = sleepyTiredTemplates;
+        break;
+      case 'workout_fitness':
+        pool = workoutFitnessTemplates;
+        break;
+      case 'diet_health':
+        pool = dietHealthTemplates;
+        break;
+      case 'coffee_caffeine':
+        pool = coffeeCaffeineTemplates;
+        break;
+      case 'pet_walk':
+        pool = petWalkTemplates;
+        break;
+      case 'chores_wash':
+        pool = choresWashTemplates;
+        break;
+      case 'interpersonal_conflict':
+        pool = interpersonalConflictTemplates;
+        break;
+      case 'monday_blues':
+        pool = mondayBluesTemplates;
+        break;
+      case 'sunny_weather':
+        pool = sunnyWeatherTemplates;
+        break;
+      case 'bodily_condition':
+        pool = bodilyConditionTemplates;
+        break;
+      case 'long_day':
+        pool = longDayTemplates;
+        break;
+      case 'fortune':
+        pool = fortuneTemplates;
+        break;
+      case 'ai_meta':
+        pool = aiMetaTemplates;
+        break;
+      case 'testing':
+        pool = testingTemplates;
+        break;
+      case 'language':
+        pool = languageTemplates;
+        break;
+      case 'travel':
+        pool = travelTemplates;
+        break;
+      case 'time':
+        pool = timeTemplates;
+        break;
+      case 'love':
+        pool = loveTemplates;
+        break;
+      case 'work':
+        pool = workTemplates;
+        break;
+      case 'school':
+        pool = schoolTemplates;
+        break;
+      case 'invest':
+        pool = investTemplates;
+        break;
+      case 'philosophy':
+        pool = philosophyTemplates;
+        break;
+      case 'tech':
+        pool = techTemplates;
+        break;
+      case 'sports':
+        pool = sportsTemplates;
+        break;
+      case 'culture':
+        pool = cultureTemplates;
+        break;
+      case 'play':
+        pool = playTemplates;
+        break;
+      case 'praise':
+        pool = praiseTemplates;
+        break;
+      default:
+        pool = generalWittyTemplates;
+    }
   }
 
-  let answer = pickRandom(pool);
+  let answer = pickNonRepeating(pool);
   if (context?.profile?.name && Math.random() > 0.5) {
     answer = `${context.profile.name}님, ${answer}`;
   }

@@ -35,7 +35,7 @@ export function resolveJosa(text) {
   if (!text || typeof text !== 'string') return text;
 
   let res = text.replace(
-    /([가-힣A-Za-z0-9][\s\*\_\)\]]*)\s*(?:을\(를\)|\(을\)를|이\(가\)|\(이\)가|은\(는\)|\(은\)는|과\(와\)|\(과\)와|\(이\)랑|이\(랑\))/g,
+    /([가-힣A-Za-z0-9][\s\*\_\)\]\%\'\"~]*)\s*(?:을\(를\)|\(을\)를|이\(가\)|\(이\)가|은\(는\)|\(은\)는|과\(와\)|\(과\)와|\(이\)랑|이\(랑\))/g,
     (match, prefix) => {
       const chars = prefix.match(/[가-힣A-Za-z0-9]/g);
       if (!chars || chars.length === 0) return match;
@@ -43,7 +43,11 @@ export function resolveJosa(text) {
       const code = lastChar.charCodeAt(0);
 
       let hasBatchim = false;
-      if (code >= 0xac00 && code <= 0xd7a3) {
+      const cleanPrefix = prefix.trim().replace(/[\*\_\)\]\'\"]+$/g, '');
+      if (cleanPrefix.endsWith('%')) {
+        // '%'는 '퍼센트'로 발음되어 받침 없음
+        hasBatchim = false;
+      } else if (code >= 0xac00 && code <= 0xd7a3) {
         hasBatchim = (code - 0xac00) % 28 !== 0;
       } else if (/[0-9]/.test(lastChar)) {
         hasBatchim = /[013678]/.test(lastChar);
