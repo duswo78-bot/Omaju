@@ -45,7 +45,10 @@ export function updateDialogueStateFromFrame(frame) {
   if (frame.energy) state.energy = frame.energy;
   if (frame.relation) state.relation = frame.relation;
   if (frame.intent) state.lastIntent = frame.intent;
-  if (frame.intent === 'DECLINE_ALCOHOL' || frame.constraints?.nonAlcoholic || frame.constraints?.onlySnack) {
+  const wantsDrink = /말아|한\s*잔|마실|마셔|마시자|술|취하|짠|알콜|하이볼|맥주|소주|칵테일|위스키|와인/.test(frame.rawText || '');
+  if (wantsDrink) {
+    state.nonAlcoholic = false;
+  } else if (frame.intent === 'DECLINE_ALCOHOL' || frame.constraints?.nonAlcoholic || frame.constraints?.onlySnack) {
     state.nonAlcoholic = true;
   } else if ((frame.slots?.alcoholHints || []).length > 0 || (frame.resolved?.alcoholIds || []).length > 0) {
     state.nonAlcoholic = false;
@@ -64,7 +67,14 @@ export function inheritDialogueState(frame) {
   if (!frame.mood && state.mood) frame.mood = state.mood;
   if (!frame.energy && state.energy) frame.energy = state.energy;
   if (!frame.relation && state.relation) frame.relation = state.relation;
-  if (state.nonAlcoholic && !(frame.slots?.alcoholHints || []).length && !(frame.resolved?.alcoholIds || []).length) {
+  const wantsDrink = /말아|한\s*잔|마실|마셔|마시자|술|취하|짠|알콜|하이볼|맥주|소주|칵테일|위스키|와인/.test(frame.rawText || '');
+  if (wantsDrink) {
+    state.nonAlcoholic = false;
+    if (frame.constraints) {
+      delete frame.constraints.onlySnack;
+      delete frame.constraints.nonAlcoholic;
+    }
+  } else if (state.nonAlcoholic && !(frame.slots?.alcoholHints || []).length && !(frame.resolved?.alcoholIds || []).length) {
     frame.constraints = frame.constraints || {};
     frame.constraints.onlySnack = true;
     frame.constraints.nonAlcoholic = true;

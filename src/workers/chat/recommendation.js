@@ -96,6 +96,7 @@ export async function handleRecommendation(text, cleanText, context) {
     skipPrompt: context.skipPrompt,
     matchedOpening: frame?.matchedOpening || context.matchedOpening,
     profile: context.profile,
+    constraints,
   });
 
   const reasonParts = [];

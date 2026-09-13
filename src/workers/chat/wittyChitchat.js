@@ -21,6 +21,22 @@ const deepListeningAnchorTemplates = [
   "마음속 응어리는 이야기로 풀고, 몸의 피로는 맛있는 야식과 한 잔으로 씻어내야죠. 오늘 밤만큼은 오롯이 손님만을 위한 치유의 페어링을 내어드릴게요 🍷",
 ];
 
+// 5~7턴 장기 넋두리 루프: 무리한 추천/영업을 완전히 멈추고 시원한 냉수와 묵묵한 경청으로 곁을 지키는 바텐더
+const silentCompanionWaterTemplates = [
+  "손님, 오늘은 무언가를 꼭 마시거나 드시지 않아도 괜찮습니다. 목 축이실 수 있게 시원한 얼음물 한 잔 카운터에 먼저 채워둘게요 🧊 마음속에 쌓아두신 이야기, 편하게 다 털어놓고 가세요. 온전히 다 들어드릴게요.",
+  "바텐더 곁에서 묵묵히 잔을 닦으며 온전히 귀 기울이고 있습니다. 속에 담아두면 결국 병이 되는 법이니까요. 부담 갖지 마시고 편히 말씀하세요. 고소한 기본 안주도 앞에 살짝 밀어둘게요 🥜",
+  "얼마나 답답하고 힘드셨을까요... 억지로 기분 내실 필요 전혀 없어요. 시원한 냉수 한 모금 천천히 넘기시면서, 손님의 속도대로 편하게 이야기해 주세요 💧",
+  "다 듣고 있습니다. 아무 말 없이 곁에 머물러 드리는 것도 바텐더의 일이니까요. 목마르지 않게 시원한 차 한 잔 올려두었으니, 천천히 마음을 털어내세요 🍵",
+  "복잡한 세상일 잠시 다 내려놓고 여기선 편안히 기대셔도 됩니다. 마실 것이나 안주는 언제든 생각나시면 말씀하시고, 지금은 억울했던 마음 온전히 다 쏟아내고 가세요 ✨",
+];
+
+// 8턴 이상 무한 잡담/넋두리: 언제나 손님 편인 온전한 안식처 모드
+const safeHavenCompanionTemplates = [
+  "손님, 오늘 밤 이 바 카운터는 오롯이 손님만을 위한 가장 안전한 아지트예요 🕯️ 무언가를 주문해야 한다는 생각은 1도 하지 마세요. 지금은 그저 멍하니 쉬어가셔도 좋고, 속에 남은 서러운 이야기 다 쏟아내셔도 좋습니다. 저는 언제나 손님 편에서 묵묵히 듣고 있을게요.",
+  "참 오래도록 혼자 마음고생 많으셨어요... 다 털어놓으실 때까지 카운터 불 밝히고 끝까지 자리 지켜드릴게요. 편하게 쉬었다 가세요 🌙",
+  "여기서만큼은 그 어떤 가면도 쓰실 필요 없습니다. 술이나 음식은 손님이 먼저 원하실 때 살짝 귀띔만 해주세요. 오늘은 그저 손님의 이야기를 묵묵히 품어드리는 밤으로 채우겠습니다 🌿",
+];
+
 const investTemplates = [
   "차트는 빨갛고 파랗게 널뛰어도, 맛있는 술과 안주는 절대 배신하지 않죠 📈 복잡한 머릿속을 식혀줄 시원한 맥주나 하이볼 한 잔 어떠세요?",
   "투자의 기본은 역시 멘탈 관리! 오늘은 수익률 생각 잠시 내려놓고, 나를 위한 맛있는 야식에 투자해 보는 건 어떨까요? 🍷",
@@ -232,8 +248,18 @@ export function handleWittyChitchat(text, context) {
   const category = detectChitChatCategory(text);
   let pool;
 
-  // 연속 2턴 이상 감정 배출/넋두리 시: 매번 "골라드릴까요?" 재촉하지 않고 깊은 경청 + 속 달래기 앵커링
-  if (turns >= 2 && (category === 'general' || category === 'work' || category === 'interpersonal_conflict' || category === 'long_day' || category === 'bodily_condition')) {
+  // 연속 넋두리/일상 이야기 지속 시 4단계 바텐더 템포 (Pacing) 적용:
+  // 1) 8턴 이상: Safe Haven & Ever-present Comfort (온전한 안식처 모드, 주문 강요 0%)
+  // 2) 5~7턴: Silent Companion & Welcome Ice Water (영업 배제, 냉수 및 묵묵한 경청)
+  // 3) 3~4턴: Deep Listening & Food Therapy (깊은 경청 & 속 달래기)
+  // 4) 2턴: 심리적 스트레스 카테고리일 때 Deep Listening
+  if (turns >= 8) {
+    pool = safeHavenCompanionTemplates;
+  } else if (turns >= 5) {
+    pool = silentCompanionWaterTemplates;
+  } else if (turns >= 3) {
+    pool = deepListeningAnchorTemplates;
+  } else if (turns >= 2 && (category === 'general' || category === 'work' || category === 'interpersonal_conflict' || category === 'long_day' || category === 'bodily_condition')) {
     pool = deepListeningAnchorTemplates;
   } else {
     switch (category) {
@@ -262,7 +288,7 @@ export function handleWittyChitchat(text, context) {
         pool = choresWashTemplates;
         break;
       case 'interpersonal_conflict':
-        pool = interpersonalConflictTemplates;
+        pool = conflictTemplates;
         break;
       case 'monday_blues':
         pool = mondayBluesTemplates;

@@ -71,8 +71,8 @@ export function isDeclineAlcohol(hay, text) {
     // 2) 금주 / 논알콜 / 무알콜 / 간 휴식
     /금주|단주|노알콜|논알콜|무알콜|알콜\s*없이|술\s*없이|알콜\s*안받|술마실\s*기분\s*아니|간\s*쉬|속\s*안좋아서\s*술|술\s*생각\s*(?:1도\s*)?없/.test(h) ||
     // 3) '술' 단어가 생략된 자연스러운 거절 표현 ("오늘은 안마실래", "안 마실래", "마시기 싫어", "안 땡겨", "오늘은 쉴래", "오늘은 패스")
-    /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실(?:래|란다|래여|래요|거야|듯|다)|안\s*마셔(?:요)?|안\s*마신다|안\s*먹을(?:래|란다|래여|래요|거야)|안\s*먹어(?:요)?|마시기\s*싫(?:어|다|은데|음|네)|안\s*땡(?:겨|기네|긴다|겨요)|안\s*끌(?:려|리네|린다)|생각\s*(?:없|안\s*나)|쉬(?:고\s*싶|어야겠|ㄹ래)|패스\s*할(?:래|게))/.test(h) ||
-    /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실|안\s*마셔|안\s*먹을|안\s*먹어|마시기\s*싫|안\s*땡|안\s*끌|생각\s*없|패스\s*할)/.test(t) ||
+    /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실(?:래|란다|래여|래요|거야|듯|다)|안\s*마셔(?:요)?|안\s*마신다|안\s*먹을(?:래|란다|래여|래요|거야)|안\s*먹어(?:요)?|마시기\s*싫(?:어|다|은데|음|네)|먹기\s*싫(?:어|다|은데|음|네)|먹고\s*싶지\s*않|마시고\s*싶지\s*않|먹고\s*싶지도\s*않|마시고\s*싶지도\s*않|아무것도\s*먹고|아무것도\s*마시고|안\s*땡(?:겨|기네|긴다|겨요)|안\s*끌(?:려|리네|린다)|생각\s*(?:없|안\s*나)|쉬(?:고\s*싶|어야겠|ㄹ래)|패스\s*할(?:래|게))/.test(h) ||
+    /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실|안\s*마셔|안\s*먹을|안\s*먹어|마시기\s*싫|먹기\s*싫|먹고\s*싶지|마시고\s*싶지|먹고\s*싶지도|마시고\s*싶지도|아무것도\s*먹|아무것도\s*안|안\s*땡|안\s*끌|생각\s*없|패스\s*할)/.test(t) ||
     /금주|단주|노알콜|논알콜만|무알콜만/.test(t)
   );
 }
@@ -88,7 +88,10 @@ export function isAloneUtterance(hay, text) {
 
 function hasRecommendAsk(text) {
   if (isDeclineAlcohol(text, text)) return false;
-  return /추천|골라|뭐\s*마시|뭐\s*먹|먹고싶|마시고싶|한\s*잔|없나|없을까|부탁|각(?:이|임|야)?|어울리|페어링|마실\s*거|먹기\s*좋은|마시기\s*좋은/.test(
+  if (/먹고\s*싶지\s*않|마시고\s*싶지\s*않|먹기\s*싫|마시기\s*싫|안\s*먹고\s*싶|안\s*마시고\s*싶|먹고\s*싶지도\s*않|마시고\s*싶지도\s*않|안\s*먹을|안\s*마실/.test(text)) {
+    return false;
+  }
+  return /추천|골라|뭐\s*마시|뭐\s*먹|먹고싶|마시고싶|한\s*잔|없나|없을까|부탁|각(?:이|임|야)?|어울리|페어링|마실\s*거|먹기\s*좋은|마시기\s*좋은|쌉파서블|쌉가능|알잘딱|알잘딱깔센|기깔난|끝내주는|없냐/.test(
     text
   );
 }
@@ -131,8 +134,8 @@ function hasKeyword(spacedText, compactText, keyword) {
     return re.test(String(spacedText || ''));
   }
   if (k.length === 2 && /^[가-힣]+$/.test(k)) {
-    // 2글자 키워드는 단어 경계 및 한국어 조사 허용 ("가을에", "겨울엔", "소주말고"≠"주말")
-    const re = new RegExp(`(^|[^가-힣])${k}(?:에|엔|도|은|는|이|가|을|를|과|와|의|로|으로|이야|이네|이면)?([^가-힣]|$)`);
+    // 2글자 키워드는 단어 경계 및 한국어 조사 허용 ("가을에", "겨울엔", "눈물만", "소주말고"≠"주말")
+    const re = new RegExp(`(^|[^가-힣])${k}(?:에|엔|도|은|는|이|가|을|를|과|와|의|로|으로|이야|이네|이면|만|이나|이랑|부터)?([^가-힣]|$)`);
     return re.test(String(spacedText || '')) || re.test(String(compactText || ''));
   }
   return String(spacedText || '').includes(k) || String(compactText || '').includes(k);
@@ -206,6 +209,10 @@ function extractHints(text) {
   for (const name of ALC_NAME_HINTS) {
     if (name.length >= 2 && text.includes(name)) alcoholHints.push(name);
   }
+  if (alcoholHints.length === 0) {
+    if (/말아|소맥|칵테일|하이볼/.test(text)) alcoholHints.push('하이볼');
+    else if (/생맥|캔맥/.test(text)) alcoholHints.push('맥주');
+  }
 
   const snackHints = [];
   for (const name of SNK_NAME_HINTS) {
@@ -225,8 +232,8 @@ function extractHints(text) {
   if (snackHints.length === 0) {
     if (/매운|매콤|얼큰|칼칼|알싸|얼얼/.test(text)) snackHints.push('매운');
     else if (/마른|바삭|스낵|쥐포|먹태/.test(text)) snackHints.push('마른');
-    else if (/국물|탕|찌개|뜨끈한|따뜻한|따끈한|따뜻|어묵|시원한\s*(?:국물|탕|찌개)/.test(text)) snackHints.push('탕');
-    else if (/전|부침/.test(text)) snackHints.push('전');
+    else if (/(?:^|[^가-힣])탕(?:$|[\s,!?~.]|[은는이가을를도랑과와만에]|먹|땡|거리|집)|(?:어묵|조개|매운|알|꽃게|홍합|나가사키)탕|국물|찌개|뜨끈한|따뜻한|따끈한/.test(text)) snackHints.push('탕');
+    else if (/(?:^|[^가-힣])전(?:$|[\s,!?~.]|[은는이가을를도랑과와만에]|먹|땡|부쳐|집|거리)|(?:파|김치|해물|부추|감자|호박|육|배추|모둠|해물파)전|부침개|부침/.test(text)) snackHints.push('전');
     else if (/기름진|고기|삼겹|구이|헤비/.test(text)) snackHints.push('고기');
     else if (/담백|깔끔|가벼|산뜻|다이어트|샐러드/.test(text)) snackHints.push('샐러드');
   }
@@ -249,10 +256,17 @@ function extractConstraints(text) {
   while ((m = excludeRe.exec(text)) !== null) {
     if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
   }
-  // "싫다/싫어" 단독 패턴
+  // "싫다/싫어" 단독 패턴 — 동사적 부정(하기, 가기, 일하기 등)이나 세상만사 부정은 음식 제외에서 배제
+  const NON_FOOD_HATE = new Set([
+    '하기', '가기', '먹기', '마시기', '출근하기', '일하기', '공부하기', '살기', '생각하기', '말하기', '듣기', '보기',
+    '아무것도', '아무것', '세상', '세상이', '인생', '인생이', '사람', '사람이', '모두', '다', '그냥', '너'
+  ]);
   const hateRe = /([가-힣A-Za-z0-9]{2,12})\s*(싫(?:어|다|음)?)/g;
   while ((m = hateRe.exec(text)) !== null) {
-    if (m[1] && !EXCLUDE_STOP.has(m[1])) exclude.push(m[1]);
+    const word = m[1].trim();
+    if (word && !EXCLUDE_STOP.has(word) && !NON_FOOD_HATE.has(word) && !word.endsWith('하기') && !word.endsWith('가기') && !word.endsWith('일하기')) {
+      exclude.push(word);
+    }
   }
 
   // 다이어트/칼로리 부담 시 기름진/헤비 메뉴 자동 제외
@@ -275,9 +289,10 @@ function extractConstraints(text) {
   const clean = String(text || '').replace(/\s+/g, '');
   const mentionsAlcohol =
     /술|맥주|소주|와인|막걸리|하이볼|위스키|칵테일|보드카|전통주|마실|한\s*잔|도수/.test(text);
+  const fullStomach = /배(?:는|가|도)?\s*(?:터질|터지겠|터져|불러|부른|부른데|불러서|부르고|가득)|배불러/.test(text);
   const onlyAlcohol =
-    (/술만|주류만|마실\s*것만|술\s*추천|도수/.test(text) && !/안주/.test(text)) ||
-    (/약한\s*도수|센\s*거|도\s*낮은/.test(text) && !/안주/.test(text));
+    (/술만|주류만|마실\s*것만|술만\s*추천/.test(text) && !/안주|먹을|요리|음식|달달|단거|디저트/.test(text)) ||
+    (/약한\s*도수|센\s*거|도\s*낮은/.test(text) && !/안주|먹을|요리|음식|달달|단거|디저트/.test(text) && !fullStomach);
   const onlySnack =
     (/안주만|밥만|식사만|안주\s*위주|음식만|야식만|먹을\s*것만|간식만|디저트만|안주만\s*추천|안주만\s*골라|안주만\s*줘|안주만\s*해줘|안주만\s*볼래|안주만\s*먹을래/.test(text) &&
       !/술\s*추천|술도/.test(text)) ||
@@ -285,12 +300,18 @@ function extractConstraints(text) {
     (/안주|야식|간식|디저트/.test(text) && !mentionsAlcohol) ||
     /^(?:안주|음식|야식|간식|디저트)(?:만|요|만요|만골라줘|만추천해줘)?$/.test(clean);
 
-  const hangover = /해장|숙취|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁|술병|더부룩|니글|느글/.test(text);
+  const preventHangover = /다음\s*날\s*숙취.*(?:없|걱정|전혀|1도|안)|숙취\s*(?:전혀\s*|1도\s*)?없|숙취\s*(?:없는|없어야|없게|없을|안생기|적은)|뒤끝\s*(?:깔끔|없는|없어야)|내일\s*출근.*숙취.*없/.test(text);
+  const hangover = !preventHangover && /해장|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁|술병|더부룩|니글|느글|숙취\s*(?:있|때문|심해|심하)/.test(text);
   const heavy = !notHeavy && /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주|쎈거|쎈술|도수\s*높/.test(text);
   const light = !heavy && (notGreasy || notHeavy || /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술|약한|개운|산뜻|바삭/.test(text));
   const spicy = !notSpicy && /매운|매콤|불닭|핫|얼큰|칼칼|알싸|얼얼|매워/.test(text);
   const sweet = !notSweet && /달달|달콤|스위트|단거|디저트|달짝|새콤달콤|상큼/.test(text);
   const cheap = /싸게|저렴|가성비|싼|저가|호불호|지갑가벼|돈없/.test(text);
+
+  const paradox = {
+    fullAndSweet: fullStomach && sweet,
+    heavyAndNoHangover: heavy && preventHangover,
+  };
 
   return {
     onlyAlcohol,
@@ -303,6 +324,9 @@ function extractConstraints(text) {
     heavy,
     cheap,
     hangover,
+    preventHangover,
+    fullStomach,
+    paradox,
     exclude: uniq(exclude),
   };
 }
@@ -498,6 +522,8 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
       constraints.heavy ||
       constraints.cheap ||
       constraints.hangover ||
+      constraints.preventHangover ||
+      constraints.fullStomach ||
       (constraints.exclude || []).length
   );
   const recommendAsk = hasRecommendAsk(hay);
@@ -514,6 +540,15 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     if (!signals.detectedSituation) {
       signals.detectedSituation = { id: 'sit_honsul', name: '혼술' };
     }
+  }
+
+  // 모순/상반된 요구(Paradox) 감지 시 바텐더의 위트 있는 오프닝 부여
+  if (constraints.paradox?.fullAndSweet && constraints.paradox?.heavyAndNoHangover) {
+    signals.matchedOpening = "배는 터질 것 같은데 달달한 게 당기고, 도수는 센데 다음 날 숙취는 전혀 없어야 한다니... 세상에서 제일 까다롭지만 매력적인 주문이네요! 😉\n오마주 바텐더라면 이 불가능해 보이는 난제도 완벽하게 풀어낼 수 있죠 ✨";
+  } else if (constraints.paradox?.heavyAndNoHangover) {
+    signals.matchedOpening = "도수는 화끈하게 센 걸 원하시면서 내일 숙취는 전혀 없어야 한다니! 불가능해 보이지만 최고급 순수 증류주라면 완벽하게 가능하죠 🍸";
+  } else if (constraints.paradox?.fullAndSweet) {
+    signals.matchedOpening = "배는 터질 것 같은데 달달한 게 당기시는군요! 배부르지 않으면서 달콤함을 채워줄 가벼운 디저트 페어링을 준비해드릴게요 🍰";
   }
 
   // --- Intent 우선순위 ---
@@ -550,7 +585,8 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
   }
   // 0.5) 술 거부 / 금주 / 술 안 땡김 의도 (추천으로 억지 전환 방지, 단 야식/안주 요청 시 안주 단독 추천)
   else if (declineAlcohol) {
-    if (constraints.onlySnack || /안주|야식|간식|음식|요리|먹을/.test(hay)) {
+    const refusesAll = /아무것도\s*(?:먹고\s*싶지|안\s*먹|마시고\s*싶지|안\s*마실)|입맛\s*없|음식.*(?:안\s*땡|생각\s*없)|세상이\s*다\s*싫/.test(hay);
+    if (!refusesAll && (constraints.onlySnack || /안주|야식|간식|음식|요리|먹을/.test(hay))) {
       intent = 'RECOMMEND';
       confidence = 0.92;
       constraints.onlySnack = true;
@@ -700,6 +736,7 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
     !hasEntity &&
     !hasConstraintSignal &&
     !wantGame &&
+    !signals.detectedEmotion &&
     GUIDE_TRIGGERS.some((g) => hay.includes(g))
   ) {
     intent = 'GUIDE';
@@ -709,16 +746,20 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
   }
   // 8) 명확한 추천 신호 + 엔티티/제약/게임/추천 요청 / 혼술 상황
   else if (
-    hasEntity ||
-    hasConstraintSignal ||
-    wantGame ||
-    recommendAsk ||
-    alone ||
-    (signals.detectedSituation && !['sit_rain', 'sit_snow', 'sit_autumn', 'sit_spring', 'sit_summer', 'sit_winter'].includes(signals.detectedSituation.id)) ||
-    (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑/.test(hay) && domainScore >= 1)
+    !declineAlcohol &&
+    (
+      hasEntity ||
+      hasConstraintSignal ||
+      wantGame ||
+      recommendAsk ||
+      alone ||
+      (signals.detectedSituation && !['sit_rain', 'sit_snow', 'sit_autumn', 'sit_spring', 'sit_summer', 'sit_winter'].includes(signals.detectedSituation.id)) ||
+      (!/먹고\s*싶지\s*않|마시고\s*싶지\s*않|먹고\s*싶지도\s*않|마시고\s*싶지도\s*않|안\s*먹고\s*싶|안\s*마시고\s*싶/.test(hay) &&
+       /페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑/.test(hay) && domainScore >= 1)
+    )
   ) {
     intent = 'RECOMMEND';
-    confidence = hasEntity || hasConstraintSignal || alone ? 0.88 : 0.75;
+    confidence = hasEntity || hasConstraintSignal || alone || recommendAsk ? 0.88 : 0.75;
   }
   // 9) 도메인 힌트가 있고 특정 방향이 보임 → 1단계: 명확화 (후보 제시)
   else if (domainScore > 0 && !hasEntity) {

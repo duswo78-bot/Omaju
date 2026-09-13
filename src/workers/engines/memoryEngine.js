@@ -97,13 +97,22 @@ export function getDialogueContext(limitTurns = 4) {
       }
 
       // 새 안주가 언급되고 번복 시그널이 있으면 이전 안주 누적값 초기화
-      const foundNewSnacks = SNACK_HINTS.filter((s) => t.includes(s) && !t.includes(`${s} 말고`) && !t.includes(`${s} 빼고`));
+      const isSnackHintMatch = (text, s) => {
+        if (!text.includes(s)) return false;
+        if (s.length === 1) {
+          const re = new RegExp(`(^|[^가-힣])${s}(?:$|[\\s,!?~.]|[은는이가을를도랑과와만에]|먹|땡|거리|집)`);
+          return re.test(text);
+        }
+        return true;
+      };
+
+      const foundNewSnacks = SNACK_HINTS.filter((s) => isSnackHintMatch(t, s) && !t.includes(`${s} 말고`) && !t.includes(`${s} 빼고`));
       if (hasChangeOfMind && foundNewSnacks.length > 0) {
         snackHints = [];
       }
 
       for (const s of SNACK_HINTS) {
-        if (t.includes(s)) {
+        if (isSnackHintMatch(t, s)) {
           if (/싫|별로|말고|제외|빼고|먹었/.test(t)) {
             exclude.push(s);
             snackHints = snackHints.filter((item) => item !== s);

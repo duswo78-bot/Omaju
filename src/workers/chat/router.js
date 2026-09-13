@@ -40,8 +40,11 @@ export async function routeChat(text, cleanText, context) {
 
   // 0) 술 거부 / 금주 의도 (단, 야식/안주 요청 시 안주 추천으로 즉시 전환)
   if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
-    if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+    if (wantOnlySnack || (!/아무것도\s*먹고\s*싶지|아무것도\s*안\s*먹|입맛\s*없|세상이\s*다\s*싫/.test(cleanText) && /야식|안주|음식|먹을|요리|간식/.test(cleanText))) {
       return await finishRecommend(await handleRecommendation(text, cleanText, context));
+    }
+    if (getDialogueState().consecutiveChitchatTurns >= 3) {
+      return handleWittyChitchat(text, context);
     }
     return handleDeclineAlcohol(text, context);
   }
@@ -107,8 +110,11 @@ export async function routeChat(text, cleanText, context) {
 
   if (isState(STATES.ASKING)) {
     if (frame?.intent === 'DECLINE_ALCOHOL' || policy.action === 'decline_alcohol') {
-      if (wantOnlySnack || /야식|안주|음식|먹을|요리|간식/.test(cleanText)) {
+      if (wantOnlySnack || (!/아무것도\s*먹고\s*싶지|아무것도\s*안\s*먹|입맛\s*없|세상이\s*다\s*싫/.test(cleanText) && /야식|안주|음식|먹을|요리|간식/.test(cleanText))) {
         return await finishRecommend(await handleRecommendation(text, cleanText, context));
+      }
+      if (getDialogueState().consecutiveChitchatTurns >= 3) {
+        return handleWittyChitchat(text, context);
       }
       return handleDeclineAlcohol(text, context);
     }
@@ -130,7 +136,12 @@ export async function routeChat(text, cleanText, context) {
     if (frame?.intent === 'OFFTOPIC') return handleOfftopic(text, context);
     if (frame?.intent === 'PLACE') return handlePlace(text, context);
     if (frame?.intent === 'COMPLAINT') return handleComplaint(text, context);
-    if (frame?.intent === 'MOOD') return handleMood(text, context, policy);
+    if (frame?.intent === 'MOOD') {
+      if (getDialogueState().consecutiveChitchatTurns >= 2) {
+        return handleWittyChitchat(text, context);
+      }
+      return handleMood(text, context, policy);
+    }
     if (frame?.intent === 'GOODBYE') return handleGoodbye(text, context);
     if (frame?.intent === 'SMALLTALK') return handleSmallTalk(text, context, policy);
     if (frame?.intent === 'UNKNOWN' || policy.action === 'apology') {

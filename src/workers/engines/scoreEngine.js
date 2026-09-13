@@ -166,6 +166,19 @@ export function calculateScore(
       if (typeof item.sweetness === 'number' && item.sweetness >= 3) score += 1.5;
       else score -= 1.0;
     }
+    if (constraints.preventHangover) {
+      const isPureDistilled =
+        item.subCategory?.includes('증류식') ||
+        item.category === '위스키' ||
+        item.category === '보드카' ||
+        tags.includes('증류식소주') ||
+        tags.includes('위스키') ||
+        tags.includes('보드카') ||
+        tags.includes('깔끔한');
+      const isCheapDilutive = item.subCategory?.includes('희석식') || item.category === '막걸리';
+      if (isPureDistilled) score += 3.5;
+      if (isCheapDilutive) score -= 4.0;
+    }
   }
 
   if (isSnack) {
@@ -182,6 +195,35 @@ export function calculateScore(
       } else {
         score -= 3.5;
       }
+    }
+    if (constraints.sweet) {
+      if (typeof item.sweet === 'number' && item.sweet >= 3) score += 3.5;
+      else if (item.category === '디저트' || tags.includes('달달') || tags.includes('달콤')) score += 3.0;
+      else score -= 1.5;
+    }
+    if (constraints.fullStomach) {
+      const isLightSweetOrSnack =
+        item.category === '디저트' ||
+        item.category === '간단안주' ||
+        item.category === '위스키안주' ||
+        tags.includes('디저트') ||
+        tags.includes('과일') ||
+        tags.includes('초콜릿') ||
+        tags.includes('가벼운') ||
+        tags.includes('단짠') ||
+        tags.includes('마른안주');
+      const isHeavyFilling =
+        item.category === '국물/탕' ||
+        item.category === '고기/구이' ||
+        item.category === '식사/면' ||
+        item.category === '분식' ||
+        tags.includes('기름진') ||
+        tags.includes('든든') ||
+        tags.includes('식사') ||
+        tags.includes('헤비');
+
+      if (isLightSweetOrSnack) score += 4.0;
+      if (isHeavyFilling) score -= 6.0;
     }
     if (constraints.diet) {
       if (item.category === '샐러드/과일' || tags.includes('담백') || tags.includes('샐러드') || tags.includes('가벼운') || tags.includes('저칼로리')) {

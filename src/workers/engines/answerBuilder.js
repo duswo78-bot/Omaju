@@ -173,7 +173,7 @@ const honsulComboTemplates = [
   "오늘 밤의 작은 사치! **{alcName}** {abvInfo} 한 잔과 정갈한 **{snkName}**으로 나만의 홈바를 완성해 보세요. 🍸",
 ];
 
-export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, isTargetedSnack, isAlone, skipPrompt, matchedOpening, profile }) {
+export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc, wantOnlySnack, isTargetedSnack, isAlone, skipPrompt, matchedOpening, profile, constraints }) {
   let empathy = "";
   let reason = "";
   let explanation = "";
@@ -283,8 +283,16 @@ export function buildAnswer({ intent, bestAlc, bestSnack, bestGame, wantOnlyAlc,
         explanation = formatTemplate(pickRandom(alcoholTemplates), bestAlc, null, bestGame, false);
       }
       
+      // 모순/상반된 요구(Paradox) 해결 사유 문구 추가
+      if (constraints?.paradox?.heavyAndNoHangover && constraints?.paradox?.fullAndSweet) {
+        reason = `(불순물이 없는 순수 증류주로 뒤끝을 깨끗하게 잡고, 부담 없는 은은한 단맛의 디저트로 배부름과 당 충전을 동시에 만족시키는 특급 페어링이에요! 🍸)`;
+      } else if (constraints?.paradox?.heavyAndNoHangover) {
+        reason = `(도수는 화끈하지만 다음 날 숙취가 없도록 불순물이 걸러진 깨끗한 순수 증류주로 골랐어요! 🧊)`;
+      } else if (constraints?.paradox?.fullAndSweet) {
+        reason = `(더부룩하지 않으면서도 기분 좋은 달콤함을 선사할 산뜻한 디저트 픽입니다! 🍰)`;
+      }
       // 프로필 취향 반영 문구 추가 (일치 여부에 따라 자연스러운 연결 문구 생성)
-      if (profile) {
+      else if (profile) {
         if (profile.favoriteDrink && bestAlc && !wantOnlySnack && Math.random() > 0.4) {
           const fav = profile.favoriteDrink;
           const isDrinkMatch =

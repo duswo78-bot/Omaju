@@ -226,20 +226,57 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     explicitFamilies.includes('nonalc') ||
     (userTokens || []).some((t) => /논알|무알/.test(String(t)));
 
+  const alcHardExcluded = (alc) =>
+    isExcludedItem(alc, {
+      families: scoreOpts.excludedFamilies,
+      needles: scoreOpts.excludedNeedles,
+      ids: scoreOpts.excludedIds,
+    }) ||
+    (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0) ||
+    (!allowNonAlcInPool && alc.category === '논알콜/음료') ||
+    (constraints.diet && (alc.category?.includes('막걸리') || alc.subCategory?.includes('막걸리') || alc.name_ko?.includes('막걸리'))) ||
+    (constraints.heavy && typeof alc.abv === 'number' && alc.abv < 20) ||
+    (constraints.light && typeof alc.abv === 'number' && alc.abv > 15);
+
+  const snkHardExcluded = (snk) => {
+    if (rejectedItems.includes(snk.id)) return true;
+    if (constraints.fullStomach) {
+      const isHeavy =
+        snk.category === '국물/탕' ||
+        snk.category === '탕류' ||
+        snk.category === '고기/구이' ||
+        snk.category === '육류' ||
+        snk.category === '식사/면' ||
+        snk.category === '식사겸안주' ||
+        snk.category === '분식' ||
+        snk.category === '전/부침개' ||
+        snk.category === '전·부침' ||
+        snk.category === '튀김' ||
+        snk.category === '중식안주' ||
+        (snk.tags || []).some((t) => /기름진|든든|식사|헤비|배부른|고기|튀김|부침|삼겹살|치킨/.test(t));
+      if (isHeavy) return true;
+    }
+    if (constraints.sweet) {
+      const isSweet =
+        (typeof snk.sweet === 'number' && snk.sweet >= 2) ||
+        snk.category === '디저트' ||
+        (snk.tags || []).some((t) => /달달|달콤|디저트|과일|초콜릿|샤베트|아이스크림|달콤한|달콤고소|단짠|단짠조합/.test(t));
+      if (!isSweet) return true;
+    }
+    if (constraints.spicy && (snk.spicy === 0 || !(snk.tags || []).some((t) => /매운|매콤|얼큰/.test(t)))) {
+      return true;
+    }
+    if (constraints.diet && ((snk.tags || []).includes('기름진') || (snk.tags || []).includes('튀김') || snk.greasy >= 3)) {
+      return true;
+    }
+    return false;
+  };
+
   // 1. 주류 검색 (안주 위주 요청이라도 술이 이미 정해졌다면 해당 술을 찾아 유지함)
   if (!wantOnlySnack || hasExplicitAlc) {
     let alcCandidates = [];
     for (const { item, vector } of alcoholEmbeddings) {
-      if (wantNonAlc && item.category !== '논알콜/음료' && item.abv !== 0) continue;
-      if (!allowNonAlcInPool && item.category === '논알콜/음료') continue;
-      if (constraints.diet && (item.category?.includes('막걸리') || item.subCategory?.includes('막걸리') || item.name_ko?.includes('막걸리'))) continue;
-      if (constraints.heavy && typeof item.abv === 'number' && item.abv < 20) continue;
-      if (constraints.light && typeof item.abv === 'number' && item.abv > 15) continue;
-      if (isExcludedItem(item, {
-        families: scoreOpts.excludedFamilies,
-        needles: scoreOpts.excludedNeedles,
-        ids: scoreOpts.excludedIds,
-      })) continue;
+      if (alcHardExcluded(item)) continue;
       // 명시 주종 힌트가 있으면 그 풀 안에서만 고름
       if (hasExplicitAlc) {
         const inResolved = resolvedAlcIds.has(item.id);
@@ -289,6 +326,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   if (!wantOnlyAlc) {
     let snkCandidates = [];
     for (const { item, vector } of snackEmbeddings) {
+      if (snkHardExcluded(item)) continue;
       // 명시 안주 힌트(치킨 등)가 있으면 그 풀 안에서만 고름 — 라면으로 새지 않게
       if (hasExplicitSnack) {
         const inResolved = resolvedSnkIds.has(item.id);
@@ -338,18 +376,6 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     }
   }
 
-  const alcHardExcluded = (alc) =>
-    isExcludedItem(alc, {
-      families: scoreOpts.excludedFamilies,
-      needles: scoreOpts.excludedNeedles,
-      ids: scoreOpts.excludedIds,
-    }) ||
-    (wantNonAlc && alc.category !== '논알콜/음료' && alc.abv !== 0) ||
-    (!allowNonAlcInPool && alc.category === '논알콜/음료') ||
-    (constraints.diet && (alc.category?.includes('막걸리') || alc.subCategory?.includes('막걸리') || alc.name_ko?.includes('막걸리'))) ||
-    (constraints.heavy && typeof alc.abv === 'number' && alc.abv < 20) ||
-    (constraints.light && typeof alc.abv === 'number' && alc.abv > 15);
-
   // 3. 짝꿍 매칭 — 명시 힌트는 덮어쓰지 않음
   // 안주만 맞음 → 술은 페어링으로 채움 (치킨은 유지)
   if (!wantOnlySnack && isSnackMatched && !alcLocked && bestSnack) {
@@ -376,7 +402,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   } else if (!wantOnlyAlc && isAlcMatched && !snackLocked && !isSnackMatched && bestAlc) {
     // 술만 맞음 → 안주는 페어링 (단, 사용자가 안주를 명시한 경우 절대 덮지 않음)
     const scored = snacksData
-      .filter((snk) => !rejectedItems.includes(snk.id))
+      .filter((snk) => !snkHardExcluded(snk))
       .map((snk) => ({
         item: snk,
         score: getRelationScore(bestAlc.id, snk.id) - diversityPenalty(snk.id, recentIds) * 40,
@@ -385,7 +411,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     if (picked) {
       bestSnack = picked;
     } else {
-      const matchingSnacks = snacksData.filter(s => s.bestDrinks && s.bestDrinks.includes(bestAlc.id) && !rejectedItems.includes(s.id));
+      const matchingSnacks = snacksData.filter(s => s.bestDrinks && s.bestDrinks.includes(bestAlc.id) && !snkHardExcluded(s));
       if (matchingSnacks.length > 0) bestSnack = pickRandom(matchingSnacks);
     }
     isLowConfidence = false;
@@ -394,7 +420,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     const currentRelScore = getRelationScore(bestAlc.id, bestSnack.id);
     if (currentRelScore < 75) {
       const scored = snacksData
-        .filter((snk) => !rejectedItems.includes(snk.id))
+        .filter((snk) => !snkHardExcluded(snk))
         .map((snk) => ({
           item: snk,
           score: getRelationScore(bestAlc.id, snk.id) - diversityPenalty(snk.id, recentIds) * 40,
@@ -429,7 +455,8 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       isSnackMatched = true;
       snackLocked = true;
     } else {
-      bestSnack = pickRandom(snacksData);
+      const pool = snacksData.filter((s) => !snkHardExcluded(s));
+      bestSnack = pickRandom(pool.length ? pool : snacksData);
     }
   }
 
