@@ -11,7 +11,7 @@ import { simpleTokenize, cleanTextString } from './utils/tokenizer.js';
 import { buildNluFrame } from './nlu/validate.js';
 import alcoholsData from '../data/alcohols.json';
 import snacksData from '../data/snacks.json';
-import { syncMyProfile, getLearnedProfilePatch } from './engines/profileEngine.js';
+import { syncMyProfile, getLearnedProfilePatch, resetProfile } from './engines/profileEngine.js';
 import { getMbtiTrait } from '../data/mbtiTraits.js';
 import {
   annotateGlossary,
@@ -113,6 +113,7 @@ export function resetConversation() {
   resetDialogueState();
   clearConversationMemory();
   resetState();
+  resetProfile();
 }
 
 /**

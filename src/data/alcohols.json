@@ -618,24 +618,27 @@
     "country": "글로벌",
     "priceLevel": 3,
     "moods": [
-      "hoesik",
       "comfort",
-      "friends"
+      "tired",
+      "alone",
+      "date"
     ],
     "weather": [
-      "humid",
-      "autumn"
+      "autumn",
+      "winter",
+      "any"
     ],
     "tags": [
       "칵테일/하이볼",
-      "단짠",
-      "든든한"
+      "달달",
+      "디저트",
+      "부드러운"
     ],
     "pairings": [
-      "snk_egg_soup",
-      "snk_jeyuk_bokkeum",
-      "snk_buchu_jeon",
-      "snk_san_nakji"
+      "snk_pineapple_sherbet",
+      "snk_peach",
+      "snk_bingsu",
+      "snk_user_1783696077714_h29l"
     ]
   },
   {

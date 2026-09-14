@@ -98,7 +98,7 @@ function pickStrongCandidate(candidates, { band = 0.18, minPool = 5, preferMatch
 /** Pull exclude tokens from NLU constraints + inline “X 말고/싫어” patterns. */
 function collectExcludeTokens(cleanText, constraints) {
   const tokens = [...(constraints?.exclude || [])];
-  const re = /([가-힣A-Za-z0-9]{1,12})\s*(말고|제외|빼고|싫|별로|먹었)/g;
+  const re = /([가-힣A-Za-z0-9]{1,12})\s*(?:은|는|이|가|도)?\s*(알레르기|알러지|절대\s*안\s*돼|안\s*돼|안됨|못\s*먹|못먹|사절|금지|머리\s*아프|숙취|말고|제외|빼고|싫|별로|먹었)/g;
   let m;
   while ((m = re.exec(cleanText || '')) !== null) {
     if (m[1] && !['그거', '이거', '저거', '다른', '오늘', '그냥'].includes(m[1])) {
@@ -236,10 +236,67 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
     (!allowNonAlcInPool && alc.category === '논알콜/음료') ||
     (constraints.diet && (alc.category?.includes('막걸리') || alc.subCategory?.includes('막걸리') || alc.name_ko?.includes('막걸리'))) ||
     (constraints.heavy && typeof alc.abv === 'number' && alc.abv < 20) ||
+    (constraints.moderate && typeof alc.abv === 'number' && (alc.abv > 20 || alc.abv < 4)) ||
+    (constraints.cheap && typeof alc.priceLevel === 'number' && alc.priceLevel >= 3) ||
     (constraints.light && typeof alc.abv === 'number' && alc.abv > 15);
 
   const snkHardExcluded = (snk) => {
     if (rejectedItems.includes(snk.id)) return true;
+
+    // 1) 명시 제외 및 알레르기/거부 토큰 처리
+    const excludeList = [...(constraints.exclude || []), ...(excludeResolved.needles || [])];
+    if (excludeList.length > 0) {
+      const snkBlob = `${snk.name_ko || ''} ${snk.category || ''} ${(snk.tags || []).join(' ')}`;
+      for (const ex of excludeList) {
+        if (!ex) continue;
+        if (snkBlob.includes(ex)) return true;
+        if (ex === '해산물' || ex === '해물') {
+          if (
+            snk.category === '해산물' ||
+            /해물|해산|생선|어패|연어|참치|광어|우럭|장어|고등어|꽁치|명태|대구|갈치|동태|조개|꽃게|게|새우|회|낙지|문어|오징어|어묵|골뱅이|바지락|홍합|가리비|연포탕|굴|꼬막|소라|멍게|해삼|전복|물회|매운탕|해물탕/.test(snkBlob)
+          ) return true;
+        }
+        if (ex === '고기' || ex === '육류') {
+          if (
+            snk.category === '고기/구이' ||
+            snk.category === '육류' ||
+            /고기|육류|소고기|돼지|삼겹|치킨|닭|오리|보쌈|수육|제육|갈비|차돌|스테이크|소시지|소세지|육회|육전|편육/.test(snkBlob)
+          ) return true;
+        }
+        if (ex === '기름진' || ex === '튀김') {
+          if (snk.greasy >= 3 || /튀김|부침|전|기름진|삼겹/.test(snkBlob)) return true;
+        }
+      }
+    }
+
+    // 2) 로맨틱/데이트 분위기에서는 포차/국밥/제육 계열 배제
+    const isRomantic =
+      frameSignals.relation === 'date' ||
+      contextSignals?.relation === 'date' ||
+      (frameSignals.moods || []).includes('romantic') ||
+      (frameSignals.moods || []).includes('date');
+    if (isRomantic) {
+      const isPochaFood =
+        /제육볶음|국밥|순대|번데기|뼈해장국|돼지국밥|순대국|포차/.test(snk.name_ko || '') ||
+        (snk.tags || []).some((t) => /포차|국밥|해장/.test(t));
+      if (isPochaFood) return true;
+    }
+
+    // 3) 디저트/커피/단술(깔루아 등)과 날것/해산물/헤비찌개 충돌 방지
+    if (
+      bestAlc &&
+      (bestAlc.name_ko?.includes('깔루아') ||
+        bestAlc.name_ko?.includes('베일리스') ||
+        (bestAlc.category === '칵테일/하이볼' && bestAlc.sweetness >= 4))
+    ) {
+      const isClashing =
+        snk.category === '해산물' ||
+        snk.category === '국물/탕' ||
+        snk.category === '탕류' ||
+        /산낙지|회|사시미|제육|삼겹살|꽃게탕|매운탕|순대|곱창|김치찌개/.test(snk.name_ko || '');
+      if (isClashing) return true;
+    }
+
     if (constraints.fullStomach) {
       const isHeavy =
         snk.category === '국물/탕' ||
@@ -264,6 +321,12 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
       if (!isSweet) return true;
     }
     if (constraints.spicy && (snk.spicy === 0 || !(snk.tags || []).some((t) => /매운|매콤|얼큰/.test(t)))) {
+      return true;
+    }
+    if (constraints.cheap && typeof snk.priceLevel === 'number' && snk.priceLevel >= 3) {
+      return true;
+    }
+    if (constraints.light && (snk.greasy >= 3 || (snk.tags || []).some((t) => /기름진|헤비|튀김/.test(t)))) {
       return true;
     }
     if (constraints.diet && ((snk.tags || []).includes('기름진') || (snk.tags || []).includes('튀김') || snk.greasy >= 3)) {
@@ -434,6 +497,7 @@ export async function recommend(cleanText, userTokens, contextTokens, contextSig
   const explicitSnackPool = snacksData.filter(
     (s) =>
       !rejectedItems.includes(s.id) &&
+      !snkHardExcluded(s) &&
       (resolvedSnkIds.has(s.id) || itemMatchesHint(s, snackHints))
   );
   const explicitAlcPool = alcoholsData.filter(

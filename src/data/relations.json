@@ -21,7 +21,7 @@
   },
   {
     "source": "alc_cocktail_kahlua",
-    "target": "snk_egg_soup",
+    "target": "snk_peach",
     "score": 90
   },
   {
@@ -836,8 +836,8 @@
   },
   {
     "source": "alc_cocktail_kahlua",
-    "target": "snk_jeyuk_bokkeum",
-    "score": 79
+    "target": "snk_pineapple_sherbet",
+    "score": 90
   },
   {
     "source": "alc_highball_jimbeam",

@@ -212,3 +212,28 @@ export function rejectRecommendation(rec) {
   userProfile.rejectCount = (userProfile.rejectCount || 0) + 1;
   recomputeRates();
 }
+
+/** 프로필 및 세션 상태 초기화 (테스트 및 새 세션용) */
+export function resetProfile() {
+  userProfile = {
+    name: '',
+    gender: '',
+    mbti: '',
+    favoriteDrink: '',
+    favoriteSnack: '',
+    tolerance: '',
+    favoriteAlcohols: [],
+    favoriteFoods: [],
+    favoriteGames: [],
+    dislikedAlcohols: [],
+    favoriteMood: [],
+    monthlyBudget: 0,
+    acceptanceRate: 1.0,
+    rejectionRate: 0.0,
+    acceptCount: 0,
+    rejectCount: 0,
+    recentHistory: [],
+    preferredAbv: null,
+    mbtiTrait: null,
+  };
+}

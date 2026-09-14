@@ -57,7 +57,7 @@
     "sweet": 1,
     "bestDrinks": [
       "alc_cocktail_junebug",
-      "alc_cocktail_kahlua"
+      "alc_soju_cham"
     ],
     "moods": [
       "happy",
@@ -3097,7 +3097,7 @@
     "bestDrinks": [
       "alc_beer_terra",
       "alc_beer_heineken",
-      "alc_cocktail_kahlua"
+      "alc_soju_cham"
     ],
     "moods": [
       "happy",
