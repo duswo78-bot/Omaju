@@ -1,7 +1,7 @@
 import { pipeline, env } from '@xenova/transformers';
-import alcoholsData from '../../data/alcohols.json';
-import snacksData from '../../data/snacks.json';
-import gamesData from '../../data/games.json';
+import alcoholsData from '../../data/alcohols.json' with { type: 'json' };
+import snacksData from '../../data/snacks.json' with { type: 'json' };
+import gamesData from '../../data/games.json' with { type: 'json' };
 
 // 브라우저 캐시 활성화 (다운로드 1회만 되도록 보장)
 env.allowLocalModels = false;

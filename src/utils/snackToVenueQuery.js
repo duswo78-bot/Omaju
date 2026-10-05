@@ -1,4 +1,4 @@
-import { CATEGORY_VENUE_RULES, NAME_RULES } from '../data/venueTaxonomy';
+import { CATEGORY_VENUE_RULES, NAME_RULES } from '../data/venueTaxonomy.js';
 
 function unique(arr) {
   return [...new Set((arr || []).map((s) => String(s || '').trim()).filter(Boolean))];

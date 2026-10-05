@@ -1,5 +1,5 @@
 import { pickRandom } from '../utils/random.js';
-import moodTemplates from '../templates/mood.json';
+import moodTemplates from '../templates/mood.json' with { type: 'json' };
 import { setLastBotAsk } from '../semantic/dialogueState.js';
 import { composeSemanticReply } from '../semantic/composeEmpathy.js';
 

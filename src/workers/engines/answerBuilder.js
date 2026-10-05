@@ -1,20 +1,20 @@
 import { pickRandom } from '../utils/random.js';
-import comboTemplates from '../templates/combo.json';
-import alcoholTemplates from '../templates/alcohol.json';
-import snackTemplates from '../templates/snack.json';
-import greetingTemplates from '../templates/greeting.json';
-import thanksTemplates from '../templates/thanks.json';
-import rerollTemplates from '../templates/reroll.json';
-import smalltalkTemplates from '../templates/smalltalk.json';
-import unknownTemplates from '../templates/unknown.json';
-import questionTemplates from '../templates/question.json';
-import gameTemplates from '../templates/game.json';
-import offtopicTemplates from '../templates/offtopic.json';
-import guideTemplates from '../templates/guide.json';
-import complaintTemplates from '../templates/complaint.json';
-import moodTemplates from '../templates/mood.json';
-import goodbyeTemplates from '../templates/goodbye.json';
-import denyTemplates from '../templates/deny.json';
+import comboTemplates from '../templates/combo.json' with { type: 'json' };
+import alcoholTemplates from '../templates/alcohol.json' with { type: 'json' };
+import snackTemplates from '../templates/snack.json' with { type: 'json' };
+import greetingTemplates from '../templates/greeting.json' with { type: 'json' };
+import thanksTemplates from '../templates/thanks.json' with { type: 'json' };
+import rerollTemplates from '../templates/reroll.json' with { type: 'json' };
+import smalltalkTemplates from '../templates/smalltalk.json' with { type: 'json' };
+import unknownTemplates from '../templates/unknown.json' with { type: 'json' };
+import questionTemplates from '../templates/question.json' with { type: 'json' };
+import gameTemplates from '../templates/game.json' with { type: 'json' };
+import offtopicTemplates from '../templates/offtopic.json' with { type: 'json' };
+import guideTemplates from '../templates/guide.json' with { type: 'json' };
+import complaintTemplates from '../templates/complaint.json' with { type: 'json' };
+import moodTemplates from '../templates/mood.json' with { type: 'json' };
+import goodbyeTemplates from '../templates/goodbye.json' with { type: 'json' };
+import denyTemplates from '../templates/deny.json' with { type: 'json' };
 import { composeGuideAnswer } from '../utils/composeGuide.js';
 
 function attachParticle(word, withFinal, withoutFinal) {

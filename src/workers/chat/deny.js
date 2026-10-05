@@ -1,5 +1,5 @@
 import { pickRandom } from '../utils/random.js';
-import denyTemplates from '../templates/deny.json';
+import denyTemplates from '../templates/deny.json' with { type: 'json' };
 import { setLastBotAsk } from '../semantic/dialogueState.js';
 
 /**

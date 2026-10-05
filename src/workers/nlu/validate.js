@@ -1,5 +1,5 @@
-import alcoholsData from '../../data/alcohols.json';
-import snacksData from '../../data/snacks.json';
+import alcoholsData from '../../data/alcohols.json' with { type: 'json' };
+import snacksData from '../../data/snacks.json' with { type: 'json' };
 import { INTENTS, emptyFrame } from './schema.js';
 import { ruleNlu } from './ruleNlu.js';
 

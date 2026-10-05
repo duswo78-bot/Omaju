@@ -1,4 +1,4 @@
-﻿import { setLastBotAsk } from '../semantic/dialogueState.js';
+import { setLastBotAsk } from '../semantic/dialogueState.js';
 
 export function handleClarify(text, context) {
   const frame = context?.frame;

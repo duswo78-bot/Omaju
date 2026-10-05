@@ -9,8 +9,8 @@ import {
 } from './engines/memoryEngine.js';
 import { simpleTokenize, cleanTextString } from './utils/tokenizer.js';
 import { buildNluFrame } from './nlu/validate.js';
-import alcoholsData from '../data/alcohols.json';
-import snacksData from '../data/snacks.json';
+import alcoholsData from '../data/alcohols.json' with { type: 'json' };
+import snacksData from '../data/snacks.json' with { type: 'json' };
 import { syncMyProfile, getLearnedProfilePatch, resetProfile } from './engines/profileEngine.js';
 import { getMbtiTrait } from '../data/mbtiTraits.js';
 import {

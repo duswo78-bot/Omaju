@@ -1,4 +1,4 @@
-import guideTemplates from '../templates/guide.json';
+import guideTemplates from '../templates/guide.json' with { type: 'json' };
 import { composeGuideAnswer } from '../utils/composeGuide.js';
 
 export function handleGuide(text, context) {

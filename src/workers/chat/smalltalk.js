@@ -1,5 +1,5 @@
 import { pickRandom } from '../utils/random.js';
-import smalltalkTemplates from '../templates/smalltalk.json';
+import smalltalkTemplates from '../templates/smalltalk.json' with { type: 'json' };
 import { setLastBotAsk } from '../semantic/dialogueState.js';
 import { composeSemanticReply } from '../semantic/composeEmpathy.js';
 

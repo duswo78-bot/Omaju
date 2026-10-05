@@ -1,5 +1,5 @@
 import { pickRandom } from '../utils/random.js';
-import complaintTemplates from '../templates/complaint.json';
+import complaintTemplates from '../templates/complaint.json' with { type: 'json' };
 
 export function handleComplaint(text, context) {
   let answer = pickRandom(complaintTemplates);

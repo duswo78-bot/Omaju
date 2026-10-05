@@ -16,9 +16,9 @@ import {
   toDrinkFamily,
   pickFallbackFamilies,
 } from '../../data/drinkFamilies.js';
-import alcoholsData from '../../data/alcohols.json';
-import snacksData from '../../data/snacks.json';
-import relationsData from '../../data/relations.json';
+import alcoholsData from '../../data/alcohols.json' with { type: 'json' };
+import snacksData from '../../data/snacks.json' with { type: 'json' };
+import relationsData from '../../data/relations.json' with { type: 'json' };
 
 // relations.json을 빠른 조회를 위한 Map으로 변환
 // key: "alc_id|snk_id", value: score (0-100)

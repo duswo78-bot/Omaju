@@ -2,9 +2,9 @@ import { recommend } from '../engines/recommendationEngine.js';
 import { buildAnswer } from '../engines/answerBuilder.js';
 import { updateProfile } from '../engines/profileEngine.js';
 import { getLastRecommendation, setLastRecommendation } from '../engines/memoryEngine.js';
-import alcoholsData from '../../data/alcohols.json';
-import snacksData from '../../data/snacks.json';
-import gamesData from '../../data/games.json';
+import alcoholsData from '../../data/alcohols.json' with { type: 'json' };
+import snacksData from '../../data/snacks.json' with { type: 'json' };
+import gamesData from '../../data/games.json' with { type: 'json' };
 
 export async function handleRecommendation(text, cleanText, context) {
   updateProfile(text, alcoholsData, snacksData, gamesData);

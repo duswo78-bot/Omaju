@@ -1,7 +1,7 @@
-import emotionsDataJson from '../../data/emotions.json';
-import situationsDataJson from '../../data/situations.json';
-import alcoholsData from '../../data/alcohols.json';
-import snacksData from '../../data/snacks.json';
+import emotionsDataJson from '../../data/emotions.json' with { type: 'json' };
+import situationsDataJson from '../../data/situations.json' with { type: 'json' };
+import alcoholsData from '../../data/alcohols.json' with { type: 'json' };
+import snacksData from '../../data/snacks.json' with { type: 'json' };
 import { emptyFrame } from './schema.js';
 import {
   DOMAIN_CORE,
@@ -69,7 +69,7 @@ export function isDeclineAlcohol(hay, text) {
     // 1) 술 키워드와 함께 거부/사양
     /술(?:은|이|도|을|이란)?\s*(?:안\s*마|안\s*땡|안\s*먹|안\s*해|생각.*(?:없|안)|못\s*마|안\s*끌|그만|안마|패스|빼|안먹|안땡|자제|끊|싫|안들어가|안받아|안당겨|안내켜|스킵|됐|안마실|안먹을)/.test(h) ||
     // 2) 금주 / 논알콜 / 무알콜 / 간 휴식
-    /금주|단주|노알콜|논알콜|무알콜|알콜\s*없이|술\s*없이|알콜\s*안받|술마실\s*기분\s*아니|간\s*쉬|속\s*안좋아서\s*술|술\s*생각\s*(?:1도\s*)?없/.test(h) ||
+    /금주|단주|노알콜|논알콜|무알콜|알코?올\s*없이|술\s*없이|알코?올\s*안받|술마실\s*기분\s*아니|간\s*쉬|속\s*안좋아서\s*술|술\s*생각\s*(?:1도\s*)?없|알코?올\s*(?:은|는|이|가|도)?\s*(?:1도\s*)?(?:안|없|빼|거부|싫)/.test(h) ||
     // 3) '술' 단어가 생략된 자연스러운 거절 표현 ("오늘은 안마실래", "안 마실래", "마시기 싫어", "안 땡겨", "오늘은 쉴래", "오늘은 패스")
     /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실(?:래|란다|래여|래요|거야|듯|다)|안\s*마셔(?:요)?|안\s*마신다|안\s*먹을(?:래|란다|래여|래요|거야)|안\s*먹어(?:요)?|마시기\s*싫(?:어|다|은데|음|네)|먹기\s*싫(?:어|다|은데|음|네)|먹고\s*싶지\s*않|마시고\s*싶지\s*않|먹고\s*싶지도\s*않|마시고\s*싶지도\s*않|아무것도\s*먹고|아무것도\s*마시고|안\s*땡(?:겨|기네|긴다|겨요)|안\s*끌(?:려|리네|린다)|생각\s*(?:없|안\s*나)|쉬(?:고\s*싶|어야겠|ㄹ래)|패스\s*할(?:래|게))/.test(h) ||
     /(?:오늘(?:은)?|나(?:는)?|지금(?:은)?|이번(?:엔)?|그냥)?\s*(?:안\s*마실|안\s*마셔|안\s*먹을|안\s*먹어|마시기\s*싫|먹기\s*싫|먹고\s*싶지|마시고\s*싶지|먹고\s*싶지도|마시고\s*싶지도|아무것도\s*먹|아무것도\s*안|안\s*땡|안\s*끌|생각\s*없|패스\s*할)/.test(t) ||
@@ -310,7 +310,8 @@ function extractConstraints(text) {
   const notSpicy = /안\s*매[운콤워]|덜\s*매[운콤워]|안\s*맵고|맵지\s*않/.test(text);
   const notGreasy = /안\s*기름|덜\s*기름|기름기\s*없|안\s*느끼|덜\s*느끼|느끼하지\s*않|기름진.*(?:싫|빼|제외|안|별로)|느끼한.*(?:싫|빼|제외|안)/.test(text);
   const notSweet = /안\s*달[달콤]|덜\s*달[달콤]|달지\s*않|안\s*단/.test(text);
-  const notHeavy = /안\s*센|덜\s*센|안\s*독한|덜\s*독한|도수\s*낮/.test(text);
+  const heavy = /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주|쎈거|쎈술|도수\s*높/.test(text);
+  const notHeavy = (!heavy && /안\s*센|덜\s*센|안\s*독한|덜\s*독한|도수\s*낮/.test(text));
 
   if (notSpicy) exclude.push('매운', '얼큰', '칼칼');
   if (notGreasy) exclude.push('기름진', '느끼한', '튀김');
@@ -338,7 +339,7 @@ function extractConstraints(text) {
 
   const preventHangover = /다음\s*날\s*숙취.*(?:없|걱정|전혀|1도|안)|숙취\s*(?:전혀\s*|1도\s*)?없|숙취\s*(?:없는|없어야|없게|없을|안생기|적은)|뒤끝\s*(?:깔끔|없는|없어야)|내일\s*출근.*숙취.*없/.test(text);
   const hangover = !preventHangover && /해장|속쓰|속\s*쓰|속이\s*안|속안좋|속\s*안\s*좋|토할|울렁|술병|더부룩|니글|느글|숙취\s*(?:있|때문|심해|심하)/.test(text);
-  const heavy = !notHeavy && /센\s*술|도수\s*센|도수\s*높은|독한|센거|독주|고도수|센\s*독주|쎈거|쎈술|도수\s*높/.test(text);
+  
   const moderate = /도수\s*(?:적당|낮은|안\s*높|보통)|너무\s*세지\s*않|부담\s*없는\s*도수|적당한\s*도수|도수도\s*적당|도수는\s*적당|도수도\s*너무\s*세면\s*안/.test(text);
   const light = !heavy && !moderate && (notGreasy || notHeavy || /담백|가벼|라이트|시원|약한\s*도수|도\s*낮은|약하게|간단|다이어트|칼로리|살\s*안\s*찌|저칼로리|가볍게|약한\s*술|약한술|약한|개운|산뜻|바삭/.test(text));
   const spicy = !notSpicy && /매운|매콤|불닭|핫|얼큰|칼칼|알싸|얼얼|매워/.test(text);
@@ -353,7 +354,7 @@ function extractConstraints(text) {
   return {
     onlyAlcohol,
     onlySnack: onlySnack || hangover,
-    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코올\s*없이|운전|논알/.test(text) || isDeclineAlcohol(text, text) || hangover,
+    nonAlcoholic: /논알콜|무알콜|술빼고|술\s*없이|알코?올\s*없이|운전|논알|알코?올\s*(?:은|는|이|가|도)?\s*(?:1도\s*)?(?:안|없|빼)/.test(text) || isDeclineAlcohol(text, text) || hangover,
     diet: isDiet,
     spicy,
     sweet,
@@ -375,7 +376,7 @@ function enrichMoodsFromText(text, moods) {
   if (/혼자|혼술|혼맥|혼소/.test(text)) next.push('honsul', 'comfort');
   if (/데이트|소개팅|연인|남친|여친|기념일/.test(text)) next.push('romantic', 'special');
   if (/파티|불금|주말|신나게|달려|달린다|집들이/.test(text)) next.push('celebrate', 'friends', 'happy');
-  if (/승진|축하|대박|기분\s*좋|기분\s*최고|행복/.test(text)) next.push('happy', 'celebrate', 'special');
+  if (/승진|축하|대박|기분\s*좋|기분\s*최고|행복|플렉스|나를\s*위한\s*선물/.test(text)) next.push('happy', 'celebrate', 'special');
   if (/야근|피곤|힘들|지쳐|지쳤|울적|우울|위로|슬프/.test(text)) next.push('tired', 'comfort', 'honsul');
   if (/캠핑|글램핑|숯불/.test(text)) next.push('friends', 'happy', 'special');
   if (/가벼|라이트|약하게|약한\s*도수/.test(text)) next.push('refresh');
@@ -798,7 +799,8 @@ export function ruleNlu(rawText, cleanText, nluContext = {}) {
       alone ||
       (signals.detectedSituation && !['sit_rain', 'sit_snow', 'sit_autumn', 'sit_spring', 'sit_summer', 'sit_winter'].includes(signals.detectedSituation.id)) ||
       (!/먹고\s*싶지\s*않|마시고\s*싶지\s*않|먹고\s*싶지도\s*않|마시고\s*싶지도\s*않|안\s*먹고\s*싶|안\s*마시고\s*싶/.test(hay) &&
-       /페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑/.test(hay) && domainScore >= 1)
+       (/페어링|어울리|당기|땡겨|마실래|먹고싶|마시고싶|한\s*잔|마실\s*술|마실술|술도|마실거|마실것|음식|2차|축하|기념|구울|캠핑|승진|플렉스/.test(hay) ||
+        signals.moods.includes('celebrate') || signals.moods.includes('romantic') || signals.moods.includes('friends') || signals.moods.includes('special')))
     )
   ) {
     intent = 'RECOMMEND';

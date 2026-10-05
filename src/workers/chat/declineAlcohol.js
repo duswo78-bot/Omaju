@@ -1,4 +1,4 @@
-﻿import { buildAnswer } from '../engines/answerBuilder.js';
+import { buildAnswer } from '../engines/answerBuilder.js';
 import { setLastBotAsk } from '../semantic/dialogueState.js';
 
 export function handleDeclineAlcohol(text, context) {
