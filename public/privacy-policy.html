@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오마주(Omaju) - 개인정보처리방침</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.7;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 40px 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111827;
+      margin-top: 0;
+      margin-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 12px;
+    }
+    .date-info {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 18px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+    p, li {
+      font-size: 15px;
+      color: #374151;
+    }
+    ul {
+      padding-left: 20px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .highlight-box {
+      background-color: #eef2ff;
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 14.5px;
+    }
+    .highlight-box strong {
+      color: var(--primary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+    }
+    .footer-contact {
+      background-color: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-top: 36px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>오마주(Omaju) 개인정보처리방침</h1>
+    <div class="date-info">
+      시행일자: 2026년 9월 20일
+    </div>
+
+    <p>
+      '오마주(Omaju)'(이하 '서비스')는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」 및 관련 법령, 구글 플레이 개발자 정책을 준수하고 있습니다.
+      본 개인정보처리방침은 서비스가 수집하는 정보, 이용 목적, 보관 및 파기 기준, 이용자의 권리 등을 설명합니다.
+    </p>
+
+    <h2>1. 수집하는 개인정보 항목 및 이용 목적</h2>
+    <p>서비스는 회원가입 없이도 핵심 기능을 이용할 수 있으며, 서비스 제공에 필수적인 최소한의 정보만을 처리합니다.</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>수집/처리 항목</th>
+          <th>이용 목적</th>
+          <th>처리 방식</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>위치 정보 (GPS)</strong></td>
+          <td>기기의 현재 위도·경도 좌표 (정확한 위치 / 대략적인 위치)</td>
+          <td>현재 위치 기반의 주변 장소(맛집, 카페, 명소 등) 검색 및 추천</td>
+          <td>검색 요청 시 일시적(Ephemeral)으로 처리되며, <strong>서버에 저장되지 않음</strong></td>
+        </tr>
+        <tr>
+          <td><strong>오디오/음성 데이터</strong></td>
+          <td>마이크를 통한 음성 입력 데이터</td>
+          <td>음성 명령 및 음성 검색의 텍스트 변환(Speech-to-Text)</td>
+          <td>기기 및 시스템 음성 인식 API를 통해 실시간 텍스트 변환 후 <strong>즉시 파기 (오디오 파일 미보관)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>기기 및 서비스 로그</strong></td>
+          <td>기기 모델명, OS 버전, 앱 오류 로그</td>
+          <td>앱 오류 수정 및 서비스 품질 개선</td>
+          <td>통계적 분석을 위한 비식별 익명 처리</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <strong>알아두세요:</strong> 오마주는 사용자의 <strong>위치 정보 및 음성 녹음 파일을 자체 원격 서버에 수집·영구 저장하지 않습니다.</strong> 
+      장소 탐색과 음성 인식은 기기 내부 또는 공개 검색 API 호출 시 일시적으로만 연산 처리(Ephemeral Processing)됩니다.
+    </div>
+
+    <h2>2. 개인정보의 보유 및 이용 기간</h2>
+    <ul>
+      <li><strong>위치 정보:</strong> 앱 내에서 위치 검색 및 추천을 수행하는 동안 메모리 및 기기 로컬 캐시에만 일시 저장되며, 앱 종료 시 또는 캐시 갱신 시 자동 삭제됩니다. (자체 서버 영구 저장 없음)</li>
+      <li><strong>음성 데이터:</strong> 텍스트 변환 처리가 완료되는 즉시 메모리에서 소멸되며, 별도의 오디오 파일로 저장되지 않습니다.</li>
+    </ul>
+
+    <h2>3. 개인정보의 제3자 제공</h2>
+    <p>서비스는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 단, 장소 검색 등 서비스 본연의 기능 제공을 위해 아래와 같은 제3자 API가 사용됩니다:</p>
+    <ul>
+      <li><strong>카카오 로컬 API (Kakao):</strong> 이용자가 위치 기반 검색을 요청한 경우, 해당 좌표 주변의 공개 장소 정보를 불러오기 위해 사용됩니다.</li>
+    </ul>
+
+    <h2>4. 개인정보의 기술적·관리적 보호 대책</h2>
+    <ul>
+      <li><strong>데이터 전송 암호화:</strong> 서비스 통신은 최신 암호화 프로토콜(HTTPS/TLS)을 통해 안전하게 전송됩니다.</li>
+      <li><strong>최소 권한 원칙:</strong> 필요한 시점에만 사용자로부터 직접 위치/마이크 권한을 요청(런타임 권한)하며, 허용하지 않더라도 수동 지역 선택을 통해 서비스를 계속 이용할 수 있습니다.</li>
+    </ul>
+
+    <h2>5. 이용자의 권리와 행사 방법</h2>
+    <p>이용자는 스마트폰 단말기 설정을 통해 언제든지 부여된 권한을 철회하거나 재설정할 수 있습니다:</p>
+    <ul>
+      <li><strong>Android:</strong> [설정] → [애플리케이션] → [오마주] → [권한] 메뉴에서 '위치' 또는 '마이크' 권한을 [허용 안함]으로 변경</li>
+    </ul>
+
+    <h2>6. 개인정보 보호책임자 및 문의처</h2>
+    <p>서비스 이용 중 발생하는 개인정보 보호 관련 문의, 불만 처리, 의견은 아래의 연락처로 문의해 주시기 바랍니다.</p>
+    
+    <div class="footer-contact">
+      <strong>개발 및 개인정보 관리 책임자</strong><br>
+      • 서비스명: 오마주 (Omaju)<br>
+      • 이메일: <code>omaju.official@gmail.com</code> (또는 개발자 연락처)<br>
+      • 문의 응답 시간: 평일 10:00 ~ 18:00
+    </div>
+
+    <h2>7. 개인정보처리방침의 변경</h2>
+    <p>본 개인정보처리방침은 법령 개정 또는 서비스 정책 변경에 따라 내용이 추가, 삭제 및 수정될 수 있으며, 개정 시 본 페이지를 통해 사전에 공지합니다.</p>
+  </div>
+</body>
+</html>

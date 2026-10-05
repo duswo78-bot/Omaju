@@ -1,7 +1,7 @@
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2, Sparkles } from 'lucide-react';
+import { X, Mic, MicOff, Send, Loader2, Star, Volume2, Wine, UtensilsCrossed, Gamepad2, Sparkles, GlassWater, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import confetti from 'canvas-confetti';
@@ -32,6 +32,205 @@ const POLISHING_LINES = [
   '온디바이스가 문장 다듬는 중…',
   '추천은 확정, 표현만 폴리싱…',
 ];
+
+const STARTER_PROMPT_GROUPS = [
+  {
+    icon: GlassWater,
+    tone: 'mint',
+    prompts: [
+      '혼술 추천',
+      '오늘 혼자 마실 술 뭐가 좋을까?',
+      '퇴근하고 한 잔 할 술 골라줘',
+      '가볍게 시작하기 좋은 술 추천해줘',
+      '술 입문자한테 뭐가 괜찮아?',
+      '오늘은 어떤 술이 당길까?',
+      '도수 낮고 부담 없는 술 있을까?',
+      '평소랑 다른 술 마셔보고 싶어',
+      '한 잔만 마신다면 뭘 고를까?',
+      '기분 전환할 술 하나 골라줘',
+    ],
+  },
+  {
+    icon: Sparkles,
+    tone: 'sky',
+    prompts: [
+      '비 오는 날 어울리는 술',
+      '눈 오는 밤엔 뭐 마시면 좋지?',
+      '더운 날 시원하게 마실 술 추천',
+      '쌀쌀한 저녁에 생각나는 한 잔',
+      '장마철에 마시기 좋은 술 있을까?',
+      '바람 부는 날엔 어떤 술이 어울려?',
+      '오늘 날씨에 맞춰 한 잔 골라줘',
+      '여름밤에 가볍게 마실 거 추천해줘',
+      '비 오는 날 기분에 맞는 술 골라줘',
+      '추운 날 따뜻하게 마실 술은?',
+    ],
+  },
+  {
+    icon: UtensilsCrossed,
+    tone: 'amber',
+    prompts: [
+      '회식 안주 추천',
+      '여럿이 나눠 먹을 안주 뭐가 좋아?',
+      '집에서 간단히 만들 안주 골라줘',
+      '배달 안주 하나만 추천해줘',
+      '매콤한 안주 당기는데 뭐가 좋지?',
+      '손님 왔을 때 내놓기 좋은 안주',
+      '야식으로 먹을 안주 뭐가 괜찮아?',
+      '기름기 적은 안주 추천해줘',
+      '술 없이 먹어도 맛있는 안주 있어?',
+      '오늘 안주는 네가 정해줘',
+    ],
+  },
+  {
+    icon: Wine,
+    tone: 'rose',
+    prompts: [
+      '기분 좋은 날 마실 와인',
+      '오늘 좋은 일 있었어, 축하할 와인 골라줘',
+      '달콤한 와인 하나 추천해줘',
+      '치즈랑 잘 맞는 와인은 뭐야?',
+      '와인 처음인데 뭘 골라야 해?',
+      '가성비 좋은 레드 와인 알려줘',
+      '저녁 식사에 어울릴 와인 골라줘',
+      '산뜻한 화이트 와인 마시고 싶어',
+      '데이트할 때 열기 좋은 와인 추천',
+      '와인에 곁들일 안주도 골라줘',
+    ],
+  },
+  {
+    icon: Sparkles,
+    tone: 'lime',
+    prompts: [
+      '오늘 뭐 마시지?',
+      '지금 기분에 맞는 한 잔 골라줘',
+      '메뉴 고민돼, 네가 정해줘',
+      '오늘의 오마주 픽 보여줘',
+      '내 취향에 맞는 술 뭐야?',
+      '새로운 조합 하나 알려줘',
+      '한 잔만 딱 추천해줘',
+      '오늘 저녁 메뉴랑 술 같이 골라줘',
+      '아무거나 말고 센스 있게 골라줘',
+      '지금 마시기 좋은 건 뭘까?',
+    ],
+  },
+  {
+    icon: GlassWater,
+    tone: 'sky',
+    prompts: [
+      '오늘은 무알콜로 추천해줘',
+      '술 안 마실 건데 안주 뭐가 좋지?',
+      '논알콜 하이볼은 어떤 게 맛있어?',
+      '탄산 있는 음료 하나 골라줘',
+      '술 대신 마실 만한 거 알려줘',
+      '무알콜 맥주랑 먹을 안주 추천',
+      '논알콜 칵테일 마셔보고 싶어',
+      '깔끔한 무알콜 음료 추천해줘',
+      '운전해야 해, 무알콜로 골라줘',
+      '술 못 마시는 친구와 같이 즐길 메뉴',
+    ],
+  },
+  {
+    icon: Sparkles,
+    tone: 'rose',
+    prompts: [
+      '오늘 좀 지쳤어, 가볍게 한 잔 추천해줘',
+      '축하할 일이 있어! 뭐 마실까?',
+      '혼자 조용히 쉬며 마실 술 골라줘',
+      '기분 꿀꿀한데 기분 전환 메뉴 추천',
+      '좋은 사람들과 마실 술 골라줘',
+      '데이트 분위기에 어울리는 술은?',
+      '불금에 마실 술 추천해줘',
+      '편안하게 즐길 한 잔 있을까?',
+      '기념일에 마실 특별한 술 추천',
+      '들뜬 기분에 잘 맞는 와인 골라줘',
+    ],
+  },
+  {
+    icon: UtensilsCrossed,
+    tone: 'amber',
+    prompts: [
+      '치킨이랑 잘 맞는 술 뭐야?',
+      '삼겹살엔 뭘 마시면 좋아?',
+      '회랑 먹기 좋은 술 추천해줘',
+      '매운 음식에 어울리는 한 잔은?',
+      '피자랑 페어링할 술 골라줘',
+      '곱창 먹을 건데 술 뭐가 좋을까?',
+      '오늘 안주에 맞춰 술 추천해줘',
+      '막걸리랑 먹을 전 골라줘',
+      '맥주에 딱 맞는 안주 하나 골라줘',
+      '하이볼이랑 먹을 메뉴 추천해줘',
+    ],
+  },
+  {
+    icon: Gamepad2,
+    tone: 'lime',
+    prompts: [
+      '술게임 추천해줘',
+      '친구들이랑 할 게임 뭐가 재밌어?',
+      '어색한 분위기 풀 게임 알려줘',
+      '처음 만난 사람과 하기 좋은 게임',
+      '둘이서 할 술게임 추천',
+      '회식 자리 게임 하나만 골라줘',
+      '간단한 카드 술게임 뭐 있어?',
+      '술게임 규칙 쉽게 알려줘',
+      '모임에서 진행할 게임 맡아줘',
+      '벌칙 가벼운 게임 추천해줘',
+    ],
+  },
+  {
+    icon: GlassWater,
+    tone: 'mint',
+    prompts: [
+      '만원대로 즐길 술안주 조합은?',
+      '가성비 좋은 술 하나만 추천해줘',
+      '편의점에서 살 술과 안주 골라줘',
+      '도수 센 술 말고 부드러운 거 추천',
+      '깔끔하고 저렴한 술 뭐가 있어?',
+      '달달한 술 마시고 싶은데 추천해줘',
+      '씁쓸한 맛 좋아해, 뭐 마실까?',
+      '안주 없이 천천히 마실 술 추천',
+      '낮은 도수 조합으로 골라줘',
+      '오늘 예산 안에서 메뉴 정해줘',
+    ],
+  },
+];
+
+const STARTER_PROMPT_POOL = STARTER_PROMPT_GROUPS.flatMap(({ prompts, ...style }) =>
+  prompts.map((label) => ({ ...style, label }))
+);
+
+function getNextStarterPrompts(currentLabels) {
+  const availableGroups = STARTER_PROMPT_GROUPS
+    .map((group) => ({
+      ...group,
+      prompts: group.prompts.filter((label) => !currentLabels.includes(label)),
+    }))
+    .filter((group) => group.prompts.length > 0);
+
+  for (let index = availableGroups.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [availableGroups[index], availableGroups[randomIndex]] = [availableGroups[randomIndex], availableGroups[index]];
+  }
+
+  const prompts = availableGroups.slice(0, 5).map((group) => ({
+    icon: group.icon,
+    tone: group.tone,
+    label: group.prompts[Math.floor(Math.random() * group.prompts.length)],
+  }));
+
+  if (prompts.length < 5) {
+    const selectedLabels = [...currentLabels, ...prompts.map(({ label }) => label)];
+    const remaining = STARTER_PROMPT_POOL.filter(({ label }) => !selectedLabels.includes(label));
+    for (let index = remaining.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [remaining[index], remaining[randomIndex]] = [remaining[randomIndex], remaining[index]];
+    }
+    prompts.push(...remaining.slice(0, 5 - prompts.length));
+  }
+
+  return prompts;
+}
 
 function pickThinkingLine(prev) {
   if (THINKING_LINES.length <= 1) return THINKING_LINES[0];
@@ -137,10 +336,14 @@ function RecommendationCards({ recommendation, onOpenSnack }) {
 
 export default function AIChatPopup({ onClose }) {
   const navigate = useNavigate();
+  const [bartenderAvatar] = useState(() =>
+    assetUrl(Math.random() < 0.5 ? 'assets/ai-bartender.png' : 'assets/ai-bartender2.png')
+  );
+  const [starterPrompts, setStarterPrompts] = useState(() => getNextStarterPrompts([]));
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "안녕하세요! 오마주 AI 바텐더입니다 🍷\n\n술 추천, 안주 추천, 술게임은 물론\n그냥 가볍게 대화도 가능합니다.\n\n예시:\n• 혼술 추천\n• 비 오는 날 어울리는 술\n• 회식 안주 추천\n• 기분 좋은 날 마실 와인\n• 오늘 뭐 마시지?\n\n편하게 말씀해주세요 😊",
+      text: "안녕하세요!\n\n술 추천, 안주 추천, 술게임은 물론\n그냥 가볍게 대화도 가능합니다.\n\n편하게 말씀해주세요 😊",
       isAi: true,
     },
   ]);
@@ -718,37 +921,95 @@ export default function AIChatPopup({ onClose }) {
               key={msg.id}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className={msg.isAi ? "chat-bubble-ai" : "chat-bubble-user"}
+              className={`chat-message-row ${msg.isAi ? 'chat-message-row--ai' : 'chat-message-row--user'}${msg.isAi && msg.id === 1 ? ' chat-message-row--intro' : ''}`}
               style={msg.isAi && msg.recommendation ? { maxWidth: '95%' } : undefined}
             >
-              {msg.text}
-              {msg.isAi && (
-                <button
-                  onClick={() => speak(msg.text)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle', padding: 0 }}
-                  title="읽어주기"
-                >
-                  <Volume2 size={16} color="rgba(255,255,255,0.7)" />
-                </button>
-              )}
-              {msg.isAi && msg.polishing && isThinking && (
-                <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: '#9ca3af', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <Loader2 size={12} className="spin" />
-                  {polishLabel}
-                </div>
-              )}
-              {msg.isAi && msg.recommendation && (
-                <RecommendationCards recommendation={msg.recommendation} onOpenSnack={openSnackRecipe} />
-              )}
-              {msg.isAi && msg.placeSearch?.venueQuery && (
-                <PlaceSearchButtons
-                  compact
-                  venueQuery={msg.placeSearch.venueQuery}
-                  label={msg.placeSearch.label || `근처 ${msg.placeSearch.venueQuery} 찾기`}
+              {msg.isAi && msg.id !== 1 && (
+                <img
+                  className="chat-ai-avatar"
+                  src={bartenderAvatar}
+                  alt=""
+                  aria-hidden="true"
                 />
               )}
+              <div className={msg.isAi ? 'chat-bubble-ai' : 'chat-bubble-user'}>
+                {msg.isAi && msg.id === 1 && (
+                  <div className="chat-intro-brand">
+                    <img src={bartenderAvatar} alt="" aria-hidden="true" />
+                    <span>오마주 AI 바텐더</span>
+                  </div>
+                )}
+                <div>{msg.text}</div>
+                {msg.isAi && (
+                  <button
+                    onClick={() => speak(msg.text)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle', padding: 0 }}
+                    title="읽어주기"
+                  >
+                    <Volume2 size={16} color="rgba(255,255,255,0.7)" />
+                  </button>
+                )}
+                {msg.isAi && msg.polishing && isThinking && (
+                  <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: '#9ca3af', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Loader2 size={12} className="spin" />
+                    {polishLabel}
+                  </div>
+                )}
+                {msg.isAi && msg.recommendation && (
+                  <RecommendationCards recommendation={msg.recommendation} onOpenSnack={openSnackRecipe} />
+                )}
+                {msg.isAi && msg.placeSearch?.venueQuery && (
+                  <PlaceSearchButtons
+                    compact
+                    venueQuery={msg.placeSearch.venueQuery}
+                    label={msg.placeSearch.label || `근처 ${msg.placeSearch.venueQuery} 찾기`}
+                  />
+                )}
+              </div>
             </motion.div>
           ))}
+
+          {messages.length === 1 && messages[0]?.isAi && !isThinking && !input.trim() && !pendingContext && (
+            <motion.div
+              key="chat-starter-prompts"
+              className="chat-starter-group"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+            >
+              <div className="chat-starter-heading">
+                <div className="chat-starter-heading-label">
+                  <Sparkles size={14} aria-hidden="true" />
+                  <span>오늘 어떤 게 끌리세요?</span>
+                </div>
+                <button
+                  type="button"
+                  className="chat-starter-refresh"
+                  aria-label="다른 추천 질문 보기"
+                  title="다른 추천 질문 보기"
+                  onClick={() => setStarterPrompts(getNextStarterPrompts(starterPrompts.map(({ label }) => label)))}
+                >
+                  <RefreshCw size={15} aria-hidden="true" />
+                </button>
+              </div>
+              <div className="chat-starter-prompts" role="group" aria-label="추천 질문">
+                {starterPrompts.map(({ label, icon: PromptIcon, tone }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={`chat-starter-prompt chat-starter-prompt--${tone}`}
+                    onClick={() => handleSend(label)}
+                    disabled={isThinking}
+                  >
+                    <span className="chat-starter-prompt-icon">
+                      <PromptIcon size={17} aria-hidden="true" />
+                    </span>
+                    <span className="chat-starter-prompt-label">{label}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {isThinking && !hasPartialAnswer && (
             <motion.div

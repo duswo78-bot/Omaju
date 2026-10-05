@@ -10,12 +10,18 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build-output
+*.aab
 *.local
 
-# Secrets / local env (never commit API keys)
+# Secrets / local env (never commit API keys or signing keys)
 .env
 .env.*
 !.env.example
+*.jks
+*.keystore
+key.properties
+local.properties
 
 # Editor directories and files
 .vscode/*

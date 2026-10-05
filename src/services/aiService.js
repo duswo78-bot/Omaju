@@ -115,6 +115,13 @@ aiWorker.onmessage = (e) => {
     return;
   }
 
+  if (type === 'error' && !requestId) {
+    aiState.isReady = true;
+    aiState.statusMessage = 'AI 임베딩을 사용할 수 없어 기본 추천 모드로 전환했습니다.';
+    broadcast(e.data);
+    return;
+  }
+
   broadcast(e.data);
 };
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { CupSoda, Heart, Trash2, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { CupSoda, Heart, Plus, Trash2, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls, useMotionValue, useSpring } from 'framer-motion';
 import { useDrag } from '@use-gesture/react';
 import confetti from 'canvas-confetti';
